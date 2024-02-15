@@ -1,8 +1,6 @@
 //
+//  Obstacle Avoidance App
 //  ContentView.swift
-//  obstacle_avoidance
-//
-//  Created by Alexander on 2/13/24.
 //
 
 import SwiftUI
@@ -25,11 +23,51 @@ struct ContentView: View {
                         .default(Text("Start"))
             )
         }
+        
+        CameraView() //Calling the Camera
     }
+}
 
+struct CameraView: View {
+    var body: some View {
+        ZStack {
+            //Going to be Camera preview
+            Color.black
+                .ignoresSafeArea(.all,edges: .all)
+            
+            VStack {
+                Spacer()
+                
+                HStack{
+                    //The Traditional camera button to be replaced
+                    Button(action: {}, label: {
+                        
+                        ZStack {
+                            Circle()
+                                .fill(Color.white)
+                                .frame(width: 65, height: 65)
+                        }
+                    })
+                    
+                }
+            }
+            
+            
+        }
+    }
 }
 
 
+//Put the AI inplementation here
+//
+//Will get threat level
+//
+//
+
+
+
+
+// Loads the iphone preview
 #Preview {
     ContentView()
 }
