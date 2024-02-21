@@ -5,11 +5,13 @@
 
 import SwiftUI
 
-
 struct ContentView: View {
+    @StateObject private var model = FrameHandler()
     @State private var showAlert = false
+    
     var body: some View {
-
+       
+        // Text alert on screen.
         Text("Obstacle Avoidance")
             .onAppear{
                 showAlert = true
@@ -24,50 +26,18 @@ struct ContentView: View {
             )
         }
         
-        CameraView() //Calling the Camera
-    }
-}
-
-struct CameraView: View {
-    var body: some View {
-        ZStack {
-            //Going to be Camera preview
-            Color.black
-                .ignoresSafeArea(.all,edges: .all)
-            
-            VStack {
-                Spacer()
-                
-                HStack{
-                    //The Traditional camera button to be replaced
-                    Button(action: {}, label: {
-                        
-                        ZStack {
-                            Circle()
-                                .fill(Color.white)
-                                .frame(width: 65, height: 65)
-                        }
-                    })
-                    
-                }
-            }
-            
-            
-        }
+        //Access the camera and start obstacle avoidance mode
+        FrameView(image: model.frame)
+            .ignoresSafeArea()
     }
 }
 
 
-//Put the AI inplementation here
-//
-//Will get threat level
-//
-//
 
 
-
-
-// Loads the iphone preview
-#Preview {
-    ContentView()
+// For Preview in Xcode
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }

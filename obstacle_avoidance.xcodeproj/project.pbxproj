@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		111CEFD02B86341900C30A31 /* FrameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111CEFCF2B86341900C30A31 /* FrameView.swift */; };
+		111CEFD22B86353C00C30A31 /* FrameHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111CEFD12B86353C00C30A31 /* FrameHandler.swift */; };
 		11BA3D592B7C2AA9006477A7 /* obstacle_avoidanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11BA3D582B7C2AA9006477A7 /* obstacle_avoidanceApp.swift */; };
 		11BA3D5B2B7C2AA9006477A7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11BA3D5A2B7C2AA9006477A7 /* ContentView.swift */; };
 		11BA3D5D2B7C2AAB006477A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11BA3D5C2B7C2AAB006477A7 /* Assets.xcassets */; };
@@ -34,6 +36,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		111CEFCF2B86341900C30A31 /* FrameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameView.swift; sourceTree = "<group>"; };
+		111CEFD12B86353C00C30A31 /* FrameHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameHandler.swift; sourceTree = "<group>"; };
 		11BA3D552B7C2AA9006477A7 /* obstacle_avoidance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = obstacle_avoidance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		11BA3D582B7C2AA9006477A7 /* obstacle_avoidanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = obstacle_avoidanceApp.swift; sourceTree = "<group>"; };
 		11BA3D5A2B7C2AA9006477A7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -96,6 +100,8 @@
 			children = (
 				11BA3D582B7C2AA9006477A7 /* obstacle_avoidanceApp.swift */,
 				11BA3D5A2B7C2AA9006477A7 /* ContentView.swift */,
+				111CEFCF2B86341900C30A31 /* FrameView.swift */,
+				111CEFD12B86353C00C30A31 /* FrameHandler.swift */,
 				11BA3D5C2B7C2AAB006477A7 /* Assets.xcassets */,
 				11BA3D5E2B7C2AAB006477A7 /* Preview Content */,
 			);
@@ -257,7 +263,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				111CEFD02B86341900C30A31 /* FrameView.swift in Sources */,
 				11BA3D5B2B7C2AA9006477A7 /* ContentView.swift in Sources */,
+				111CEFD22B86353C00C30A31 /* FrameHandler.swift in Sources */,
 				11BA3D592B7C2AA9006477A7 /* obstacle_avoidanceApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -422,8 +430,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"obstacle_avoidance/Preview Content\"";
+				DEVELOPMENT_TEAM = 227XRZL4ZB;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Obstacle Avoidance would like to use your camera";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -450,8 +460,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"obstacle_avoidance/Preview Content\"";
+				DEVELOPMENT_TEAM = 227XRZL4ZB;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Obstacle Avoidance would like to use your camera";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
