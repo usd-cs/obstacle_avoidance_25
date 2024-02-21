@@ -2,8 +2,12 @@
 //  Obstacle Avoidance App
 //  ContentView.swift
 //
+//  Content View is a swift file that is used for triggering the Obstacle avoidance application.
+//
 
 import SwiftUI
+
+//Structure for app viewing upon opening.
 
 struct ContentView: View {
     @StateObject private var model = FrameHandler()
@@ -17,6 +21,7 @@ struct ContentView: View {
                 showAlert = true
             }
         
+        //Trigger the alert with the message
         .alert(isPresented: $showAlert) {
             Alert(
                 title: Text("Obstacle Avoidance"),

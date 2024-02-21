@@ -2,7 +2,7 @@
 //  obstacle_avoidanceApp.swift
 //  obstacle_avoidance
 //
-//  Created by Alexander on 2/13/24.
+//  Main driver file to the Obstacle avoidance app.
 //
 
 import SwiftUI
@@ -11,6 +11,7 @@ import SwiftUI
 struct obstacle_avoidanceApp: App {
     var body: some Scene {
         WindowGroup {
+            //Trigger the Content View program upon startup.
             ContentView()
         }
     }

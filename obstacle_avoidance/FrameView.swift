@@ -2,7 +2,7 @@
 //  FrameView.swift
 //  obstacle_avoidance
 //
-//  Created by Alexander on 2/21/24.
+//  Swift file that is used to startup the phone camera for viewing the frames. 
 //
 
 import SwiftUI
