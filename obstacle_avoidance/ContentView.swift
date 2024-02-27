@@ -10,7 +10,7 @@ import SwiftUI
 //Structure for app viewing upon opening.
 
 struct ContentView: View {
-    @StateObject private var model = FrameHandler()
+    //@StateObject private var model = FrameHandler()
     @State private var showAlert = false
     
     var body: some View {
@@ -30,11 +30,28 @@ struct ContentView: View {
                         .default(Text("Start"))
             )
         }
+        TabView {
+            CameraView()
+            .tabItem {
+                    Image(systemName: "house.fill")
+                    Text("Home").font(.system(size: 36))
+                }
+            
+            Text("The content of the second view")
+                .tabItem {
+                    Image(systemName: "gear")
+                    Text("Second Tab")
+                }
+        }
         
-        //Access the camera and start obstacle avoidance mode
-        FrameView(image: model.frame)
-            .ignoresSafeArea()
     }
+}
+struct CameraView: View {
+    @StateObject private var model = FrameHandler()
+    var body: some View {
+            FrameView(image: model.frame)
+            .ignoresSafeArea()
+            }
 }
 
 
