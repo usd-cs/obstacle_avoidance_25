@@ -30,11 +30,25 @@ struct ContentView: View {
                         .default(Text("Start"))
             )
         }
-        TabView {
+        TabbedView()
+        
+    }
+}
+
+struct TabbedView: View {
+    init() {
+        UITabBar.appearance().backgroundColor = UIColor.lightGray
+        UITabBar.appearance().isTranslucent = true
+        //let font = UIFont(name: "Helvetica", size: 22)
+        //UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.font:font]
+        //UIFont.systemFont(ofSize: 50, weight: .bold)
+    }
+    var body: some View {
+        return TabView {
             CameraView()
-            .tabItem {
+                .tabItem {
                     Image(systemName: "house.fill")
-                    Text("Home").font(.system(size: 36))
+                    Text("Home").font(.system(size: 50))
                 }
             
             Text("The content of the second view")
@@ -43,9 +57,9 @@ struct ContentView: View {
                     Text("Second Tab")
                 }
         }
-        
     }
 }
+
 struct CameraView: View {
     @StateObject private var model = FrameHandler()
     var body: some View {
