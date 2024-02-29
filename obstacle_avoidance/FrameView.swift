@@ -15,8 +15,12 @@ struct BoundingBox: Identifiable {
 struct FrameView: View {
     var image: CGImage?
     var boundingBoxes: [BoundingBox]
+    
+    //boundingBoxes.append(test)
 
     var body: some View {
+        //let test = BoundingBox(rect: CGRect(origin: CGPoint(x: 50, y: 50), size: CGSize(width: 50, height: 50)))
+        //let testList = [test]
         ZStack {
             if let image = image {
                 Image(uiImage: UIImage(cgImage: image))

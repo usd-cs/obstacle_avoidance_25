@@ -13,6 +13,7 @@ import Vision
 
 class FrameHandler: NSObject, ObservableObject {
     @Published var frame: CGImage?
+    @Published var boundingBoxes: [BoundingBox] = []
     
     // Initializing variables related to capturing image.
     private var permissionGranted = true
@@ -88,6 +89,10 @@ class FrameHandler: NSObject, ObservableObject {
                 // Transform bounding box
                 let objectBounds = VNImageRectForNormalizedRect(highestObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
                 let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
+                
+                self?.boundingBoxes = []
+                let transformedBox = BoundingBox(rect: transformedBounds)
+                self?.boundingBoxes.append(transformedBox)
 
                 let boxLayer = self?.drawBoundingBox(transformedBounds)
 
@@ -186,6 +191,7 @@ extension FrameHandler: AVCaptureVideoDataOutputSampleBufferDelegate {
         // All UI updates should be performed on the main queue.
         DispatchQueue.main.async { [unowned self] in
             self.frame = cgImage
+            //self.boundingBoxes = []
         }
         
         do {
