@@ -44,8 +44,10 @@ struct TabbedView: View {
         //UIFont.systemFont(ofSize: 50, weight: .bold)
     }
     var body: some View {
+        let boundingBoxes: [BoundingBox] = []
+        
         return TabView {
-            CameraView()
+            CameraView(boundingBoxes: boundingBoxes)
                 .tabItem {
                     Image(systemName: "house.fill")
                     Text("Home").font(.system(size: 50))
@@ -62,8 +64,10 @@ struct TabbedView: View {
 
 struct CameraView: View {
     @StateObject private var model = FrameHandler()
+    var boundingBoxes: [BoundingBox]
+    
     var body: some View {
-            FrameView(image: model.frame)
+            FrameView(image: model.frame, boundingBoxes: boundingBoxes)
             .ignoresSafeArea()
             }
 }
