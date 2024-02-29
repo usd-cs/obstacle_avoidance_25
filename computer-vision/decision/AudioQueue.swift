@@ -11,11 +11,13 @@ enum AudioQueueError: Error {
 }
 
 class AudioQueue {
+    // Properties
     var threatLevel: Int // Threat level of the obstacle between 0-100, with 100 being the greatest threat.
     var objectName: String // Name of the obstacle
     var angle: Int // Angle of the obstacle in clock terms. Ex. 12 O'clock would be straight forward.
     var distance: Int // Distance calculated from the person holding phone to the obstacle (in feet).
     
+    // Initialize object and check for invalid data
     init(threatLevel: Int, objectName: String, angle: Int, distance: Int) throws {
         guard threatLevel >= 0 && threatLevel <= 100 else {
             throw AudioQueueError.invalidThreatLevel
