@@ -64,13 +64,21 @@ struct TabbedView: View {
 
 struct CameraView: View {
     @StateObject private var model = FrameHandler()
-    
+    @State private var db = DecisionBlock() // No need to pass initial values here
+
     var body: some View {
         FrameView(image: model.frame, boundingBoxes: model.boundingBoxes)
             .ignoresSafeArea()
+            .onReceive(model.$frame) { newFrame in
+                // Update DecisionBlock when the frame changes
+                db.processInput(image: newFrame, boundingBoxes: model.boundingBoxes)
             }
+            .onReceive(model.$boundingBoxes) { newBoundingBoxes in
+                // Update DecisionBlock when bounding boxes change
+                db.processInput(image: model.frame, boundingBoxes: newBoundingBoxes)
+            }
+    }
 }
-
 
 
 

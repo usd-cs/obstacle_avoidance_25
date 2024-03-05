@@ -17,7 +17,14 @@ class DecisionBlock {
     var objectName: String?
     var distance: Int?
     var direction: Int?
+
+    // Queue to store AudioQueue objects
+    private var audioQueueQueue: [AudioQueue] = []
     
+    func processInput(image: Image, boundingBoxes: [BoundingBox]) {
+        // Process image and bounding boxes here...
+    }
+
     // Method to process input and determine if announcement is needed
     func processInput(objectName: String, distance: Int, direction: Int) -> AudioQueue? {
         self.objectName = objectName
@@ -33,5 +40,13 @@ class DecisionBlock {
             // No need to announce, return nil
             return nil
         }
+    }
+
+    // Function to return and pop an AudioQueue object from the queue
+    func popAudioQueue() -> AudioQueue? {
+        guard !audioQueueQueue.isEmpty else {
+            return nil
+        }
+        return audioQueueQueue.removeFirst()
     }
 }
