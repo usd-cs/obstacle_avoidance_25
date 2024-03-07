@@ -71,7 +71,9 @@ struct CameraView: View {
         FrameView(image: model.frame, boundingBoxes: model.boundingBoxes)
             .ignoresSafeArea()
             .onReceive(model.$frame) { newFrame in
-                db.processInput(objectName: model.objectName)
+                if let objectNameUnwrap = model.objectName {
+                    db.processInput(objectName: objectNameUnwrap)
+                }
 //                // Update DecisionBlock when the frame changes
 //                db.processInput(image: model.frame, model.objectName, boundingBoxes: model.boundingBoxes)
             }

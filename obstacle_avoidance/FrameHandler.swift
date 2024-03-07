@@ -22,7 +22,7 @@ class FrameHandler: NSObject, ObservableObject {
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private let context = CIContext()
     private var requests = [VNRequest]() // To hold detection requests
-    private var detectionLayer: CALayer! = nil=
+    private var detectionLayer: CALayer! = nil
     var screenRect: CGRect!
     
     override init() {
