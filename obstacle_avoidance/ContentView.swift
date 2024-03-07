@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import AVFoundation
+import Foundation
 
 //Structure for app viewing upon opening.
 
@@ -72,7 +74,13 @@ struct CameraView: View {
             .ignoresSafeArea()
             .onReceive(model.$frame) { newFrame in
                 if let objectNameUnwrap = model.objectName {
-                    db.processInput(objectName: objectNameUnwrap)
+                    //db.processInput(objectName: objectNameUnwrap)
+                    let utterance = AVSpeechUtterance(string: objectNameUnwrap)
+                    let voice = AVSpeechSynthesisVoice(language: "en-GB")
+                    utterance.voice = voice
+                    
+                    let synthesizer = AVSpeechSynthesizer()
+                    synthesizer.speak(utterance)
                 }
 //                // Update DecisionBlock when the frame changes
 //                db.processInput(image: model.frame, model.objectName, boundingBoxes: model.boundingBoxes)
