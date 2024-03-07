@@ -14,6 +14,7 @@ import Vision
 class FrameHandler: NSObject, ObservableObject {
     @Published var frame: CGImage?
     @Published var boundingBoxes: [BoundingBox] = []
+    @Published var objectName: String?
     
     // Initializing variables related to capturing image.
     private var permissionGranted = true
@@ -21,7 +22,7 @@ class FrameHandler: NSObject, ObservableObject {
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private let context = CIContext()
     private var requests = [VNRequest]() // To hold detection requests
-    private var detectionLayer: CALayer! = nil
+    private var detectionLayer: CALayer! = nil=
     var screenRect: CGRect!
     
     override init() {
@@ -85,6 +86,7 @@ class FrameHandler: NSObject, ObservableObject {
                 // Extract the label with the highest confidence
                 let highestLabel = highestObservation.labels.first?.identifier ?? "Unknown"
                 print("Highest Confidence Label: \(highestLabel)")
+                self?.objectName = highestLabel
 
                 // Transform bounding box
                 let objectBounds = VNImageRectForNormalizedRect(highestObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
