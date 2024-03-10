@@ -55,7 +55,7 @@ struct TabbedView: View {
                     Text("Home").font(.system(size: 50))
                 }
             
-            Text("The content of the second view")
+            SettingsView()
                 .tabItem {
                     Image(systemName: "gear")
                     Text("Second Tab")
@@ -64,15 +64,49 @@ struct TabbedView: View {
     }
 }
 
-
+struct SettingsView: View {
+    var body: some View {
+        Button(action: speak){
+            Text("test")
+        }
+    }
+}
+func speak(){
+    let utterance = AVSpeechUtterance(string: "Settings")
+    utterance.rate = 0.57
+    utterance.pitchMultiplier = 0.8
+    utterance.postUtteranceDelay = 0.2
+    utterance.volume = 0.8
+    
+    //let voice = AVSpeechSynthesisVoice(language: "en-GB")
+    //utterance.voice = voice
+    
+    let synthesizer = AVSpeechSynthesizer()
+    synthesizer.speak(utterance)
+}
 struct CameraView: View {
     @StateObject private var model = FrameHandler()
-    @State private var db = DecisionBlock() // No need to pass initial values here
+    //@State private var db = DecisionBlock() // No need to pass initial values here
 
     var body: some View {
         FrameView(image: model.frame, boundingBoxes: model.boundingBoxes)
             .ignoresSafeArea()
-            .onReceive(model.$frame) { newFrame in
+            .onReceive(model.$boundingBoxes) { newBoundingBoxes in
+                if let objectNameUnwrap = model.objectName {
+                    DispatchQueue.global().async {
+                        //db.processInput(objectName: objectNameUnwrap)
+                        let utterance = AVSpeechUtterance(string: objectNameUnwrap)
+                        let voice = AVSpeechSynthesisVoice(language: "en-GB")
+                        utterance.voice = voice
+                        
+                        let synthesizer = AVSpeechSynthesizer()
+                        synthesizer.speak(utterance)
+                    }
+                }
+//                // Update DecisionBlock when bounding boxes change
+//                db.processInput(image: model.frame, model.objectName, boundingBoxes: newBoundingBoxes)
+        
+            /*.onReceive(model.$frame) { newFrame in
                 if let objectNameUnwrap = model.objectName {
                     //db.processInput(objectName: objectNameUnwrap)
                     let utterance = AVSpeechUtterance(string: objectNameUnwrap)
@@ -84,10 +118,8 @@ struct CameraView: View {
                 }
 //                // Update DecisionBlock when the frame changes
 //                db.processInput(image: model.frame, model.objectName, boundingBoxes: model.boundingBoxes)
-            }
-            .onReceive(model.$boundingBoxes) { newBoundingBoxes in
-//                // Update DecisionBlock when bounding boxes change
-//                db.processInput(image: model.frame, model.objectName, boundingBoxes: newBoundingBoxes)
+            }*/
+            
             }
     }
 }
