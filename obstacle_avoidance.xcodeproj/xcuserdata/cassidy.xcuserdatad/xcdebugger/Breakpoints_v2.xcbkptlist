@@ -14,8 +14,8 @@
             filePath = "obstacle_avoidance/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "65"
-            endingLineNumber = "65"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
             landmarkName = "TabbedView"
             landmarkType = "14">
          </BreakpointContent>

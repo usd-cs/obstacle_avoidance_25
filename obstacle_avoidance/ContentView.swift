@@ -8,7 +8,6 @@
 import SwiftUI
 import AVFoundation
 import Foundation
-
 //Structure for app viewing upon opening.
 
 struct ContentView: View {
@@ -41,24 +40,21 @@ struct TabbedView: View {
     init() {
         UITabBar.appearance().backgroundColor = UIColor.lightGray
         UITabBar.appearance().isTranslucent = true
-        //let font = UIFont(name: "Helvetica", size: 22)
-        //UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.font:font]
-        //UIFont.systemFont(ofSize: 50, weight: .bold)
     }
     var body: some View {
-        //let boundingBoxes: [BoundingBox] = []
-        
         return TabView {
-            CameraView() //boundingBoxes: boundingBoxe
+            CameraView()
                 .tabItem {
                     Image(systemName: "house.fill")
+                        .accessibility(label: Text("Home Tab"))
                     Text("Home").font(.system(size: 50))
                 }
             
             SettingsView()
                 .tabItem {
                     Image(systemName: "gear")
-                    Text("Second Tab")
+                        .accessibility(label: Text("Settings Tab"))
+                    Text("Settings")
                 }
         }
     }
@@ -66,69 +62,67 @@ struct TabbedView: View {
 
 struct SettingsView: View {
     var body: some View {
-        Button(action: speak){
-            Text("test")
+        Text("This page will have settings")
+            .accessibility(label: Text("Settings Page")) // Provide a label for VoiceOver
+            .accessibility(addTraits: .isStaticText) // Specify that the text is static
+            .onAppear {
+                UIAccessibility.post(notification: .announcement, argument: "This page will have settings")
+            }
+        
+        
+    }
+}
+    func speak(word: String){
+        let utterance = AVSpeechUtterance(string: word)
+        utterance.rate = 0.57
+        utterance.pitchMultiplier = 0.8
+        utterance.postUtteranceDelay = 0.2
+        utterance.volume = 0.8
+        
+        let synthesizer = AVSpeechSynthesizer()
+        synthesizer.speak(utterance)
+        
+    }
+    
+    struct CameraView: View {
+        @StateObject private var model = FrameHandler()
+        //@State private var spokenText: String = ""
+        //@State private var db = DecisionBlock() // No need to pass initial values here
+        
+        var body: some View {
+            FrameView(image: model.frame, boundingBoxes: model.boundingBoxes, name: model.objectName)
+                .ignoresSafeArea()
+            /*.onReceive(model.$boundingBoxes) { newBoundingBoxes in
+             if let objectNameUnwrap = model.objectName {
+             DispatchQueue.global().async {
+             speak(word: objectNameUnwrap)
+             //spokenText = objectNameUnwrap
+             //db.processInput(objectName: objectNameUnwrap)
+             }
+             }*/
+            
+            //                // Update DecisionBlock when bounding boxes change
+            //                db.processInput(image: model.frame, model.objectName, boundingBoxes: newBoundingBoxes)
+            
+            /*.onReceive(model.$frame) { newFrame in
+             if let objectNameUnwrap = model.objectName {
+             //db.processInput(objectName: objectNameUnwrap)
+             }
+             //                // Update DecisionBlock when the frame changes
+             //                db.processInput(image: model.frame, model.objectName, boundingBoxes: model.boundingBoxes)
+             }*/
+            
+        }
+        // Text(spokenText)
+    }
+    
+    
+    
+    
+    // For Preview in Xcode
+    struct ContentView_Previews: PreviewProvider {
+        static var previews: some View {
+            ContentView()
         }
     }
-}
-func speak(){
-    let utterance = AVSpeechUtterance(string: "Settings")
-    utterance.rate = 0.57
-    utterance.pitchMultiplier = 0.8
-    utterance.postUtteranceDelay = 0.2
-    utterance.volume = 0.8
-    
-    //let voice = AVSpeechSynthesisVoice(language: "en-GB")
-    //utterance.voice = voice
-    
-    let synthesizer = AVSpeechSynthesizer()
-    synthesizer.speak(utterance)
-}
-struct CameraView: View {
-    @StateObject private var model = FrameHandler()
-    //@State private var db = DecisionBlock() // No need to pass initial values here
 
-    var body: some View {
-        FrameView(image: model.frame, boundingBoxes: model.boundingBoxes)
-            .ignoresSafeArea()
-            .onReceive(model.$boundingBoxes) { newBoundingBoxes in
-                if let objectNameUnwrap = model.objectName {
-                    DispatchQueue.global().async {
-                        //db.processInput(objectName: objectNameUnwrap)
-                        let utterance = AVSpeechUtterance(string: objectNameUnwrap)
-                        let voice = AVSpeechSynthesisVoice(language: "en-GB")
-                        utterance.voice = voice
-                        
-                        let synthesizer = AVSpeechSynthesizer()
-                        synthesizer.speak(utterance)
-                    }
-                }
-//                // Update DecisionBlock when bounding boxes change
-//                db.processInput(image: model.frame, model.objectName, boundingBoxes: newBoundingBoxes)
-        
-            /*.onReceive(model.$frame) { newFrame in
-                if let objectNameUnwrap = model.objectName {
-                    //db.processInput(objectName: objectNameUnwrap)
-                    let utterance = AVSpeechUtterance(string: objectNameUnwrap)
-                    let voice = AVSpeechSynthesisVoice(language: "en-GB")
-                    utterance.voice = voice
-                    
-                    let synthesizer = AVSpeechSynthesizer()
-                    synthesizer.speak(utterance)
-                }
-//                // Update DecisionBlock when the frame changes
-//                db.processInput(image: model.frame, model.objectName, boundingBoxes: model.boundingBoxes)
-            }*/
-            
-            }
-    }
-}
-
-
-
-// For Preview in Xcode
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}

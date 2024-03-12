@@ -42,16 +42,6 @@ class DecisionBlock {
             
         }
         
-        // Getting the phone to speak.
-        let utterance = AVSpeechUtterance(string: objectName)
-        let voice = AVSpeechSynthesisVoice(language: "en-GB")
-        utterance.voice = voice
-        
-        let synthesizer = AVSpeechSynthesizer()
-        synthesizer.speak(utterance)
-        
-    
-        
     }
 
 //    // Method to process input and determine if announcement is needed
