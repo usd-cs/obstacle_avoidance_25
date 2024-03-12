@@ -13,11 +13,32 @@ import Foundation
 struct ContentView: View {
     //@StateObject private var model = FrameHandler()
     @State private var showAlert = false
+    @State private var startPressed = false
     
     var body: some View {
-       
+        VStack {
+            if startPressed {
+                TabbedView()
+            } else {
+                Text("Obstacle Avoidance")
+                    .onAppear{
+                        showAlert = true
+                    }
+                .alert(isPresented: $showAlert) {
+                    Alert(
+                        title: Text("Obstacle Avoidance"),
+                        message: Text("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body."),
+                        dismissButton: .default(Text("Start")) {
+                            startPressed = true
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
         // Text alert on screen.
-        Text("Obstacle Avoidance")
+        /*Text("Obstacle Avoidance")
             .onAppear{
                 showAlert = true
             }
@@ -31,10 +52,8 @@ struct ContentView: View {
                         .default(Text("Start"))
             )
         }
-        TabbedView()
+        TabbedView()*/
         
-    }
-}
 
 struct TabbedView: View {
     init() {
