@@ -40,6 +40,12 @@ class FrameHandler: NSObject, ObservableObject {
     func stopCamera() {
         captureSession.stopRunning()
     }
+    
+    func startCamera(){
+        setupCaptureSession()
+        captureSession.startRunning()
+        setupDetector()
+    }
 
     
     func setupDetector() {

@@ -118,7 +118,7 @@ struct SettingsView: View {
             FrameView(image: model.frame, boundingBoxes: model.boundingBoxes, name: model.objectName)
                 .ignoresSafeArea()
                 .onAppear {
-                    //model.setupCaptureSession()
+                    model.startCamera()
                 }
                 .onDisappear {
                     model.stopCamera()
