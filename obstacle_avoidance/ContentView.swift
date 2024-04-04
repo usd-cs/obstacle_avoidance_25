@@ -18,25 +18,6 @@ struct ContentView: View {
     var body: some View {
         VStack {
             TabbedView()
-            /*
-             if startPressed {
-             TabbedView()
-             } else {
-             Text("Obstacle Avoidance")
-             .onAppear{
-             showAlert = true
-             }
-             .alert(isPresented: $showAlert) {
-             Alert(
-             title: Text("Obstacle Avoidance"),
-             message: Text("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body."),
-             dismissButton: .default(Text("Start")) {
-             startPressed = true
-             }
-             )
-             }
-             }
-             */
         }
     }
 }
@@ -55,7 +36,6 @@ struct TabbedView: View {
                         .accessibility(label: Text("Home Tab"))
                     Text("Home").font(.system(size: 50))
                 }
-                .accessibilityLabel("Home")
                 .accessibilityHint("This is the first tab")
             CameraView()
                 .tabItem {
@@ -84,14 +64,18 @@ struct InstructionView: View{
             Text("Obstacle Avoidance")
                 .font(.title)
                 .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                .accessibilityLabel("Title")
+                .accessibilityLabel("Obstacle Avoidance")
                 .accessibility(addTraits: .isStaticText)
+                .onTapGesture {
+                                    UIAccessibility.post(notification: .announcement, argument: "Obstacle Avoidance")
+                                }
            
             Text("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body")
                 .font(.body)
                 .foregroundColor(.secondary)
                 .accessibility(label: Text("Home Page")) // Provide a label for VoiceOver
                 .accessibility(addTraits: .isStaticText) // Specify that the text is static
+                .accessibilityLabel("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body")
         }
         
         .padding()
