@@ -17,42 +17,29 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            if startPressed {
-                TabbedView()
-            } else {
-                Text("Obstacle Avoidance")
-                    .onAppear{
-                        showAlert = true
-                    }
-                .alert(isPresented: $showAlert) {
-                    Alert(
-                        title: Text("Obstacle Avoidance"),
-                        message: Text("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body."),
-                        dismissButton: .default(Text("Start")) {
-                            startPressed = true
-                        }
-                    )
-                }
-            }
+            TabbedView()
+            /*
+             if startPressed {
+             TabbedView()
+             } else {
+             Text("Obstacle Avoidance")
+             .onAppear{
+             showAlert = true
+             }
+             .alert(isPresented: $showAlert) {
+             Alert(
+             title: Text("Obstacle Avoidance"),
+             message: Text("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body."),
+             dismissButton: .default(Text("Start")) {
+             startPressed = true
+             }
+             )
+             }
+             }
+             */
         }
     }
 }
-        // Text alert on screen.
-        /*Text("Obstacle Avoidance")
-            .onAppear{
-                showAlert = true
-            }
-        
-        //Trigger the alert with the message
-        .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text("Obstacle Avoidance"),
-                message: Text("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body. Press start to begin."),
-                dismissButton:
-                        .default(Text("Start"))
-            )
-        }
-        TabbedView()*/
         
 
 struct TabbedView: View {
@@ -62,12 +49,22 @@ struct TabbedView: View {
     }
     var body: some View {
         return TabView {
-            CameraView()
+            InstructionView()
                 .tabItem {
                     Image(systemName: "house.fill")
                         .accessibility(label: Text("Home Tab"))
                     Text("Home").font(.system(size: 50))
                 }
+                .accessibilityLabel("Home")
+                .accessibilityHint("This is the first tab")
+            CameraView()
+                .tabItem {
+                    Image(systemName: "camera.fill")
+                        .accessibility(label: Text("Camera Tab"))
+                    Text("Camera").font(.system(size: 50))
+                }
+                .accessibilityLabel("Camera")
+                .accessibilityHint("This is the second tab")
             
             SettingsView()
                 .tabItem {
@@ -75,9 +72,34 @@ struct TabbedView: View {
                         .accessibility(label: Text("Settings Tab"))
                     Text("Settings")
                 }
+                .accessibilityLabel("Settings")
+                .accessibilityHint("This is the third tab")
         }
     }
 }
+
+struct InstructionView: View{
+    var body: some View{
+        VStack(alignment: .leading, spacing: 10){
+            Text("Obstacle Avoidance")
+                .font(.title)
+                .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                .accessibilityLabel("Title")
+                .accessibility(addTraits: .isStaticText)
+           
+            Text("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body")
+                .font(.body)
+                .foregroundColor(.secondary)
+                .accessibility(label: Text("Home Page")) // Provide a label for VoiceOver
+                .accessibility(addTraits: .isStaticText) // Specify that the text is static
+        }
+        
+        .padding()
+        
+    }
+}
+
+
 
 struct SettingsView: View {
     var body: some View {
