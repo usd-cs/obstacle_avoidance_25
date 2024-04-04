@@ -117,6 +117,13 @@ struct SettingsView: View {
         var body: some View {
             FrameView(image: model.frame, boundingBoxes: model.boundingBoxes, name: model.objectName)
                 .ignoresSafeArea()
+                .onAppear {
+                    //model.setupCaptureSession()
+                }
+                .onDisappear {
+                    model.stopCamera()
+                }
+                
             /*.onReceive(model.$boundingBoxes) { newBoundingBoxes in
              if let objectNameUnwrap = model.objectName {
              DispatchQueue.global().async {
