@@ -30,11 +30,11 @@ class FrameHandler: NSObject, ObservableObject {
         self.checkPermission()
         // Initialize screenRect here before setting up the capture session and detector
         self.screenRect = UIScreen.main.bounds
-        sessionQueue.async { [unowned self] in
-            self.setupCaptureSession()
-            self.captureSession.startRunning()
-            self.setupDetector()
-        }
+//        sessionQueue.async { [unowned self] in
+////            self.setupCaptureSession()
+////            self.captureSession.startRunning()
+////            self.setupDetector()
+//        }
     }
     
     func stopCamera() {
@@ -43,7 +43,7 @@ class FrameHandler: NSObject, ObservableObject {
     
     func startCamera(){
         setupCaptureSession()
-        captureSession.startRunning()
+        captureSession.startRunning() // TODO: Run in a background thread
         setupDetector()
     }
 
@@ -85,11 +85,12 @@ class FrameHandler: NSObject, ObservableObject {
             updateLayers() // Ensure detectionLayer frame is updated
         }
 
+        // TODO: Set up producer consumer for this part and set up unique ids for bounding boxes for tracking
         DispatchQueue.main.async { [weak self] in
             self?.detectionLayer?.sublayers = nil
 
-            // Create an array to store bounding boxes and labels
-            var boundingBoxResults: [(CGRect, String)] = []
+            // Create an array to store BoundingBox objects
+            var boundingBoxResults: [BoundingBox] = []
 
             // Iterate through all results
             for result in results {
@@ -97,22 +98,27 @@ class FrameHandler: NSObject, ObservableObject {
                 if let observation = result as? VNRecognizedObjectObservation {
                     // Iterate through labels in the observation
                     for label in observation.labels {
-                        // Extract label identifier and confidence
+                        // Extract label identifier, confidence, and bounding box
                         let labelIdentifier = label.identifier
+                        print(labelIdentifier)
                         let confidence = label.confidence
                         
-                        // Extract bounding box and transform
+                        // Transform bounding box
                         let objectBounds = VNImageRectForNormalizedRect(observation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
                         let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
-                        
-                        // Add bounding box and label to the results array
-                        boundingBoxResults.append((transformedBounds, labelIdentifier))
+
+                        // Create BoundingBox object
+                        let boundingBox = BoundingBox(classIndex: 0, score: confidence, rect: transformedBounds)
+
+                        // Add BoundingBox object to the array
+                        boundingBoxResults.append(boundingBox)
                     }
                 }
             }
 
             // Call the NMS function
-            let filteredResults = performNMS(on: boundingBoxResults)
+            self?.boundingBoxes = []
+            let filteredResults = NMSHandler.performNMS(on: boundingBoxResults)
             self?.boundingBoxes = filteredResults
 
             // // Find the observation with the highest confidence

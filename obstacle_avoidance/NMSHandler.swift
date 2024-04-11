@@ -8,38 +8,42 @@
 import Foundation
 import UIKit
 
-class NMSViewController: UIViewController {
-    let numClasses = 4
-    let selectHowMany = 6
-    let selectPerClass = 2
-    let scoreThreshold: Float = 0.1
-    let iouThreshold: Float = 0.5
-    
-    var boundingBoxViews: [BoundingBoxView] = []
-    var multiClass = false
-    
-    // TODO: add the bounding boxes into the list above
-    func something() {
+struct NMSHandler {
+    //     TODO: add the bounding boxes into the list above
+    static func performNMS(on boundingBoxes: [BoundingBox]) -> [BoundingBox] {
+        let numClasses = 4
+        let selectHowMany = 6
+        let selectPerClass = 2
+        let scoreThreshold: Float = 0.1
+        let iouThreshold: Float = 0.5
+        
+        //    var boundingBoxViews: [BoundingBoxView] = []
+        let multiClass = true
+        
+        
         // Perform non-maximum suppression to find the best bounding boxes.
         let selected: [Int]
         if multiClass {
             selected = nonMaxSuppressionMultiClass(numClasses: numClasses,
-                                                   boundingBoxes: predictions,
+                                                   boundingBoxes: boundingBoxes,
                                                    scoreThreshold: scoreThreshold,
                                                    iouThreshold: iouThreshold,
                                                    maxPerClass: selectPerClass,
                                                    maxTotal: selectHowMany)
         } else {
             // First remove bounding boxes whose score is too low.
-            let filteredIndices = predictions.indices.filter { predictions[$0].score > scoreThreshold }
+            let filteredIndices = boundingBoxes.indices.filter { boundingBoxes[$0].score > scoreThreshold }
             
-            selected = nonMaxSuppression(boundingBoxes: predictions,
+            selected = nonMaxSuppression(boundingBoxes: boundingBoxes,
                                          indices: filteredIndices,
                                          iouThreshold: iouThreshold,
                                          maxBoxes: selectHowMany)
         }
         
-        boundingBoxViews[i].show(frame: prediction.rect,
-                                 label: String(format: "%.2f", prediction.score),
-                                 color: color, textColor: textColor)
+        var result: [BoundingBox] = []
+        for sbox in selected {
+            result.append(boundingBoxes[sbox])
+        }
+        return result
     }
+}

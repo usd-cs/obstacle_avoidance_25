@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct BoundingBox: Identifiable {
-    var id = UUID()
-    var rect: CGRect
-}
+//struct BoundingBox: Identifiable {
+//    var id = UUID()
+//    var rect: CGRect
+//}
 
 struct FrameView: View {
     var image: CGImage?

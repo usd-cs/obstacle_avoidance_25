@@ -23,7 +23,9 @@
 import Foundation
 import Accelerate
 
-public struct BoundingBox {
+public struct BoundingBox: Identifiable {
+  public var id: UUID
+    
   /** Index of the predicted class. */
   public let classIndex: Int
 
@@ -34,6 +36,7 @@ public struct BoundingBox {
   public let rect: CGRect
 
   public init(classIndex: Int, score: Float, rect: CGRect) {
+    self.id = UUID()
     self.classIndex = classIndex
     self.score = score
     self.rect = rect
