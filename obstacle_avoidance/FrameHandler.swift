@@ -87,51 +87,59 @@ class FrameHandler: NSObject, ObservableObject {
 
         DispatchQueue.main.async { [weak self] in
             self?.detectionLayer?.sublayers = nil
-            
-            // Perform non-maximum suppression to find the best bounding boxes.
-            let selected: [Int]
-            if multiClass {
-              selected = nonMaxSuppressionMultiClass(numClasses: numClasses,
-                                                     boundingBoxes: predictions,
-                                                     scoreThreshold: scoreThreshold,
-                                                     iouThreshold: iouThreshold,
-                                                     maxPerClass: selectPerClass,
-                                                     maxTotal: selectHowMany)
-            } else {
-              // First remove bounding boxes whose score is too low.
-              let filteredIndices = predictions.indices.filter { predictions[$0].score > scoreThreshold }
 
-              selected = nonMaxSuppression(boundingBoxes: predictions,
-                                           indices: filteredIndices,
-                                           iouThreshold: iouThreshold,
-                                           maxBoxes: selectHowMany)
-            }
+            // Create an array to store bounding boxes and labels
+            var boundingBoxResults: [(CGRect, String)] = []
 
-            // Find the observation with the highest confidence
-            if let highestObservation = results
-                .compactMap({ $0 as? VNRecognizedObjectObservation })
-                .max(by: { $0.confidence < $1.confidence }) {
-
-                // Extract the label with the highest confidence
-                let highestLabel = highestObservation.labels.first?.identifier ?? "Unknown"
-                print("Highest Confidence Label: \(highestLabel)")
-                self?.objectName = highestLabel
-
-                // Transform bounding box
-                let objectBounds = VNImageRectForNormalizedRect(highestObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
-                let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
-                
-                self?.boundingBoxes = []
-                let transformedBox = BoundingBox(rect: transformedBounds)
-                self?.boundingBoxes.append(transformedBox)
-
-                let boxLayer = self?.drawBoundingBox(transformedBounds)
-
-                // Safely unwrap detectionLayer before accessing
-                if let detectionLayer = self?.detectionLayer {
-                    detectionLayer.addSublayer(boxLayer ?? CALayer())
+            // Iterate through all results
+            for result in results {
+                // Check if the result is a recognized object observation
+                if let observation = result as? VNRecognizedObjectObservation {
+                    // Iterate through labels in the observation
+                    for label in observation.labels {
+                        // Extract label identifier and confidence
+                        let labelIdentifier = label.identifier
+                        let confidence = label.confidence
+                        
+                        // Extract bounding box and transform
+                        let objectBounds = VNImageRectForNormalizedRect(observation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
+                        let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
+                        
+                        // Add bounding box and label to the results array
+                        boundingBoxResults.append((transformedBounds, labelIdentifier))
+                    }
                 }
             }
+
+            // Call the NMS function
+            let filteredResults = performNMS(on: boundingBoxResults)
+            self?.boundingBoxes = filteredResults
+
+            // // Find the observation with the highest confidence
+            // if let highestObservation = results
+            //     .compactMap({ $0 as? VNRecognizedObjectObservation })
+            //     .max(by: { $0.confidence < $1.confidence }) {
+
+            //     // Extract the label with the highest confidence
+            //     let highestLabel = highestObservation.labels.first?.identifier ?? "Unknown"
+            //     print("Highest Confidence Label: \(highestLabel)")
+            //     self?.objectName = highestLabel
+
+            //     // Transform bounding box
+            //     let objectBounds = VNImageRectForNormalizedRect(highestObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
+            //     let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
+                
+            //     self?.boundingBoxes = []
+            //     let transformedBox = BoundingBox(rect: transformedBounds)
+            //     self?.boundingBoxes.append(transformedBox)
+
+            //     let boxLayer = self?.drawBoundingBox(transformedBounds)
+
+            //     // Safely unwrap detectionLayer before accessing
+            //     if let detectionLayer = self?.detectionLayer {
+            //         detectionLayer.addSublayer(boxLayer ?? CALayer())
+            //     }
+            // }
         }
     }
 
