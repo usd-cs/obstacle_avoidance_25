@@ -87,6 +87,25 @@ class FrameHandler: NSObject, ObservableObject {
 
         DispatchQueue.main.async { [weak self] in
             self?.detectionLayer?.sublayers = nil
+            
+            // Perform non-maximum suppression to find the best bounding boxes.
+            let selected: [Int]
+            if multiClass {
+              selected = nonMaxSuppressionMultiClass(numClasses: numClasses,
+                                                     boundingBoxes: predictions,
+                                                     scoreThreshold: scoreThreshold,
+                                                     iouThreshold: iouThreshold,
+                                                     maxPerClass: selectPerClass,
+                                                     maxTotal: selectHowMany)
+            } else {
+              // First remove bounding boxes whose score is too low.
+              let filteredIndices = predictions.indices.filter { predictions[$0].score > scoreThreshold }
+
+              selected = nonMaxSuppression(boundingBoxes: predictions,
+                                           indices: filteredIndices,
+                                           iouThreshold: iouThreshold,
+                                           maxBoxes: selectHowMany)
+            }
 
             // Find the observation with the highest confidence
             if let highestObservation = results

@@ -1,10 +1,3 @@
-//
-//  nonMaxSuppression.swift
-//  obstacle_avoidance
-//
-//  Created by Kenny Collins on 2/22/24.
-//
-
 /*
   Copyright (c) 2017-2019 M.I. Hollemans
 
