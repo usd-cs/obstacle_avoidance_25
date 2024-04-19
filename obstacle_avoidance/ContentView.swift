@@ -86,15 +86,63 @@ struct InstructionView: View{
 
 
 struct SettingsView: View {
+    @State private var meters = false
+    @State private var clock = false
+    
     var body: some View {
-        Text("This page will have settings")
-            .accessibility(label: Text("Settings Page")) // Provide a label for VoiceOver
-            .accessibility(addTraits: .isStaticText) // Specify that the text is static
-            .onAppear {
-                UIAccessibility.post(notification: .announcement, argument: "This page will have settings")
+        VStack(alignment: .leading, spacing: 20) {
+            Text("Settings")
+                .font(.title)
+                .fontWeight(.bold)
+                .foregroundColor(.black)
+                .padding(.top, 50)
+                .padding(.bottom, 30)
+            
+            VStack(alignment: .leading, spacing: 10) {
+                Toggle(isOn: $meters) {
+                    Text("Use meters instead of feet")
+                        .font(.headline) // Larger font size
+                }
+                .toggleStyle(SettingsToggleStyle())
+                .background(Color(UIColor.systemGray6))
+                .cornerRadius(8)
+                
+                Text("Switch to use meters for distance. Example: Object in 2 meters.")
+                    .font(.subheadline) // Larger font size
+                    .foregroundColor(.gray)
+                
+                Toggle(isOn: $clock) {
+                    Text("Use clock times instead of angle")
+                        .font(.headline) // Larger font size
+                }
+                .toggleStyle(SettingsToggleStyle())
+                .background(Color(UIColor.systemGray6))
+                .cornerRadius(8)
+                
+                Text("Switch to clock format instead of angles for location. Example: Object at 1 o'Clock.")
+                    .font(.subheadline) // Larger font size
+                    .foregroundColor(.gray)
             }
-        
-        
+            .padding()
+            
+            Spacer()
+        }
+        .padding()
+        .background(Color(UIColor.systemBackground))
+        .edgesIgnoringSafeArea(.all)
+    }
+}
+
+struct SettingsToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.label
+                .font(.headline) // Larger font size
+            Spacer()
+            Toggle("", isOn: configuration.$isOn)
+                .labelsHidden()
+                .toggleStyle(SwitchToggleStyle())
+        }
     }
 }
     func speak(word: String){
