@@ -112,14 +112,14 @@ struct SettingsView: View {
                     .foregroundColor(.gray)
                 
                 Toggle(isOn: $clock) {
-                    Text("Use clock times instead of angle")
+                    Text("Use angle instead of clock")
                         .font(.headline) // Larger font size
                 }
                 .toggleStyle(SettingsToggleStyle())
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(8)
                 
-                Text("Switch to clock format instead of angles for location. Example: Object at 1 o'Clock.")
+                Text("Switch to angles for direction instead of clock positioning. Example: Object at 90 degrees.")
                     .font(.subheadline) // Larger font size
                     .foregroundColor(.gray)
             }
@@ -142,6 +142,7 @@ struct SettingsToggleStyle: ToggleStyle {
             Toggle("", isOn: configuration.$isOn)
                 .labelsHidden()
                 .toggleStyle(SwitchToggleStyle())
+                .frame(width: 80, height: 40)
         }
     }
 }
