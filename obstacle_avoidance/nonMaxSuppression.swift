@@ -31,15 +31,15 @@ public struct BoundingBox: Identifiable {
 
   /** Confidence score. */
   public let score: Float
-
+    public let name: String
   /** Normalized coordinates between 0 and 1. */
   public let rect: CGRect
-
-  public init(classIndex: Int, score: Float, rect: CGRect) {
+    public init(classIndex: Int, score: Float, rect: CGRect, name: String) {
     self.id = UUID()
     self.classIndex = classIndex
     self.score = score
     self.rect = rect
+        self.name = name
   }
 }
 

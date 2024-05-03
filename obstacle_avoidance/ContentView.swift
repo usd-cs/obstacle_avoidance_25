@@ -115,7 +115,7 @@ struct SettingsView: View {
         //@State private var db = DecisionBlock() // No need to pass initial values here
         
         var body: some View {
-            FrameView(image: model.frame, boundingBoxes: model.boundingBoxes, name: model.objectName)
+            FrameView(image: model.frame, boundingBoxes: model.boundingBoxes)
                 .ignoresSafeArea()
                 .onAppear {
                     model.startCamera()

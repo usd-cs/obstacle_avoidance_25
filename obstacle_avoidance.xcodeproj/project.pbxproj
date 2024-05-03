@@ -21,7 +21,6 @@
 		C37CAE5B2B9A7D140066CB9E /* YOLOv3Tiny.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = C37CAE5A2B9A7D140066CB9E /* YOLOv3Tiny.mlmodel */; };
 		DBEEC0A42BC879710096D041 /* BoundingBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEEC0A32BC879710096D041 /* BoundingBoxView.swift */; };
 		DBEEC0A62BC87B890096D041 /* NMSHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEEC0A52BC87B890096D041 /* NMSHandler.swift */; };
-		DBEEC0AC2BC88D4C0096D041 /* yolov8n-oiv7.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = DBEEC0AB2BC88D4C0096D041 /* yolov8n-oiv7.mlmodel */; };
 		DBF8FF342BC8761F005B24BA /* NonMaxSuppression.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF8FF332BC8761F005B24BA /* NonMaxSuppression.swift */; };
 /* End PBXBuildFile section */
 
@@ -60,7 +59,6 @@
 		C37CAE5A2B9A7D140066CB9E /* YOLOv3Tiny.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = YOLOv3Tiny.mlmodel; sourceTree = "<group>"; };
 		DBEEC0A32BC879710096D041 /* BoundingBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxView.swift; sourceTree = "<group>"; };
 		DBEEC0A52BC87B890096D041 /* NMSHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NMSHandler.swift; sourceTree = "<group>"; };
-		DBEEC0AB2BC88D4C0096D041 /* yolov8n-oiv7.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = "yolov8n-oiv7.mlmodel"; sourceTree = "<group>"; };
 		DBF8FF332BC8761F005B24BA /* NonMaxSuppression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonMaxSuppression.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -120,7 +118,6 @@
 				DBF8FF332BC8761F005B24BA /* NonMaxSuppression.swift */,
 				1108E13E2B97DE9700AE0452 /* DecisionBlock.swift */,
 				111CEFD12B86353C00C30A31 /* FrameHandler.swift */,
-				DBEEC0AB2BC88D4C0096D041 /* yolov8n-oiv7.mlmodel */,
 				DBEEC0A52BC87B890096D041 /* NMSHandler.swift */,
 				C37CAE5A2B9A7D140066CB9E /* YOLOv3Tiny.mlmodel */,
 				11BA3D5C2B7C2AAB006477A7 /* Assets.xcassets */,
@@ -292,7 +289,6 @@
 				11BA3D592B7C2AA9006477A7 /* obstacle_avoidanceApp.swift in Sources */,
 				1108E1412B97DE9B00AE0452 /* AudioQueue.swift in Sources */,
 				DBF8FF342BC8761F005B24BA /* NonMaxSuppression.swift in Sources */,
-				DBEEC0AC2BC88D4C0096D041 /* yolov8n-oiv7.mlmodel in Sources */,
 				1108E13F2B97DE9700AE0452 /* DecisionBlock.swift in Sources */,
 				DBEEC0A42BC879710096D041 /* BoundingBoxView.swift in Sources */,
 			);
@@ -472,7 +468,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidance001-kenny";
+				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidance001";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -502,7 +498,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidance001-kenny";
+				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidance001";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

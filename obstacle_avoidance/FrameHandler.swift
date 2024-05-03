@@ -14,7 +14,6 @@ import Vision
 class FrameHandler: NSObject, ObservableObject {
     @Published var frame: CGImage?
     @Published var boundingBoxes: [BoundingBox] = []
-    @Published var objectName: String?
     
     // Initializing variables related to capturing image.
     private var permissionGranted = true
@@ -66,7 +65,7 @@ class FrameHandler: NSObject, ObservableObject {
     func detectionDidComplete(request: VNRequest, error: Error?) {
         DispatchQueue.main.async(execute: {
             if let results = request.results {
-                print("Detection Results:", results) // Check detection results
+               /* print("Detection Results:", results)*/ // Check detection results
                 self.extractDetections(results)
             }
         })
@@ -100,7 +99,7 @@ class FrameHandler: NSObject, ObservableObject {
                     for label in observation.labels {
                         // Extract label identifier, confidence, and bounding box
                         let labelIdentifier = label.identifier
-                        print(labelIdentifier)
+//                        print(labelIdentifier)
                         let confidence = label.confidence
                         
                         // Transform bounding box
@@ -108,7 +107,7 @@ class FrameHandler: NSObject, ObservableObject {
                         let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
 
                         // Create BoundingBox object
-                        let boundingBox = BoundingBox(classIndex: 0, score: confidence, rect: transformedBounds)
+                        let boundingBox = BoundingBox(classIndex: 0, score: confidence, rect: transformedBounds, name: labelIdentifier)
 
                         // Add BoundingBox object to the array
                         boundingBoxResults.append(boundingBox)

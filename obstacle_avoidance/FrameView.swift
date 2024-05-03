@@ -15,7 +15,6 @@ import SwiftUI
 struct FrameView: View {
     var image: CGImage?
     var boundingBoxes: [BoundingBox]
-    var name: String?
     
     //boundingBoxes.append(test)
 
@@ -33,6 +32,7 @@ struct FrameView: View {
             // get the biggest box
             let biggestIndex = boundingBoxes.indices.max(by: { boundingBoxes[$0].rect.width < boundingBoxes[$1].rect.width })
             
+            
             // Overlay bounding boxes on the image
             ForEach(boundingBoxes) { box in
                 ZStack {
@@ -40,25 +40,26 @@ struct FrameView: View {
                         .stroke(Color.red, lineWidth: 2) // Adjust stroke color and width as needed
                         .frame(width: box.rect.width, height: box.rect.height)
                         .position(x: box.rect.midX, y: box.rect.midY)
-                    if let name = name {
-                        Text(name)
-                            .foregroundColor(Color.white)
-                            .font(.headline)
-                            .offset(y: box.rect.midY - 20)
-                            .accessibility(label: Text(name))
-                            .accessibility(addTraits: .isStaticText)
-                            .onAppear {
-                                UIAccessibility.post(notification: .announcement, argument: name)
-                            }
-                    }
+    
+                    Text(box.name)
+                        .foregroundColor(Color.white)
+                        .font(.headline)
+                        .offset(y: box.rect.midY - 20)
+                        .accessibility(label: Text(box.name))
+                        .accessibility(addTraits: .isStaticText)
+                        .onAppear {
+                            UIAccessibility.post(notification: .announcement, argument: box.name)
+                        }
                 }
             }
         }
     }
 }
 
+
 struct FrameView_Previews: PreviewProvider {
     static var previews: some View {
-        FrameView(image: nil, boundingBoxes: [], name: "")
+        FrameView(image: nil, boundingBoxes: [])
     }
 }
+//
