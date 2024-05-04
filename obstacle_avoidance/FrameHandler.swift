@@ -105,9 +105,13 @@ class FrameHandler: NSObject, ObservableObject {
                         // Transform bounding box
                         let objectBounds = VNImageRectForNormalizedRect(observation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
                         let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
+                        
+                    // Calculate direction based on the bounding box's center x percentage //RDA
+                        let centerXPercentage = (transformedBounds.midX / screenRect.width) * 100 //RDA
+                        let direction = self?.calculateDirection(centerXPercentage) //RDA
 
                         // Create BoundingBox object
-                        let boundingBox = BoundingBox(classIndex: 0, score: confidence, rect: transformedBounds, name: labelIdentifier)
+                        let boundingBox = BoundingBox(classIndex: 0, score: confidence, rect: transformedBounds, name: labelIdentifier, direction: direction!) //RDA
 
                         // Add BoundingBox object to the array
                         boundingBoxResults.append(boundingBox)
@@ -147,7 +151,31 @@ class FrameHandler: NSObject, ObservableObject {
             // }
         }
     }
+    
+    // Helper function to calculate direction from percentage //RDA
+    private func calculateDirection(_ percentage: CGFloat) -> String { //RDA
+        switch percentage {
+        case 0..<16.67:
+            return "9 o'clock"
+        case 16.67..<33.33:
+            return "10 o'clock"
+        case 33.33..<50:
+            return "11 o'clock"
+        case 50..<66.67:
+            return "12 o'clock"
+        case 66.67..<83.33:
+            return "1 o'clock"
+        case 83.33..<100:
+            return "2 o'clock"
+        default:
+            return "Unknown"
+        }
+    }
 
+    private func calculateAngle(centerX: CGFloat) -> Int { //RDA
+        let centerPercentage = (centerX / self.screenRect.width) * 100 //RDA
+        return Int(centerPercentage * 360 / 100) // Simplified calculation for the angle //RDA
+    }
 
 
     

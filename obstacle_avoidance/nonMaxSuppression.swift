@@ -24,22 +24,30 @@ import Foundation
 import Accelerate
 
 public struct BoundingBox: Identifiable {
-  public var id: UUID
-    
-  /** Index of the predicted class. */
-  public let classIndex: Int
+    public var id = UUID()
 
-  /** Confidence score. */
-  public let score: Float
+    /** Index of the predicted class. */
+    public let classIndex: Int
+
+    /** Confidence score. */
+    public let score: Float
+
+    /** Name of the detected object, if any. */
     public let name: String
-  /** Normalized coordinates between 0 and 1. */
-  public let rect: CGRect
-    public init(classIndex: Int, score: Float, rect: CGRect, name: String) {
+
+    /** Normalized coordinates between 0 and 1. */
+    public let rect: CGRect
+
+    /** Direction of the object relative to the viewer's position, like '12 o'clock'. */
+    public var direction: String
+    
+    public init(classIndex: Int, score: Float, rect: CGRect, name: String,direction: String) {
     self.id = UUID()
     self.classIndex = classIndex
     self.score = score
     self.rect = rect
-        self.name = name
+    self.name = name
+    self.direction = direction
   }
 }
 
@@ -62,10 +70,8 @@ public func IOU(_ a: CGRect, _ b: CGRect) -> Float {
   return Float(intersectionArea / (areaA + areaB - intersectionArea))
 }
 
-/**
-  Removes bounding boxes that overlap too much with other boxes that have
-  a higher score.
-*/
+
+
 public func nonMaxSuppression(boundingBoxes: [BoundingBox],
                               iouThreshold: Float,
                               maxBoxes: Int) -> [Int] {

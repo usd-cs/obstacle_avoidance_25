@@ -41,7 +41,7 @@ struct FrameView: View {
                         .frame(width: box.rect.width, height: box.rect.height)
                         .position(x: box.rect.midX, y: box.rect.midY)
     
-                    Text(box.name)
+                    Text("\(box.name) at \(box.direction)")
                         .foregroundColor(Color.white)
                         .font(.headline)
                         .offset(y: box.rect.midY - 20)
