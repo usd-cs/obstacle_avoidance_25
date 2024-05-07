@@ -93,11 +93,13 @@ struct SettingsView: View {
                 .foregroundColor(.black)
                 .padding(.top, 50)
                 .padding(.bottom, 30)
+                .accessibility(addTraits: .isStaticText)
             
             VStack(alignment: .leading, spacing: 10) {
                 Toggle(isOn: $meters) {
                     Text("Use meters instead of feet")
                         .font(.headline) // Larger font size
+                        .accessibilityLabel("Use meters instead of feet")
                 }
                 .toggleStyle(SettingsToggleStyle())
                 .background(Color(UIColor.systemGray6))
@@ -106,10 +108,13 @@ struct SettingsView: View {
                 Text("Switch to use meters for distance. Example: Object in 2 meters.")
                     .font(.subheadline) // Larger font size
                     .foregroundColor(.gray)
+                    .accessibilityLabel("Switch to use meters for distance. Example: Object in 2 meters.")
+                    .accessibilityHint("Double tap to enable")
                 
                 Toggle(isOn: $clock) {
                     Text("Use angle instead of clock")
                         .font(.headline) // Larger font size
+                        .accessibilityLabel("Use angle instead of clock")
                 }
                 .toggleStyle(SettingsToggleStyle())
                 .background(Color(UIColor.systemGray6))
@@ -118,6 +123,8 @@ struct SettingsView: View {
                 Text("Switch to angles for direction instead of clock positioning. Example: Object at 90 degrees.")
                     .font(.subheadline) // Larger font size
                     .foregroundColor(.gray)
+                    .accessibilityLabel("Switch to angles for direction instead of clock positioning. Example: Object at 90 degrees.")
+                    .accessibilityHint("Double tap to enable")
             }
             .padding()
             
