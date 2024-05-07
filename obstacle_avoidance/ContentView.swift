@@ -42,17 +42,12 @@ struct TabbedView: View {
                         .accessibility(label: Text("Camera Tab"))
                     Text("Camera").font(.system(size: 50))
                 }
-                .accessibilityLabel("Camera")
-                .accessibilityHint("This is the second tab")
-            
             SettingsView()
                 .tabItem {
                     Image(systemName: "gear")
                         .accessibility(label: Text("Settings Tab"))
                     Text("Settings")
                 }
-                .accessibilityLabel("Settings")
-                .accessibilityHint("This is the third tab")
         }
     }
 }
@@ -99,13 +94,13 @@ struct SettingsView: View {
                 Toggle(isOn: $meters) {
                     Text("Use meters instead of feet")
                         .font(.headline) // Larger font size
-                        .accessibilityLabel("Use meters instead of feet")
-                        .accessibilityHint("Double tap to enable")
 
                 }
                 .toggleStyle(SettingsToggleStyle())
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(8)
+                .accessibilityLabel("Use meters instead of feet")
+                .accessibilityHint("Double tap to enable")
                 
                 Text("Switch to use meters for distance. Example: Object in 2 meters.")
                     .font(.subheadline) // Larger font size
@@ -116,12 +111,12 @@ struct SettingsView: View {
                 Toggle(isOn: $clock) {
                     Text("Use angle instead of clock")
                         .font(.headline) // Larger font size
-                        .accessibilityLabel("Use angle instead of clock")
-                        .accessibilityHint("Double tap to enable")
                 }
                 .toggleStyle(SettingsToggleStyle())
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(8)
+                .accessibilityLabel("Use angle instead of clock")
+                .accessibilityHint("Double tap to enable")
                 
                 Text("Switch to angles for direction instead of clock positioning. Example: Object at 90 degrees.")
                     .font(.subheadline) // Larger font size
