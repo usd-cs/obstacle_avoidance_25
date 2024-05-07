@@ -36,7 +36,6 @@ struct TabbedView: View {
                         .accessibility(label: Text("Home Tab"))
                     Text("Home").font(.system(size: 50))
                 }
-                .accessibilityHint("This is the first tab")
             CameraView()
                 .tabItem {
                     Image(systemName: "camera.fill")
@@ -66,35 +65,80 @@ struct InstructionView: View{
                 .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                 .accessibilityLabel("Obstacle Avoidance")
                 .accessibility(addTraits: .isStaticText)
-                .onTapGesture {
-                                    UIAccessibility.post(notification: .announcement, argument: "Obstacle Avoidance")
-                                }
+            
            
             Text("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body")
                 .font(.body)
                 .foregroundColor(.secondary)
-                .accessibility(label: Text("Home Page")) // Provide a label for VoiceOver
+                //.accessibility(label: Text("Home Page")) // Provide a label for VoiceOver
                 .accessibility(addTraits: .isStaticText) // Specify that the text is static
                 .accessibilityLabel("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body")
         }
         
         .padding()
-        
     }
 }
 
 
 
 struct SettingsView: View {
+    @State private var meters = false
+    @State private var clock = false
+    
     var body: some View {
-        Text("This page will have settings")
-            .accessibility(label: Text("Settings Page")) // Provide a label for VoiceOver
-            .accessibility(addTraits: .isStaticText) // Specify that the text is static
-            .onAppear {
-                UIAccessibility.post(notification: .announcement, argument: "This page will have settings")
+        VStack(alignment: .leading, spacing: 20) {
+            Text("Settings")
+                .font(.title)
+                .fontWeight(.bold)
+                .foregroundColor(.black)
+                .padding(.top, 50)
+                .padding(.bottom, 30)
+            
+            VStack(alignment: .leading, spacing: 10) {
+                Toggle(isOn: $meters) {
+                    Text("Use meters instead of feet")
+                        .font(.headline) // Larger font size
+                }
+                .toggleStyle(SettingsToggleStyle())
+                .background(Color(UIColor.systemGray6))
+                .cornerRadius(8)
+                
+                Text("Switch to use meters for distance. Example: Object in 2 meters.")
+                    .font(.subheadline) // Larger font size
+                    .foregroundColor(.gray)
+                
+                Toggle(isOn: $clock) {
+                    Text("Use angle instead of clock")
+                        .font(.headline) // Larger font size
+                }
+                .toggleStyle(SettingsToggleStyle())
+                .background(Color(UIColor.systemGray6))
+                .cornerRadius(8)
+                
+                Text("Switch to angles for direction instead of clock positioning. Example: Object at 90 degrees.")
+                    .font(.subheadline) // Larger font size
+                    .foregroundColor(.gray)
             }
-        
-        
+            .padding()
+            
+            Spacer()
+        }
+        .padding()
+        .background(Color(UIColor.systemBackground))
+        .edgesIgnoringSafeArea(.all)
+    }
+}
+struct SettingsToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.label
+                .font(.headline) // Larger font size
+            Spacer()
+            Toggle("", isOn: configuration.$isOn)
+                .labelsHidden()
+                .toggleStyle(SwitchToggleStyle())
+                .frame(width: 80, height: 40)
+        }
     }
 }
     func speak(word: String){

@@ -48,7 +48,7 @@ struct FrameView: View {
                         .accessibility(label: Text(box.name))
                         .accessibility(addTraits: .isStaticText)
                         .onAppear {
-                            UIAccessibility.post(notification: .announcement, argument: box.name)
+                            UIAccessibility.post(notification: .announcement, argument: Text("\(box.name) at \(box.direction)"))
                         }
                 }
             }
