@@ -2,12 +2,16 @@
 //  Obstacle Avoidance App
 //  ContentView.swift
 //
-//  Content View is a swift file that is used for triggering the Obstacle avoidance application.
+//  Content View is a swift file that is used for triggering the Obstacle Avoidance application.
+//
+//  Authors: Alexander Guerrero, Avery Lenninger, Olivia Nolan Shafer, Cassidy Spencer
+//  Last modified: 05/08/2024
 //
 
 import SwiftUI
 import AVFoundation
 import Foundation
+
 //Structure for app viewing upon opening.
 
 struct ContentView: View {
@@ -22,7 +26,7 @@ struct ContentView: View {
     }
 }
         
-
+// Main tab bar
 struct TabbedView: View {
     init() {
         UITabBar.appearance().backgroundColor = UIColor.lightGray
@@ -52,6 +56,7 @@ struct TabbedView: View {
     }
 }
 
+// Instruction tab
 struct InstructionView: View{
     var body: some View{
         VStack(alignment: .leading, spacing: 10){
@@ -65,7 +70,6 @@ struct InstructionView: View{
             Text("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body")
                 .font(.body)
                 .foregroundColor(.secondary)
-                //.accessibility(label: Text("Home Page")) // Provide a label for VoiceOver
                 .accessibility(addTraits: .isStaticText) // Specify that the text is static
                 .accessibilityLabel("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body")
         }
@@ -75,7 +79,7 @@ struct InstructionView: View{
 }
 
 
-
+// Settings Tab set-up
 struct SettingsView: View {
     @State private var meters = false
     @State private var clock = false
@@ -134,6 +138,8 @@ struct SettingsView: View {
         .edgesIgnoringSafeArea(.all)
     }
 }
+
+// Toggle set-up (used in Settings Tab)
 struct SettingsToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack {
@@ -159,10 +165,9 @@ struct SettingsToggleStyle: ToggleStyle {
         
     }
     
+// Camera Tab
     struct CameraView: View {
         @StateObject private var model = FrameHandler()
-        //@State private var spokenText: String = ""
-        //@State private var db = DecisionBlock() // No need to pass initial values here
         
         var body: some View {
             FrameView(image: model.frame, boundingBoxes: model.boundingBoxes)
@@ -173,32 +178,8 @@ struct SettingsToggleStyle: ToggleStyle {
                 .onDisappear {
                     model.stopCamera()
                 }
-                
-            /*.onReceive(model.$boundingBoxes) { newBoundingBoxes in
-             if let objectNameUnwrap = model.objectName {
-             DispatchQueue.global().async {
-             speak(word: objectNameUnwrap)
-             //spokenText = objectNameUnwrap
-             //db.processInput(objectName: objectNameUnwrap)
-             }
-             }*/
-            
-            //                // Update DecisionBlock when bounding boxes change
-            //                db.processInput(image: model.frame, model.objectName, boundingBoxes: newBoundingBoxes)
-            
-            /*.onReceive(model.$frame) { newFrame in
-             if let objectNameUnwrap = model.objectName {
-             //db.processInput(objectName: objectNameUnwrap)
-             }
-             //                // Update DecisionBlock when the frame changes
-             //                db.processInput(image: model.frame, model.objectName, boundingBoxes: model.boundingBoxes)
-             }*/
-            
         }
-        // Text(spokenText)
     }
-    
-    
     
     
     // For Preview in Xcode
