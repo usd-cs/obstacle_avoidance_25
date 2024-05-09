@@ -9,8 +9,6 @@
 //
 
 import SwiftUI
-import AVFoundation
-import Foundation
 
 //Structure for app viewing upon opening.
 
@@ -153,17 +151,6 @@ struct SettingsToggleStyle: ToggleStyle {
         }
     }
 }
-    func speak(word: String){
-        let utterance = AVSpeechUtterance(string: word)
-        utterance.rate = 0.57
-        utterance.pitchMultiplier = 0.8
-        utterance.postUtteranceDelay = 0.2
-        utterance.volume = 0.8
-        
-        let synthesizer = AVSpeechSynthesizer()
-        synthesizer.speak(utterance)
-        
-    }
     
 // Camera Tab
     struct CameraView: View {
