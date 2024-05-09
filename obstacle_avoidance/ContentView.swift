@@ -13,7 +13,6 @@ import SwiftUI
 //Structure for app viewing upon opening.
 
 struct ContentView: View {
-    //@StateObject private var model = FrameHandler()
     @State private var showAlert = false
     @State private var startPressed = false
     
@@ -167,7 +166,6 @@ struct SettingsToggleStyle: ToggleStyle {
                 }
         }
     }
-    
     
     // For Preview in Xcode
     struct ContentView_Previews: PreviewProvider {
