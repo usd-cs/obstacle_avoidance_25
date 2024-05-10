@@ -4,16 +4,7 @@ Obstacle Avoidance is a Senior Design 2023-2024 capstone project. This applicati
 Current demo version can be found on the nms_working_code branch. 
 
 ### Authors:
-Scott Schnieders 
-Avery Leininger
-Kenny Collins
-Jacob Weil 
-Alizea Hinz
-Rakan Alrasheed
-Cassidy Spencer 
-Olivia Nolan Shafer
-Alexander Guerrero
-Aidan Pearce 
+Scott Schnieders, Avery Leininger, Kenny Collins, Jacob Weil, Alizea Hinz, Rakan Alrasheed, Cassidy Spencer, Olivia Nolan Shafer, Alexander Guerrero, Aidan Pearce 
 
 ### Last Modified: 
 05/09/2024
