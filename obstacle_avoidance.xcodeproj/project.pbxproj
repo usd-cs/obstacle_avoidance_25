@@ -3,25 +3,16 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1108E13F2B97DE9700AE0452 /* DecisionBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1108E13E2B97DE9700AE0452 /* DecisionBlock.swift */; };
-		1108E1412B97DE9B00AE0452 /* AudioQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1108E1402B97DE9B00AE0452 /* AudioQueue.swift */; };
-		111CEFD02B86341900C30A31 /* FrameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111CEFCF2B86341900C30A31 /* FrameView.swift */; };
-		111CEFD22B86353C00C30A31 /* FrameHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111CEFD12B86353C00C30A31 /* FrameHandler.swift */; };
 		11BA3D592B7C2AA9006477A7 /* obstacle_avoidanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11BA3D582B7C2AA9006477A7 /* obstacle_avoidanceApp.swift */; };
-		11BA3D5B2B7C2AA9006477A7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11BA3D5A2B7C2AA9006477A7 /* ContentView.swift */; };
 		11BA3D5D2B7C2AAB006477A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11BA3D5C2B7C2AAB006477A7 /* Assets.xcassets */; };
 		11BA3D602B7C2AAB006477A7 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11BA3D5F2B7C2AAB006477A7 /* Preview Assets.xcassets */; };
 		11BA3D6A2B7C2AAC006477A7 /* obstacle_avoidanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11BA3D692B7C2AAC006477A7 /* obstacle_avoidanceTests.swift */; };
 		11BA3D742B7C2AAC006477A7 /* obstacle_avoidanceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11BA3D732B7C2AAC006477A7 /* obstacle_avoidanceUITests.swift */; };
 		11BA3D762B7C2AAC006477A7 /* obstacle_avoidanceUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11BA3D752B7C2AAC006477A7 /* obstacle_avoidanceUITestsLaunchTests.swift */; };
-		C37CAE5B2B9A7D140066CB9E /* YOLOv3Tiny.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = C37CAE5A2B9A7D140066CB9E /* YOLOv3Tiny.mlmodel */; };
-		DBEEC0A42BC879710096D041 /* BoundingBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEEC0A32BC879710096D041 /* BoundingBoxView.swift */; };
-		DBEEC0A62BC87B890096D041 /* NMSHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEEC0A52BC87B890096D041 /* NMSHandler.swift */; };
-		DBF8FF342BC8761F005B24BA /* NonMaxSuppression.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF8FF332BC8761F005B24BA /* NonMaxSuppression.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,13 +33,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1108E13E2B97DE9700AE0452 /* DecisionBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DecisionBlock.swift; sourceTree = "<group>"; };
-		1108E1402B97DE9B00AE0452 /* AudioQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioQueue.swift; sourceTree = "<group>"; };
-		111CEFCF2B86341900C30A31 /* FrameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameView.swift; sourceTree = "<group>"; };
-		111CEFD12B86353C00C30A31 /* FrameHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameHandler.swift; sourceTree = "<group>"; };
 		11BA3D552B7C2AA9006477A7 /* obstacle_avoidance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = obstacle_avoidance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		11BA3D582B7C2AA9006477A7 /* obstacle_avoidanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = obstacle_avoidanceApp.swift; sourceTree = "<group>"; };
-		11BA3D5A2B7C2AA9006477A7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		11BA3D5C2B7C2AAB006477A7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		11BA3D5F2B7C2AAB006477A7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		11BA3D652B7C2AAC006477A7 /* obstacle_avoidanceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = obstacle_avoidanceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -56,11 +42,13 @@
 		11BA3D6F2B7C2AAC006477A7 /* obstacle_avoidanceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = obstacle_avoidanceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		11BA3D732B7C2AAC006477A7 /* obstacle_avoidanceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = obstacle_avoidanceUITests.swift; sourceTree = "<group>"; };
 		11BA3D752B7C2AAC006477A7 /* obstacle_avoidanceUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = obstacle_avoidanceUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		C37CAE5A2B9A7D140066CB9E /* YOLOv3Tiny.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = YOLOv3Tiny.mlmodel; sourceTree = "<group>"; };
-		DBEEC0A32BC879710096D041 /* BoundingBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxView.swift; sourceTree = "<group>"; };
-		DBEEC0A52BC87B890096D041 /* NMSHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NMSHandler.swift; sourceTree = "<group>"; };
-		DBF8FF332BC8761F005B24BA /* NonMaxSuppression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonMaxSuppression.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		1688B4922D051D8E00955C84 /* Presentation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Presentation; sourceTree = "<group>"; };
+		1688B4932D051DCF00955C84 /* Data */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Data; sourceTree = "<group>"; };
+		1688B4942D051E1500955C84 /* Logic */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Logic; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		11BA3D522B7C2AA9006477A7 /* Frameworks */ = {
@@ -111,15 +99,9 @@
 			isa = PBXGroup;
 			children = (
 				11BA3D582B7C2AA9006477A7 /* obstacle_avoidanceApp.swift */,
-				11BA3D5A2B7C2AA9006477A7 /* ContentView.swift */,
-				111CEFCF2B86341900C30A31 /* FrameView.swift */,
-				DBEEC0A32BC879710096D041 /* BoundingBoxView.swift */,
-				1108E1402B97DE9B00AE0452 /* AudioQueue.swift */,
-				DBF8FF332BC8761F005B24BA /* NonMaxSuppression.swift */,
-				1108E13E2B97DE9700AE0452 /* DecisionBlock.swift */,
-				111CEFD12B86353C00C30A31 /* FrameHandler.swift */,
-				DBEEC0A52BC87B890096D041 /* NMSHandler.swift */,
-				C37CAE5A2B9A7D140066CB9E /* YOLOv3Tiny.mlmodel */,
+				1688B4922D051D8E00955C84 /* Presentation */,
+				1688B4932D051DCF00955C84 /* Data */,
+				1688B4942D051E1500955C84 /* Logic */,
 				11BA3D5C2B7C2AAB006477A7 /* Assets.xcassets */,
 				11BA3D5E2B7C2AAB006477A7 /* Preview Content */,
 			);
@@ -165,6 +147,11 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				1688B4922D051D8E00955C84 /* Presentation */,
+				1688B4932D051DCF00955C84 /* Data */,
+				1688B4942D051E1500955C84 /* Logic */,
 			);
 			name = obstacle_avoidance;
 			productName = obstacle_avoidance;
@@ -281,16 +268,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBEEC0A62BC87B890096D041 /* NMSHandler.swift in Sources */,
-				111CEFD02B86341900C30A31 /* FrameView.swift in Sources */,
-				C37CAE5B2B9A7D140066CB9E /* YOLOv3Tiny.mlmodel in Sources */,
-				11BA3D5B2B7C2AA9006477A7 /* ContentView.swift in Sources */,
-				111CEFD22B86353C00C30A31 /* FrameHandler.swift in Sources */,
 				11BA3D592B7C2AA9006477A7 /* obstacle_avoidanceApp.swift in Sources */,
-				1108E1412B97DE9B00AE0452 /* AudioQueue.swift in Sources */,
-				DBF8FF342BC8761F005B24BA /* NonMaxSuppression.swift in Sources */,
-				1108E13F2B97DE9700AE0452 /* DecisionBlock.swift in Sources */,
-				DBEEC0A42BC879710096D041 /* BoundingBoxView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -454,7 +432,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"obstacle_avoidance/Preview Content\"";
-				DEVELOPMENT_TEAM = 4A3MRL2FB2;
+				DEVELOPMENT_TEAM = Q68MKCDDY9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Obstacle Avoidance would like to use your camera";
@@ -468,7 +446,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidance8888";
+				PRODUCT_BUNDLE_IDENTIFIER = ObstacleAvoidance.JF;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -484,7 +462,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"obstacle_avoidance/Preview Content\"";
-				DEVELOPMENT_TEAM = 4A3MRL2FB2;
+				DEVELOPMENT_TEAM = Q68MKCDDY9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Obstacle Avoidance would like to use your camera";
@@ -498,7 +476,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidance8888";
+				PRODUCT_BUNDLE_IDENTIFIER = ObstacleAvoidance.JF;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
