@@ -1,0 +1,36 @@
+# This workflow will build a Swift project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
+name: Swift
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build
+      run: swift build -v
+    - name: Run tests
+      run: swift test -v
+
+    - name: SwiftTest by SwiftActions
+      # You may pin to the exact commit or the version.
+      # uses: SwiftActions/SwiftTest@7a2f7fea297c8e5bc2e5d532b1a2c8f4da980750
+      uses: SwiftActions/SwiftTest@0.2
+  
+    - name: Super-Linter
+      # You may pin to the exact commit or the version.
+      # uses: super-linter/super-linter@b92721f792f381cedc002ecdbb9847a15ece5bb8
+      uses: super-linter/super-linter@v7.1.0
+              
+    
+    
+                  
