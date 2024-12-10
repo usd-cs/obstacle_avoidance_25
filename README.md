@@ -3,11 +3,11 @@ Obstacle Avoidance is a continued Senior Design 2024-2025 capstone project. This
 
 Current demo version can be found on the nms_working_code branch. 
 
-### Current Iteration Authors:
+### Current Authors:
 Darien Aranda, Jacob Fernandez, Carlos Breach, & Austin Lim
 
 ### Previous Authors:
-Scott Schnieders, Avery Leininger, Kenny Collins, Jacob Weil, Alizea Hinz, Rakan Alrasheed, Cassidy Spencer, Olivia Nolan Shafer, Alexander Guerrero, & Aidan Pearce 
+Scott Schnieders, Avery Leininger, Kenny Collins, Jacob Weil, Alizea Hinz, Rakan Alrasheed, Cassidy Spencer, Olivia Nolan Shafer, Alexander Guerrero, Aidan Pearce 
 
 ### Last Modified: 
-10/03/2024
+12/09/2024
