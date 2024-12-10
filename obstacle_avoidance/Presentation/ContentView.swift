@@ -55,76 +55,7 @@ struct TabbedView: View {
     }
 }
 
-// Instruction tab
-struct InstructionView: View{
-    var body: some View{
-        VStack(alignment: .leading, spacing: 10){
-            Text("Obstacle Avoidance")
-                .font(.title)
-                .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                .accessibilityLabel("Obstacle Avoidance")
-                .accessibility(addTraits: .isStaticText)
-            
-           
-            Text("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body")
-                .font(.body)
-                .foregroundColor(.secondary)
-                .accessibility(addTraits: .isStaticText) // Specify that the text is static
-                .accessibilityLabel("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body")
-        }
-        
-        .padding()
-    }
-}
 
-
-// Settings Tab set-up
-struct SettingsView: View {
-    @State private var meters = false
-    @State private var clock = false
-    @State private var username = "JacobTF"
-    @State private var name = "Jacob"
-    @State private var phone = "111-111-1111"
-    @State private var email = "fakeemail.com"
-    @State private var Address = "fakeaddress"
-    
-    var body: some View {
-            NavigationStack
-            {
-                List{
-                    NavigationLink(destination: AccountScreen()){
-                        Label("Account", systemImage: "arrow.right.circle")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.black)
-                            .padding(.top, 50)
-                            .padding(.bottom, 30)
-                            .accessibility(addTraits: .isStaticText)
-                    }
-                    NavigationLink(destination: EmergencyContactView()){
-                        Label("Emergency Contacts", systemImage: "arrow.right.circle")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.black)
-                            .padding(.top, 50)
-                            .padding(.bottom, 30)
-                            .accessibility(addTraits: .isStaticText)
-                    }
-                    NavigationLink(destination: PrefrencesView()){
-                        Label("System Prefrences", systemImage: "arrow.right.circle")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.black)
-                            .padding(.top, 50)
-                            .padding(.bottom, 30)
-                            .accessibility(addTraits: .isStaticText)
-                    }
-                }
-            }
-            .navigationTitle("Settings")
-            
-    }
-}
 struct AccountScreen: View{
     @State private var username: String = "jacobtf"
     @State private var name: String = "Jacob"
@@ -304,11 +235,7 @@ struct PrefrencesView: View{
                                 .accessibilityLabel("Use meters instead of feet")
                                 .accessibilityHint("Double tap to enable")
                 
-//                                Text("Switch to use meters for distance. Example: Object in 2 meters.")
-//                                    .font(.subheadline) // Larger font size
-//                                    .foregroundColor(.gray)
-//                                    .accessibilityLabel("Switch to use meters for distance. Example: Object in 2 meters.")
-//                                    .accessibility(addTraits: .isStaticText)
+
                 
                 Toggle(isOn: $spacialAudio) {
                                     Text("Use spacialized audio")
@@ -320,11 +247,7 @@ struct PrefrencesView: View{
                                 .accessibilityLabel("Use angle instead of clock")
                                 .accessibilityHint("Double tap to enable")
                 
-//                                Text("Switch to angles for direction instead of clock positioning. Example: Object at 90 degrees.")
-//                                    .font(.subheadline) // Larger font size
-//                                    .foregroundColor(.gray)
-//                                    .accessibilityLabel("Switch to angles for direction instead of clock positioning. Example: Object at 90 degrees.")
-//                                    .accessibility(addTraits: .isStaticText)
+
                 
                 Toggle(isOn: $locationSharing) {
                                     Text("Share your location")
@@ -360,21 +283,7 @@ struct SettingsToggleStyle: ToggleStyle {
     }
 }
     
-// Camera Tab
-    struct CameraView: View {
-        @StateObject private var model = FrameHandler()
-        
-        var body: some View {
-            FrameView(image: model.frame, boundingBoxes: model.boundingBoxes)
-                .ignoresSafeArea()
-                .onAppear {
-                    model.startCamera()
-                }
-                .onDisappear {
-                    model.stopCamera()
-                }
-        }
-    }
+
     
     // For Preview in Xcode
     struct ContentView_Previews: PreviewProvider {
