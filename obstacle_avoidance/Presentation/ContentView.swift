@@ -4,15 +4,17 @@
 //
 //  Content View is a swift file that is used for triggering the Obstacle Avoidance application.
 //
-//  Authors: Alexander Guerrero, Avery Lenninger, Olivia Nolan Shafer, Cassidy Spencer
-//  Last modified: 05/08/2024
+//  Previous Authors: Alexander Guerrero, Avery Lenninger, Olivia Nolan Shafer, Cassidy Spencer
+
+//Current Authors: Jacob Fernandez
+//  Last modified: 12/10/2024
 //
 
 import SwiftUI
 
 //Structure for app viewing upon opening.
-
 struct ContentView: View {
+    //tracks when an alert should ne shown or  when the start button has been pressed
     @State private var showAlert = false
     @State private var startPressed = false
     
@@ -23,7 +25,7 @@ struct ContentView: View {
     }
 }
         
-// Main tab bar
+// Main tab bar with nativation
 struct TabbedView: View {
     init() {
         UITabBar.appearance().backgroundColor = UIColor.lightGray
@@ -31,18 +33,21 @@ struct TabbedView: View {
     }
     var body: some View {
         return TabView {
+            //home tab
             InstructionView()
                 .tabItem {
                     Image(systemName: "house.fill")
                         .accessibility(label: Text("Home Tab"))
                     Text("Home").font(.system(size: 50))
                 }
+            //camera tab
             CameraView()
                 .tabItem {
                     Image(systemName: "camera.fill")
                         .accessibility(label: Text("Camera Tab"))
                     Text("Camera").font(.system(size: 50))
                 }
+            //setting view, in a navigation stack so we can have proper back button
             NavigationStack{
                 SettingsView()
             }
@@ -57,6 +62,7 @@ struct TabbedView: View {
 
 
 struct AccountScreen: View{
+    //fake default info for testing
     @State private var username: String = "jacobtf"
     @State private var name: String = "Jacob"
     @State private var email: String = "Fakemail"
@@ -69,6 +75,7 @@ struct AccountScreen: View{
 
     var body: some View {
         Form {
+            //This is the account screen so it is going to hold all the informatin for each user.
             Section(header: Text("Account Information")) {
                 HStack {
                     Text("Username:")
@@ -147,7 +154,7 @@ struct AccountScreen: View{
                     }
                 }
             }
-            
+            //if they want to edit they can see the save changes button. Will need more
             if isEditing {
                 Button("Save Changes") {
                     saveChanges()
@@ -179,13 +186,14 @@ struct EmergencyContactView: View{
 
 enum MeasurementType: String, CaseIterable, Identifiable
 {
+    //Allows for our picker to easily work, still debating if we want to do it like this or with the arrays.
     case feet = "feet"
     case meters = "meters"
     var id: String { self.rawValue }
 }
 
 struct PrefrencesView: View{
-    //You are going to need to create binding variables for each setting, eith being a bool or string and then use a navigation stack to choose those settings
+    //All variabels for the user prefrences
     @State private var hapticFeedback = false
     @State private var spacialAudio = false
     @State private var locationSharing = false
@@ -193,13 +201,14 @@ struct PrefrencesView: View{
     @State private var userHeight: String = ""
     @State private var selectedHeight: Int = 60
     @State private var selectedFOV: Int = 70
+    //the range that teh FOV cand height can be between
     let FOVRange = Array(50...110)
     let heightRange = Array(20...80)
 //    @Binding var selection: MeasurementType
     var body: some View {
         NavigationStack{
             List{
-    //                VStack{
+                //uses a picker as it is clean and easy.
                 Picker("Measurement Type", selection: $measurementSelection)
                 {
                    ForEach(MeasurementType.allCases){ measurement in
@@ -224,6 +233,7 @@ struct PrefrencesView: View{
                     }
                     
                 }
+                //Toggles for haptic, spacialized audio, and location sharing
                 Toggle(isOn: $hapticFeedback) {
                                     Text("Recieve haptic feedback")
                                         .font(.headline) // Larger font size
@@ -250,6 +260,7 @@ struct PrefrencesView: View{
 
                 
                 Toggle(isOn: $locationSharing) {
+                    //Will need more persmission access and things
                                     Text("Share your location")
                                         .font(.headline) // Larger font size
                                 }
