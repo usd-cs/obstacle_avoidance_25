@@ -27,7 +27,7 @@ jobs:
     - name: Set up Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: '15.0' # Specify the required version of Xcode
+        xcode-version: '16.1' 
 
     # Step 3: Build the project
     - name: Build the project
