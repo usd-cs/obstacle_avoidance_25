@@ -1,6 +1,9 @@
 # This workflow will build a Swift project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
 
+# This workflow will build and test the obstacle_avoidance_25 Swift project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
 name: Swift
 
 on:
@@ -14,14 +17,18 @@ jobs:
     runs-on: macos-latest
 
     steps:
+    # Step 1: Check out the repository
     - name: Check out the repository
       uses: actions/checkout@v4
 
+    # Step 2: Set up Xcode
     - name: Set up Xcode
       run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
+    # Step 3: Build the project
     - name: Build the project
-      run: xcodebuild -scheme "miniProject-seniorDesign" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro' build | xcpretty
+      run: xcodebuild -scheme "obstacle_avoidance" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro' build | xcpretty
 
+    # Step 4: Run Unit Tests
     - name: Run Unit Tests
-      run: xcodebuild test -scheme "miniProject-seniorDesign" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro' | xcpretty
+      run: xcodebuild test -scheme "obstacle_avoidance" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro' | xcpretty
