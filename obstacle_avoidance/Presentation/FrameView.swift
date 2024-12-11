@@ -1,6 +1,6 @@
 //
 //  FrameView.swift
-//  obstacle_avoidance
+//  obstacleAvoidance
 //
 //  Swift file that is used to startup the phone camera for viewing the frames.
 //  Triggers audible notification for largest bounding box in view.
@@ -49,7 +49,7 @@ struct FrameView: View {
 }
 
 
-struct FrameView_Previews: PreviewProvider {
+struct FrameViewPreviews: PreviewProvider {
     static var previews: some View {
         FrameView(image: nil, boundingBoxes: [])
     }

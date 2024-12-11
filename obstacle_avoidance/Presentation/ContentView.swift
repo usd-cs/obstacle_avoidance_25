@@ -286,7 +286,7 @@ struct SettingsToggleStyle: ToggleStyle {
 
     
     // For Preview in Xcode
-    struct ContentView_Previews: PreviewProvider {
+    struct ContentViewPreviews: PreviewProvider {
         static var previews: some View {
             ContentView()
         }

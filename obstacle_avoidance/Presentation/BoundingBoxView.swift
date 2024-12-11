@@ -1,6 +1,6 @@
 //
 //  BoundingBoxView.swift
-//  obstacle_avoidance
+//  obstacleAvoidance
 //
 //  Created by Kenny Collins on 4/11/24.
 //

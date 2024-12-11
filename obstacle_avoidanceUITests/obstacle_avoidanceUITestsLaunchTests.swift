@@ -1,13 +1,13 @@
 //
-//  obstacle_avoidanceUITestsLaunchTests.swift
-//  obstacle_avoidanceUITests
+//  obstacleAvoidanceUITestsLaunchTests.swift
+//  obstacleAvoidanceUITests
 //
 //  Created by Alexander on 2/13/24.
 //
 
 import XCTest
 
-final class obstacle_avoidanceUITestsLaunchTests: XCTestCase {
+final class obstacleAvoidanceUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

@@ -1,6 +1,6 @@
 //
 //  CameraView.swift
-//  obstacle_avoidance
+//  obstacleAvoidance
 //
 //  Created by Carlos Breach on 12/9/24.
 //
