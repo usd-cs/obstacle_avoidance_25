@@ -1,13 +1,13 @@
 //
-//  obstacle_avoidanceUITests.swift
-//  obstacle_avoidanceUITests
+//  obstacleAvoidanceUITests.swift
+//  obstacleAvoidanceUITests
 //
 //  Created by Alexander on 2/13/24.
 //
 
 import XCTest
 
-final class obstacle_avoidanceUITests: XCTestCase {
+final class obstacleAvoidanceUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
