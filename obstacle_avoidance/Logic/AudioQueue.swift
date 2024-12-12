@@ -24,7 +24,6 @@ class AudioQueue {
         guard [9,10,11,12,1,2,3].contains(angle) else {
             throw AudioQueueError.invalidAngle
         }
-        
         self.threatLevel = threatLevel
         self.objectName = objectName
         self.angle = angle

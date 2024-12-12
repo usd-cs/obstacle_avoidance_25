@@ -27,21 +27,14 @@ class DecisionBlock {
 
     // Queue to store AudioQueue objects
     private var audioQueueQueue: [AudioQueue] = []
-    
     func processInput(objectName: String) {
         // Process image and bounding boxes here...
-
-        
         // Audio processing.work
         do {
             try audio = AudioQueue(threatLevel: 0, objectName: objectName, angle: 0, distance: 0)
-            
+        }catch {
+            //there should be something here
         }
-        
-        catch {
-            
-        }
-        
     }
 
 //    // Method to process input and determine if announcement is needed

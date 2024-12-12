@@ -16,7 +16,6 @@ struct InstructionView: View{
                 .accessibilityLabel("Obstacle Avoidance")
                 .accessibility(addTraits: .isStaticText)
             
-           
             Text("To optimize your experience, we recommend using open-air earbuds or bone conduction headphones. For the best visuals, ensure your phone’s back camera is facing away from your body")
                 .font(.body)
                 .foregroundColor(.secondary)

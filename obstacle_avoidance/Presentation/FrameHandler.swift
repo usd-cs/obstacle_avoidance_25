@@ -101,7 +101,6 @@ class FrameHandler: NSObject, ObservableObject {
                         let labelIdentifier = label.identifier
 //                        print(labelIdentifier)
                         let confidence = label.confidence
-                        
                         // Transform bounding box
                         let objectBounds = VNImageRectForNormalizedRect(observation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
                         let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)

@@ -11,7 +11,6 @@
 import SwiftUI
 
 //Structure for app viewing upon opening.
-
 struct ContentView: View {
     @State private var showAlert = false
     @State private var startPressed = false
