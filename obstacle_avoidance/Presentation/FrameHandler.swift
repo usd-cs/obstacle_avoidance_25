@@ -42,7 +42,7 @@ class FrameHandler: NSObject, ObservableObject {
     
     func startCamera(){
         setupCaptureSession()
-        captureSession.startRunning() // TODO: Run in a background thread
+        captureSession.startRunning() // this should run in a background thread
         setupDetector()
     }
 
@@ -84,7 +84,7 @@ class FrameHandler: NSObject, ObservableObject {
             updateLayers() // Ensure detectionLayer frame is updated
         }
 
-        // TODO: Set up producer consumer for this part and set up unique ids for bounding boxes for tracking
+        // Set up producer consumer for this part and set up unique ids for bounding boxes for tracking
         DispatchQueue.main.async { [weak self] in
             self?.detectionLayer?.sublayers = nil
 

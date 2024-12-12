@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 struct NMSHandler {
-    //     TODO: add the bounding boxes into the list above
+    
     static func performNMS(on boundingBoxes: [BoundingBox]) -> [BoundingBox] {
         let numClasses = 4
         let selectHowMany = 6
