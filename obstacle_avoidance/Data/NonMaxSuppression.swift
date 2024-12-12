@@ -28,19 +28,15 @@ public struct BoundingBox: Identifiable {
 
     /** Index of the predicted class. */
     public let classIndex: Int
-
     /** Confidence score. */
     public let score: Float
-
     /** Name of the detected object, if any. */
     public let name: String
-
     /** Normalized coordinates between 0 and 1. */
     public let rect: CGRect
-
     /** Direction of the object relative to the viewer's position, like '12 o'clock'. */
     public var direction: String
-    
+    //hate the linter
     public init(classIndex: Int, score: Float, rect: CGRect, name: String,direction: String) {
     self.id = UUID()
     self.classIndex = classIndex
@@ -69,8 +65,6 @@ public func IOU(_ a: CGRect, _ b: CGRect) -> Float {
                          max(intersectionMaxX - intersectionMinX, 0)
   return Float(intersectionArea / (areaA + areaB - intersectionArea))
 }
-
-
 
 public func nonMaxSuppression(boundingBoxes: [BoundingBox],
                               iouThreshold: Float,
@@ -104,20 +98,15 @@ public func nonMaxSuppression(boundingBoxes: [BoundingBox],
                               indices: [Int],
                               iouThreshold: Float,
                               maxBoxes: Int) -> [Int] {
-
   // Sort the boxes based on their confidence scores, from high to low.
   let sortedIndices = indices.sorted { boundingBoxes[$0].score > boundingBoxes[$1].score }
-
   var selected: [Int] = []
-
   // Loop through the bounding boxes, from highest score to lowest score,
   // and determine whether or not to keep each box.
   for i in 0..<sortedIndices.count {
     if selected.count >= maxBoxes { break }
-
     var shouldSelect = true
     let boxA = boundingBoxes[sortedIndices[i]]
-
     // Does the current box overlap one of the selected boxes more than the
     // given threshold amount? Then it's too similar, so don't keep it.
     for j in 0..<selected.count {
@@ -127,14 +116,12 @@ public func nonMaxSuppression(boundingBoxes: [BoundingBox],
         break
       }
     }
-
     // This bounding box did not overlap too much with any previously selected
     // bounding box, so we'll keep it.
     if shouldSelect {
       selected.append(sortedIndices[i])
     }
   }
-
   return selected
 }
 
@@ -167,33 +154,27 @@ public func nonMaxSuppressionMultiClass(numClasses: Int,
                                         maxPerClass: Int,
                                         maxTotal: Int) -> [Int] {
   var selectedBoxes: [Int] = []
-
   // Look at all the classes one-by-one.
   for c in 0..<numClasses {
     var filteredBoxes = [Int]()
-
     // Look at every bounding box for this class.
     for p in 0..<boundingBoxes.count {
       let prediction = boundingBoxes[p]
       if prediction.classIndex == c {
-
         // Only keep the box if its score is over the threshold.
         if prediction.score > scoreThreshold {
           filteredBoxes.append(p)
         }
       }
     }
-
     // Only keep the best bounding boxes for this class.
     let nmsBoxes = nonMaxSuppression(boundingBoxes: boundingBoxes,
                                      indices: filteredBoxes,
                                      iouThreshold: iouThreshold,
                                      maxBoxes: maxPerClass)
-
     // Add the indices of the surviving boxes to the big list.
     selectedBoxes.append(contentsOf: nmsBoxes)
   }
-
   // Sort all the surviving boxes by score and only keep the best ones.
   let sortedBoxes = selectedBoxes.sorted { boundingBoxes[$0].score > boundingBoxes[$1].score }
   return Array(sortedBoxes.prefix(maxTotal))

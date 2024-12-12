@@ -42,7 +42,7 @@ class FrameHandler: NSObject, ObservableObject {
     
     func startCamera(){
         setupCaptureSession()
-        captureSession.startRunning() // TODO: Run in a background thread
+        captureSession.startRunning() // this should run in a background thread
         setupDetector()
     }
 
@@ -84,7 +84,7 @@ class FrameHandler: NSObject, ObservableObject {
             updateLayers() // Ensure detectionLayer frame is updated
         }
 
-        // TODO: Set up producer consumer for this part and set up unique ids for bounding boxes for tracking
+        // Set up producer consumer for this part and set up unique ids for bounding boxes for tracking
         DispatchQueue.main.async { [weak self] in
             self?.detectionLayer?.sublayers = nil
 
@@ -101,7 +101,6 @@ class FrameHandler: NSObject, ObservableObject {
                         let labelIdentifier = label.identifier
 //                        print(labelIdentifier)
                         let confidence = label.confidence
-                        
                         // Transform bounding box
                         let objectBounds = VNImageRectForNormalizedRect(observation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
                         let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
