@@ -36,8 +36,8 @@ public struct BoundingBox: Identifiable {
     public let rect: CGRect
     /** Direction of the object relative to the viewer's position, like '12 o'clock'. */
     public var direction: String
-    //hate the linter
-    public init(classIndex: Int, score: Float, rect: CGRect, name: String,direction: String) {
+    // hate the linter
+    public init(classIndex: Int, score: Float, rect: CGRect, name: String, direction: String) {
     self.id = UUID()
     self.classIndex = classIndex
     self.score = score

@@ -8,10 +8,10 @@
 import SwiftUI
 
 @main
-struct obstacleAvoidanceApp: App {
+struct ObstacleAvoidanceApp: App {
     var body: some Scene {
         WindowGroup {
-            //Trigger the Content View program upon startup.
+            // Trigger the Content View program upon startup.
             ContentView()
         }
     }

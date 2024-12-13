@@ -10,18 +10,18 @@
 
 import SwiftUI
 
-//Structure for app viewing upon opening.
+// Structure for app viewing upon opening.
 struct ContentView: View {
     @State private var showAlert = false
     @State private var startPressed = false
-    
+
     var body: some View {
         VStack {
             TabbedView()
         }
     }
 }
-        
+
 // Main tab bar
 struct TabbedView: View {
     init() {
@@ -42,7 +42,7 @@ struct TabbedView: View {
                         .accessibility(label: Text("Camera Tab"))
                     Text("Camera").font(.system(size: 50))
                 }
-            NavigationStack{
+            NavigationStack {
                 SettingsView()
             }
                 .tabItem {
@@ -54,8 +54,7 @@ struct TabbedView: View {
     }
 }
 
-
-struct AccountScreen: View{
+struct AccountScreen: View {
     @State private var username: String = "jacobtf"
     @State private var name: String = "Jacob"
     @State private var email: String = "Fakemail"
@@ -63,8 +62,6 @@ struct AccountScreen: View{
     @State private var address: String = "FakeAddress"
     @State private var password: String = "fakepassword"
     @State private var isEditing: Bool = false // Controls editing mode
-
-    
 
     var body: some View {
         Form {
@@ -146,7 +143,7 @@ struct AccountScreen: View{
                     }
                 }
             }
-            
+
             if isEditing {
                 Button("Save Changes") {
                     saveChanges()
@@ -163,28 +160,32 @@ struct AccountScreen: View{
             }
         }
     }
-    
+
     private func saveChanges() {
         // Logic to save changes to a database or user preferences
-        print("Changes saved: Username=\(username), Name=\(name), Email=\(email), Phone Number=\(phone), Address=\(address), Password=\(password)")
+        print("Changes saved: Username=\(username), " +
+              "Name=\(name), Email=\(email)," +
+              "Phone Number=\(phone), Address=\(address)," +
+              "Password=\(password)")
         isEditing = false
     }
 }
-struct EmergencyContactView: View{
+struct EmergencyContactView: View {
     var body: some View {
         Text("Emergency Contact screen")
     }
 }
 
-enum MeasurementType: String, CaseIterable, Identifiable
-{
-    case feet = "feet"
-    case meters = "meters"
+enum MeasurementType: String, CaseIterable, Identifiable {
+    case feet = "feet."
+    case meters = "meters."
     var id: String { self.rawValue }
 }
 
-struct PrefrencesView: View{
-    //You are going to need to create binding variables for each setting, eith being a bool or string and then use a navigation stack to choose those settings
+struct PrefrencesView: View {
+    // You are going to need to create binding variables for each setting,
+    // eith being a bool or string and then use a navigation stack to choose
+    // those settings
     @State private var hapticFeedback = false
     @State private var spacialAudio = false
     @State private var locationSharing = false
@@ -196,46 +197,41 @@ struct PrefrencesView: View{
     let heightRange = Array(20...80)
 //    @Binding var selection: MeasurementType
     var body: some View {
-        NavigationStack{
-            List{
+        NavigationStack {
+            List {
     //                VStack{
-                Picker("Measurement Type", selection: $measurementSelection)
-                {
-                   ForEach(MeasurementType.allCases){ measurement in
+                Picker("Measurement Type", selection: $measurementSelection) {
+                   ForEach(MeasurementType.allCases) { measurement in
                        Text(measurement.rawValue.capitalized).tag(measurement)
-    
+
                    }
-                    
+
                 }
-                Picker("User Height", selection: $selectedHeight)
-                {
+                Picker("User Height", selection: $selectedHeight) {
                     ForEach(heightRange, id: \.self) { height in
                         Text("\(height) inches").tag(height)
-                        
+
                     }
-                    
+
                 }
-                Picker("Field of View", selection: $selectedFOV)
-                {
+                Picker("Field of View", selection: $selectedFOV) {
                     ForEach(heightRange, id: \.self) { FOV in
                         Text("\(FOV) inches").tag(FOV)
-                        
+
                     }
-                    
+
                 }
                 Toggle(isOn: $hapticFeedback) {
                                     Text("Recieve haptic feedback")
                                         .font(.headline) // Larger font size
-                
+
                                 }
                                 .toggleStyle(SettingsToggleStyle())
                                 .background(Color(UIColor.systemGray6))
                                 .cornerRadius(8)
                                 .accessibilityLabel("Use meters instead of feet")
                                 .accessibilityHint("Double tap to enable")
-                
 
-                
                 Toggle(isOn: $spacialAudio) {
                                     Text("Use spacialized audio")
                                         .font(.headline) // Larger font size
@@ -245,9 +241,7 @@ struct PrefrencesView: View{
                                 .cornerRadius(8)
                                 .accessibilityLabel("Use angle instead of clock")
                                 .accessibilityHint("Double tap to enable")
-                
 
-                
                 Toggle(isOn: $locationSharing) {
                                     Text("Share your location")
                                         .font(.headline) // Larger font size
@@ -257,7 +251,7 @@ struct PrefrencesView: View{
                                 .cornerRadius(8)
                                 .accessibilityLabel("Use angle instead of clock")
                                 .accessibilityHint("Double tap to enable")
-                
+
                             Spacer()
                         }
 
@@ -281,13 +275,10 @@ struct SettingsToggleStyle: ToggleStyle {
         }
     }
 }
-    
 
-    
     // For Preview in Xcode
     struct ContentViewPreviews: PreviewProvider {
         static var previews: some View {
             ContentView()
         }
     }
-
