@@ -18,6 +18,15 @@ import AVFoundation
 import Foundation
 
 class DecisionBlock {
+
+
+
+
+
+
+
+
+
     // Properties
     var objectName: String?
     var distance: Int?
