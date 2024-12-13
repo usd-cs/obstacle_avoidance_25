@@ -7,9 +7,9 @@
 
 import XCTest
 
-final class obstacleAvoidanceUITestsLaunchTests: XCTestCase {
+final class ObstacleAvoidanceUITestsLaunchTests: XCTestCase {
 
-    override class var runsForEachTargetApplicationUIConfiguration: Bool {
+    override static var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }
 
