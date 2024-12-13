@@ -21,7 +21,7 @@ class AudioQueue {
         guard threatLevel >= 0 && threatLevel <= 100 else {
             throw AudioQueueError.invalidThreatLevel
         }
-        guard [9,10,11,12,1,2,3].contains(angle) else {
+        guard [9, 10, 11, 12, 1, 2, 3].contains(angle) else {
             throw AudioQueueError.invalidAngle
         }
         self.threatLevel = threatLevel
