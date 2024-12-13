@@ -51,6 +51,17 @@
                ReferencedContainer = "container:obstacle_avoidance.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "16EAB1222D0BEDFB00D0B8CD"
+               BuildableName = "obstacle_avoidanceLogicTests.xctest"
+               BlueprintName = "obstacle_avoidanceLogicTests"
+               ReferencedContainer = "container:obstacle_avoidance.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
