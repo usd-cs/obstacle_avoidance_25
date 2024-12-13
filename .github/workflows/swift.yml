@@ -43,5 +43,4 @@ jobs:
         if ! which swiftlint > /dev/null; then
           brew install swiftlint
         fi
-        cd obstacle_avoidance
-        swiftlint autocorrect
+        swiftlint autocorrect --path ../obstacle_avoidance
