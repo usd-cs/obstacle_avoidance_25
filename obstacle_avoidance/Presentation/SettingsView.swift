@@ -1,6 +1,6 @@
 //
 //  SettingsView.swift
-//  obstacle_avoidance
+//  obstacleAvoidance
 //
 //  Created by Carlos Breach on 12/9/24.
 //
@@ -14,13 +14,12 @@ struct SettingsView: View {
     @State private var name = "Jacob"
     @State private var phone = "111-111-1111"
     @State private var email = "fakeemail.com"
-    @State private var Address = "fakeaddress"
-    
+    @State private var address = "fakeaddress"
+
     var body: some View {
-            NavigationStack
-            {
-                List{
-                    NavigationLink(destination: AccountScreen()){
+            NavigationStack {
+                List {
+                    NavigationLink(destination: AccountScreen()) {
                         Label("Account", systemImage: "arrow.right.circle")
                             .font(.headline)
                             .fontWeight(.bold)
@@ -29,7 +28,7 @@ struct SettingsView: View {
                             .padding(.bottom, 30)
                             .accessibility(addTraits: .isStaticText)
                     }
-                    NavigationLink(destination: EmergencyContactView()){
+                    NavigationLink(destination: EmergencyContactView()) {
                         Label("Emergency Contacts", systemImage: "arrow.right.circle")
                             .font(.headline)
                             .fontWeight(.bold)
@@ -38,7 +37,7 @@ struct SettingsView: View {
                             .padding(.bottom, 30)
                             .accessibility(addTraits: .isStaticText)
                     }
-                    NavigationLink(destination: PrefrencesView()){
+                    NavigationLink(destination: PrefrencesView()) {
                         Label("System Prefrences", systemImage: "arrow.right.circle")
                             .font(.headline)
                             .fontWeight(.bold)
@@ -50,7 +49,6 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
-            
+
     }
 }
-

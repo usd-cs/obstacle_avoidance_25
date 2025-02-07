@@ -1,6 +1,6 @@
 //
 //  FrameView.swift
-//  obstacle_avoidance
+//  obstacleAvoidance
 //
 //  Swift file that is used to startup the phone camera for viewing the frames.
 //  Triggers audible notification for largest bounding box in view.
@@ -11,8 +11,7 @@ import SwiftUI
 struct FrameView: View {
     var image: CGImage?
     var boundingBoxes: [BoundingBox]
-    
-
+    // hate hte linter 
     var body: some View {
         ZStack {
             if let image = image {
@@ -22,8 +21,7 @@ struct FrameView: View {
             } else {
                 Color.black
             }
-            
-            
+
             // Overlay bounding boxes on the image
             // Notify user of object with the biggest bounding box
             if let biggestBox = boundingBoxes.max(by: { $0.rect.width < $1.rect.width }) {
@@ -32,7 +30,7 @@ struct FrameView: View {
                         .stroke(Color.red, lineWidth: 2) // Adjust stroke color and width as needed
                         .frame(width: biggestBox.rect.width, height: biggestBox.rect.height)
                         .position(x: biggestBox.rect.midX, y: biggestBox.rect.midY)
-                    
+
                     Text("\(biggestBox.name) at \(biggestBox.direction)")
                         .foregroundColor(Color.white)
                         .font(.headline)
@@ -41,17 +39,16 @@ struct FrameView: View {
                         .accessibility(addTraits: .isStaticText)
                 }
                 .onAppear {
-                    UIAccessibility.post(notification: .announcement, argument: "\(biggestBox.name) at \(biggestBox.direction)")
+                    UIAccessibility.post(notification:
+                            .announcement, argument: "\(biggestBox.name) at \(biggestBox.direction)")
                 }
             }
         }
     }
 }
 
-
-struct FrameView_Previews: PreviewProvider {
+struct FrameViewPreviews: PreviewProvider {
     static var previews: some View {
         FrameView(image: nil, boundingBoxes: [])
     }
 }
-

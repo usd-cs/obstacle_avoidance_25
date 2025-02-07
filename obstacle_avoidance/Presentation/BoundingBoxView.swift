@@ -1,6 +1,6 @@
 //
 //  BoundingBoxView.swift
-//  obstacle_avoidance
+//  obstacleAvoidance
 //
 //  Created by Kenny Collins on 4/11/24.
 //
@@ -17,7 +17,7 @@ public class BoundingBoxView {
     shapeLayer.fillColor = UIColor.clear.cgColor
     shapeLayer.lineWidth = 4
     shapeLayer.isHidden = true
-
+    // i hate the linter
     textLayer = CATextLayer()
     textLayer.isHidden = true
     textLayer.contentsScale = UIScreen.main.scale
@@ -38,7 +38,7 @@ public class BoundingBoxView {
     shapeLayer.path = path.cgPath
     shapeLayer.strokeColor = color.cgColor
     shapeLayer.isHidden = false
-
+    // hate the linter
     textLayer.string = label
     textLayer.foregroundColor = textColor.cgColor
     textLayer.backgroundColor = color.cgColor

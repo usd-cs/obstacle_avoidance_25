@@ -1,6 +1,6 @@
 //
-//  obstacle_avoidanceApp.swift
-//  obstacle_avoidance
+//  obstacleAvoidanceApp.swift
+//  obstacleAvoidance
 //
 //  Main driver file to the Obstacle avoidance app.
 //
@@ -8,10 +8,10 @@
 import SwiftUI
 
 @main
-struct obstacle_avoidanceApp: App {
+struct ObstacleAvoidanceApp: App {
     var body: some Scene {
         WindowGroup {
-            //Trigger the Content View program upon startup.
+            // Trigger the Content View program upon startup.
             ContentView()
         }
     }

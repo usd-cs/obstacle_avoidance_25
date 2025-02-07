@@ -1,15 +1,15 @@
 //
-//  obstacle_avoidanceUITestsLaunchTests.swift
-//  obstacle_avoidanceUITests
+//  obstacleAvoidanceUITestsLaunchTests.swift
+//  obstacleAvoidanceUITests
 //
 //  Created by Alexander on 2/13/24.
 //
 
 import XCTest
 
-final class obstacle_avoidanceUITestsLaunchTests: XCTestCase {
+final class ObstacleAvoidanceUITestsLaunchTests: XCTestCase {
 
-    override class var runsForEachTargetApplicationUIConfiguration: Bool {
+    override static var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }
 
@@ -20,10 +20,8 @@ final class obstacle_avoidanceUITestsLaunchTests: XCTestCase {
     func testLaunch() throws {
         let app = XCUIApplication()
         app.launch()
-
         // Insert steps here to perform after app launch but before taking a screenshot,
         // such as logging into a test account or navigating somewhere in the app
-
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = "Launch Screen"
         attachment.lifetime = .keepAlways
