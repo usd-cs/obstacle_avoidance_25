@@ -38,5 +38,4 @@ jobs:
         if ! which swiftlint > /dev/null; then
           brew install swiftlint
         fi
-        swiftlint
-        excluded: NonMaxSuppression.swift
+        swiftlint --path . --exclude NonMaxSuppression.swift
