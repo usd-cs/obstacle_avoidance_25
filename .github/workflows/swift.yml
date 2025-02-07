@@ -40,6 +40,4 @@ jobs:
           brew install swiftlint
         fi
         swiftlint
-        excluded: 
-          - NonMaxSuppression
       
