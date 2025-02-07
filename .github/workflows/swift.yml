@@ -30,8 +30,8 @@ jobs:
       run: xcodebuild -scheme "obstacle_avoidance" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro' build | xcpretty
 
     # Step 4: Run Unit Tests
-    #- name: Run Unit Tests
-    #  run: xcodebuild test -scheme "obstacle_avoidance" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro' | xcpretty
+    - name: Run Unit Tests
+      run: xcodebuild test -scheme "obstacle_avoidance" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro' | xcpretty
 
     # Step 5: Install and Run SwiftLint
     - name: Install and Run SwiftLint
