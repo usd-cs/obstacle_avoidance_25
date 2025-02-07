@@ -36,8 +36,8 @@ public struct BoundingBox: Identifiable {
     public let rect: CGRect
     /** Direction of the object relative to the viewer's position, like '12 o'clock'. */
     public var direction: String
-    //hate the linter
-    public init(classIndex: Int, score: Float, rect: CGRect, name: String,direction: String) {
+    // hate the linter
+    public init(classIndex: Int, score: Float, rect: CGRect, name: String, direction: String) {
     self.id = UUID()
     self.classIndex = classIndex
     self.score = score
@@ -50,17 +50,17 @@ public struct BoundingBox: Identifiable {
 /**
   Computes intersection-over-union overlap between two bounding boxes.
 */
-public func IOU(_ a: CGRect, _ b: CGRect) -> Float {
-  let areaA = a.width * a.height
+public func IOU(_ alpha: CGRect, _ beta: CGRect) -> Float {
+  let areaA = alpha.width * alpha.height
   if areaA <= 0 { return 0 }
 
-  let areaB = b.width * b.height
+  let areaB = beta.width * beta.height
   if areaB <= 0 { return 0 }
 
-  let intersectionMinX = max(a.minX, b.minX)
-  let intersectionMinY = max(a.minY, b.minY)
-  let intersectionMaxX = min(a.maxX, b.maxX)
-  let intersectionMaxY = min(a.maxY, b.maxY)
+  let intersectionMinX = max(alpha.minX, beta.minX)
+  let intersectionMinY = max(alpha.minY, beta.minY)
+  let intersectionMaxX = min(alpha.maxX, beta.maxX)
+  let intersectionMaxY = min(alpha.maxY, beta.maxY)
   let intersectionArea = max(intersectionMaxY - intersectionMinY, 0) *
                          max(intersectionMaxX - intersectionMinX, 0)
   return Float(intersectionArea / (areaA + areaB - intersectionArea))
@@ -79,7 +79,8 @@ public func nonMaxSuppression(boundingBoxes: [BoundingBox],
   Removes bounding boxes that overlap too much with other boxes that have
   a higher score.
 
-  Based on code from https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/kernels/non_max_suppression_op.cc
+  Based on code from https://github
+ .com/tensorflow/tensorflow/blob/master/tensorflow/core/kernels/non_max_suppression_op.cc
 
   - Note: This version of NMS ignores the class of the bounding boxes. Since it
     selects the bounding boxes in a greedy fashion, if a certain class has many
@@ -103,14 +104,14 @@ public func nonMaxSuppression(boundingBoxes: [BoundingBox],
   var selected: [Int] = []
   // Loop through the bounding boxes, from highest score to lowest score,
   // and determine whether or not to keep each box.
-  for i in 0..<sortedIndices.count {
+  for gamma in 0..<sortedIndices.count {
     if selected.count >= maxBoxes { break }
     var shouldSelect = true
-    let boxA = boundingBoxes[sortedIndices[i]]
+    let boxA = boundingBoxes[sortedIndices[gamma]]
     // Does the current box overlap one of the selected boxes more than the
     // given threshold amount? Then it's too similar, so don't keep it.
-    for j in 0..<selected.count {
-      let boxB = boundingBoxes[selected[j]]
+    for delta in 0..<selected.count {
+      let boxB = boundingBoxes[selected[delta]]
       if IOU(boxA.rect, boxB.rect) > iouThreshold {
         shouldSelect = false
         break
@@ -119,7 +120,7 @@ public func nonMaxSuppression(boundingBoxes: [BoundingBox],
     // This bounding box did not overlap too much with any previously selected
     // bounding box, so we'll keep it.
     if shouldSelect {
-      selected.append(sortedIndices[i])
+      selected.append(sortedIndices[gamma])
     }
   }
   return selected
@@ -155,15 +156,15 @@ public func nonMaxSuppressionMultiClass(numClasses: Int,
                                         maxTotal: Int) -> [Int] {
   var selectedBoxes: [Int] = []
   // Look at all the classes one-by-one.
-  for c in 0..<numClasses {
+  for charly in 0..<numClasses {
     var filteredBoxes = [Int]()
     // Look at every bounding box for this class.
-    for p in 0..<boundingBoxes.count {
-      let prediction = boundingBoxes[p]
-      if prediction.classIndex == c {
+    for peter in 0..<boundingBoxes.count {
+      let prediction = boundingBoxes[peter]
+      if prediction.classIndex == charly {
         // Only keep the box if its score is over the threshold.
         if prediction.score > scoreThreshold {
-          filteredBoxes.append(p)
+          filteredBoxes.append(peter)
         }
       }
     }

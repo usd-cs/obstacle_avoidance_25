@@ -17,8 +17,8 @@ import SwiftUI
 import AVFoundation
 import Foundation
 
-
 class DecisionBlock {
+
     // Properties
     var objectName: String?
     var distance: Int?
@@ -32,8 +32,8 @@ class DecisionBlock {
         // Audio processing.work
         do {
             try audio = AudioQueue(threatLevel: 0, objectName: objectName, angle: 0, distance: 0)
-        }catch {
-            //there should be something here
+        } catch {
+            // there should be something here
         }
     }
 

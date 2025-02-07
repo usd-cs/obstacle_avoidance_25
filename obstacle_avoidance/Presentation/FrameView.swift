@@ -11,7 +11,7 @@ import SwiftUI
 struct FrameView: View {
     var image: CGImage?
     var boundingBoxes: [BoundingBox]
-    //hate hte linter 
+    // hate hte linter 
     var body: some View {
         ZStack {
             if let image = image {
@@ -39,7 +39,8 @@ struct FrameView: View {
                         .accessibility(addTraits: .isStaticText)
                 }
                 .onAppear {
-                    UIAccessibility.post(notification: .announcement, argument: "\(biggestBox.name) at \(biggestBox.direction)")
+                    UIAccessibility.post(notification:
+                            .announcement, argument: "\(biggestBox.name) at \(biggestBox.direction)")
                 }
             }
         }
@@ -51,4 +52,3 @@ struct FrameViewPreviews: PreviewProvider {
         FrameView(image: nil, boundingBoxes: [])
     }
 }
-
