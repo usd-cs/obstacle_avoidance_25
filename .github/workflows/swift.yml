@@ -3,6 +3,7 @@
 
 name: Swift
 
+
 on:
   push:
     branches: "*"
@@ -39,5 +40,6 @@ jobs:
           brew install swiftlint
         fi
         swiftlint
-        excluded: NonMaxSuppression
+        excluded: 
+          - NonMaxSuppression
       
