@@ -13,9 +13,13 @@ import CoreImage
 import Vision
 
 class FrameHandler: NSObject, ObservableObject {
+    enum ConfigurationError: Error {
+        case lidarDeviceUnavailable
+        case requiredFormatUnavailable
+    }
     @Published var frame: CGImage?
     @Published var boundingBoxes: [BoundingBox] = []
-
+    @Published var objectDistance: Float = 0.0
     // Initializing variables related to capturing image.
     private var permissionGranted = true
     private let captureSession = AVCaptureSession()
@@ -23,6 +27,14 @@ class FrameHandler: NSObject, ObservableObject {
     private let context = CIContext()
     private var requests = [VNRequest]() // To hold detection requests
     private var detectionLayer: CALayer! = nil
+   
+    private var depthDataOutput: AVCaptureDepthDataOutput!
+    private var videoDataOutput: AVCaptureVideoDataOutput!
+    private var outputVideoSync: AVCaptureDataOutputSynchronizer!
+    
+    private let preferredWidthResolution = 1920
+    private var sessionConfigured = false
+
     var screenRect: CGRect!
 
     override init() {
@@ -229,21 +241,94 @@ class FrameHandler: NSObject, ObservableObject {
 
     // Function that creates the variables needed for video capturing.
     func setupCaptureSession() {
-        let videoOutput = AVCaptureVideoDataOutput()
-
-        guard permissionGranted else { return }
-        guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,
-                                            for: .video, position: .back) else { return }
-        guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
-        guard captureSession.canAddInput(videoDeviceInput) else { return }
-        captureSession.addInput(videoDeviceInput)
-
-        videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sampleBufferQueue"))
-        captureSession.addOutput(videoOutput)
-
-        videoOutput.connection(with: .video)?.videoOrientation = .portrait
-        // NOTE: .videoOrientation was depreciated in ios 17 but
-        // still works as of the current version.
+        
+        //old yolo code using that camera
+//        let videoOutput = AVCaptureVideoDataOutput()
+//        captureSession.addOutput(videoDataOutput)
+//        depthDataOutput = AVCaptureDepthDataOutput()
+//        captureSession.addOutput(depthDataOutput)
+//
+//
+//        guard permissionGranted else { return }
+//        guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,
+//                                            for: .video, position: .back) else { return }
+//        guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
+//        
+//        guard captureSession.canAddInput(videoDeviceInput) else { return }
+//        captureSession.addInput(videoDeviceInput)
+//
+//        videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sampleBufferQueue"))
+//        captureSession.addOutput(videoOutput)
+//
+//        videoOutput.connection(with: .video)?.videoOrientation = .portrait
+//        // NOTE: .videoOrientation was depreciated in ios 17 but
+//        // still works as of the current version.
+        if sessionConfigured{
+            return
+        }
+        //setup the lidar device and if there is input add that to the capture session
+        guard let lidarDevice = AVCaptureDevice.default(.builtInLiDARDepthCamera, for: .video, position: .back) else{
+            print("Error: LiDar device is not avaliable")
+            return
+        }
+        guard let lidarInput = try? AVCaptureDeviceInput(device: lidarDevice) else{return}
+        if captureSession.canAddInput(lidarInput){
+            captureSession.addInput(lidarInput)
+        }
+        //find a good video format with good depth support
+        guard let format = (lidarDevice.formats.last { format in
+            format.formatDescription.dimensions.width == preferredWidthResolution &&
+            format.formatDescription.mediaSubType.rawValue == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange &&
+            !format.isVideoBinned &&
+            !format.supportedDepthDataFormats.isEmpty
+        }) else {
+            print("Error: Required format is unavaliable")
+            return
+        }
+        guard let depthFormat = (format.supportedDepthDataFormats.last { depthFormat in
+            depthFormat.formatDescription.mediaSubType.rawValue == kCVPixelFormatType_DepthFloat16
+        }) else {
+            print("Error: Required format for depth is unavaliable")
+            return
+        }
+        // Begin the device configuration.
+        do {
+            try lidarDevice.lockForConfiguration()
+            
+            // Configure the device and depth formats.
+            lidarDevice.activeFormat = format
+            lidarDevice.activeDepthDataFormat = depthFormat
+            
+            // Finish the device configuration.
+            lidarDevice.unlockForConfiguration()
+        }catch {
+            print("Error configuring the lidar camera")
+            return
+        }
+        
+        //set up the video data output
+        videoDataOutput = AVCaptureVideoDataOutput()
+        videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange]
+        //Delegate for yolo detection if needed. Do not know if this will work
+        videoDataOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
+        if captureSession.canAddOutput(videoDataOutput){
+            captureSession.addOutput(videoDataOutput)
+        }
+        
+        videoDataOutput.connection(with: .video)?.videoOrientation = .portrait
+        //set up the depth data outout and add data if we can
+        depthDataOutput = AVCaptureDepthDataOutput()
+        depthDataOutput.isFilteringEnabled = true
+        if captureSession.canAddOutput(depthDataOutput)
+        {
+            captureSession.addOutput(depthDataOutput)
+        }
+        
+        //synchronize the video and depth outputs
+        outputVideoSync = AVCaptureDataOutputSynchronizer(dataOutputs: [videoDataOutput, depthDataOutput])
+        outputVideoSync.setDelegate(self, queue: DispatchQueue(label: "syncQueue"))
+        sessionConfigured = true
+        
     }
 
     // SwiftUI View for displaying camera output
@@ -263,6 +348,42 @@ class FrameHandler: NSObject, ObservableObject {
                 }
             }
         }
+}
+
+extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate{
+    func dataOutputSynchronizer(_ synchronizer: AVCaptureDataOutputSynchronizer, didOutput synchronizedDataCollection: AVCaptureSynchronizedDataCollection) {
+        //Retrieve the sycronized depth data
+        guard let syncedDepthData = synchronizedDataCollection.synchronizedData(for: depthDataOutput) as? AVCaptureSynchronizedDepthData,
+              let syncedVideoData = synchronizedDataCollection.synchronizedData(for: videoDataOutput) as? AVCaptureSynchronizedSampleBufferData else { return }
+        //Process the video frame for yolo
+        guard let pixelBuffer = syncedVideoData.sampleBuffer.imageBuffer else {return}
+        if let cgImage = imageFromSampleBuffer(sampleBuffer: syncedVideoData.sampleBuffer){
+            DispatchQueue.main.async{ [unowned self] in
+                self.frame = cgImage
+            }
+        }
+        let depthMap = syncedDepthData.depthData.depthDataMap
+        let width = CVPixelBufferGetWidth(depthMap)
+        let height = CVPixelBufferGetHeight(depthMap)
+        //locks the pixel address so we are not moving around too much
+        CVPixelBufferLockBaseAddress(depthMap, .readOnly)
+        //get the centerpoint distance and turn it into a float 16.
+        let centerPoint = unsafeBitCast(CVPixelBufferGetBaseAddress(depthMap), to: UnsafeMutablePointer<Float16>.self)
+        let centerX = width / 2
+        let centerY = height / 2
+        //gets what is in the center of the screen.
+        let depthVal = centerPoint[centerY * width + centerX]
+        
+        CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
+        
+        DispatchQueue.main.async{
+//            self.objectDistance = depthVal
+            print("Center point: \(centerPoint)")
+            print("Measured distance: \(depthVal) meters")
+        }
+        
+    }
+    
 }
 
 // AVCaptureVideoDataOutputSampleBufferDelegate implementation
