@@ -37,7 +37,7 @@ struct SettingsView: View {
                             .padding(.bottom, 30)
                             .accessibility(addTraits: .isStaticText)
                     }
-                    NavigationLink(destination: PrefrencesView()) {
+                    NavigationLink(destination: PreferencesView()) {
                         Label("System Prefrences", systemImage: "arrow.right.circle")
                             .font(.headline)
                             .fontWeight(.bold)
