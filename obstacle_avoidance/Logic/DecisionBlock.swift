@@ -28,7 +28,13 @@ class DecisionBlock {
     // Queue to store AudioQueue objects
     private var audioQueueQueue: [AudioQueue] = []
     func processInput(objectName: String) {
-        // Process image and bounding boxes here...
+        // Call the image information and store Distance & Angle within a vector
+
+
+        //Call the Object ID and store the value within the vector 
+
+        //(Potentially) Gather Object ThreatLevel or assign one based of a predetermined value.
+        
         // Audio processing.work
         do {
             try audio = AudioQueue(threatLevel: 0, objectName: objectName, angle: 0, distance: 0)
