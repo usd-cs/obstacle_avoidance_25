@@ -19,7 +19,7 @@ class FrameHandler: NSObject, ObservableObject {
     }
     @Published var frame: CGImage?
     @Published var boundingBoxes: [BoundingBox] = []
-    @Published var objectDistance: Float = 0.0
+    @Published var objectDistance: Float16 = 0.0
     // Initializing variables related to capturing image.
     private var permissionGranted = true
     private let captureSession = AVCaptureSession()
@@ -134,6 +134,11 @@ class FrameHandler: NSObject, ObservableObject {
 
                         // Add BoundingBox object to the array
                         boundingBoxResults.append(boundingBox)
+//                        print("Boundy box: \(boundingBox)")
+//                        print("Boundy box mid x: \(boundingBox.rect.midX)")
+//
+//                        print("Boundy Box Array: \(self?.boundingBoxes)")
+                        self?.boundingBoxes.append(boundingBox)
                     }
                 }
             }
@@ -244,9 +249,7 @@ class FrameHandler: NSObject, ObservableObject {
         
         //old yolo code using that camera
         let videoOutput = AVCaptureVideoDataOutput()
-//        captureSession.addOutput(videoDataOutput)
-//        depthDataOutput = AVCaptureDepthDataOutput()
-//        captureSession.addOutput(depthDataOutput)
+
 
         //sets the Yolo camera
         guard permissionGranted else { return }
@@ -356,7 +359,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate{
         guard let syncedDepthData = synchronizedDataCollection.synchronizedData(for: depthDataOutput) as? AVCaptureSynchronizedDepthData,
               let syncedVideoData = synchronizedDataCollection.synchronizedData(for: videoDataOutput) as? AVCaptureSynchronizedSampleBufferData else { return }
         //Process the video frame for yolo
-        guard let pixelBuffer = syncedVideoData.sampleBuffer.imageBuffer else {return}
+        //        guard let pixelBuffer = syncedVideoData.sampleBuffer.imageBuffer else {return}
         if let cgImage = imageFromSampleBuffer(sampleBuffer: syncedVideoData.sampleBuffer){
             DispatchQueue.main.async{ [unowned self] in
                 self.frame = cgImage
@@ -365,8 +368,11 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate{
         let depthMap = syncedDepthData.depthData.depthDataMap
         let width = CVPixelBufferGetWidth(depthMap)
         let height = CVPixelBufferGetHeight(depthMap)
+        //From the
+        //        let targetPoint = CGPoint(x: boundingBoxes[-1].rect.midX, y: boundingBoxes.rect.midY)
         //locks the pixel address so we are not moving around too much
         CVPixelBufferLockBaseAddress(depthMap, .readOnly)
+        //get the centerpoint distance and turn it into a float 16.
         //get the centerpoint distance and turn it into a float 16.
         let centerPoint = unsafeBitCast(CVPixelBufferGetBaseAddress(depthMap), to: UnsafeMutablePointer<Float16>.self)
         let centerX = width / 2
@@ -375,11 +381,12 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate{
         let depthVal = centerPoint[centerY * width + centerX]
         
         CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
+        //this inverts the depth value as the distance is inversed naturally
+        let correctedDepth: Float16 = depthVal > 0 ? 1.0 / depthVal : 0
         
         DispatchQueue.main.async{
-//            self.objectDistance = depthVal
-            print("Center point: \(centerPoint)")
             print("Measured distance: \(depthVal) meters")
+            print("Corrected distance: \(correctedDepth) meters")
         }
         
     }
