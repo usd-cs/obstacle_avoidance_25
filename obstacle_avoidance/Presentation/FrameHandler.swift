@@ -243,24 +243,24 @@ class FrameHandler: NSObject, ObservableObject {
     func setupCaptureSession() {
         
         //old yolo code using that camera
-//        let videoOutput = AVCaptureVideoDataOutput()
+        let videoOutput = AVCaptureVideoDataOutput()
 //        captureSession.addOutput(videoDataOutput)
 //        depthDataOutput = AVCaptureDepthDataOutput()
 //        captureSession.addOutput(depthDataOutput)
-//
-//
-//        guard permissionGranted else { return }
-//        guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,
-//                                            for: .video, position: .back) else { return }
-//        guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
-//        
-//        guard captureSession.canAddInput(videoDeviceInput) else { return }
-//        captureSession.addInput(videoDeviceInput)
-//
-//        videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sampleBufferQueue"))
-//        captureSession.addOutput(videoOutput)
-//
-//        videoOutput.connection(with: .video)?.videoOrientation = .portrait
+
+        //sets the Yolo camera
+        guard permissionGranted else { return }
+        guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,
+                                            for: .video, position: .back) else { return }
+        guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
+        
+        guard captureSession.canAddInput(videoDeviceInput) else { return }
+        captureSession.addInput(videoDeviceInput)
+
+        videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sampleBufferQueue"))
+        captureSession.addOutput(videoOutput)
+
+        videoOutput.connection(with: .video)?.videoOrientation = .portrait
 //        // NOTE: .videoOrientation was depreciated in ios 17 but
 //        // still works as of the current version.
         if sessionConfigured{
