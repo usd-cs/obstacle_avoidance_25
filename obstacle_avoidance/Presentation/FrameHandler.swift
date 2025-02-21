@@ -48,7 +48,7 @@ class FrameHandler: NSObject, ObservableObject {
         captureSession.stopRunning()
     }
     func startCamera() {
-        CameraSetup.setupCaptureSession(frameHandler: self);
+        CameraSetup.setupCaptureSession(frameHandler: self)
         captureSession.startRunning() // this should run in a background thread
         setupDetector()
     }

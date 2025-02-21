@@ -59,7 +59,9 @@ struct FrameHandlerTest {
         let mockDepthOutput = AVCaptureDepthDataOutput()
         // Configure outputs
         mockVideoOutput.alwaysDiscardsLateVideoFrames = true
-        mockVideoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange]
+        mockVideoOutput.videoSettings = [
+            kCVPixelBufferPixelFormatTypeKey as String
+            : kCVPixelFormatType_420YpCbCr8BiPlanarFullRange]
         mockDepthOutput.isFilteringEnabled = true
         // Ensure outputs are added to the session before using them
         if captureSession.canAddOutput(mockVideoOutput) {

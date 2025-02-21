@@ -136,7 +136,7 @@ enum MeasurementType: String, CaseIterable, Identifiable {
     case feet, meters
     var id: String { self.rawValue }
 }
-struct EmergencyContactView: View{
+struct EmergencyContactView: View {
     var body: some View{
         Text("Emergency contact screen")
     }

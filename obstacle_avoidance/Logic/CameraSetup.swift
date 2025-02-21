@@ -7,91 +7,94 @@
 
 import Foundation
 import AVFoundation
-class CameraSetup{
+class CameraSetup {
     static func setupCaptureSession(frameHandler: FrameHandler) {
-        // old yolo code using that camera
+        // Setup video capture
+        setupVideoCapture(frameHandler: frameHandler)
+        
+        // Setup LiDAR depth camera if available
+        setupLiDARCapture(frameHandler: frameHandler)
+        
+        // Setup data outputs for video and depth data
+        setupDataOutputs(frameHandler: frameHandler)
+        
+        frameHandler.sessionConfigured = true
+    }
+    
+    // Setup the video camera input
+    private static func setupVideoCapture(frameHandler: FrameHandler) {
         let videoOutput = AVCaptureVideoDataOutput()
-        // sets the Yolo camera
-//        guard frameHandler.permissionGranted else { return }
-        guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,
-            for: .video, position: .back) else { return }
+        guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera, for: .video, position: .back) else { return }
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
         guard frameHandler.captureSession.canAddInput(videoDeviceInput) else { return }
+        
         frameHandler.captureSession.addInput(videoDeviceInput)
-        videoOutput.setSampleBufferDelegate(frameHandler,
-            queue: DispatchQueue(label: "sampleBufferQueue"))
+        videoOutput.setSampleBufferDelegate(frameHandler, queue: DispatchQueue(label: "sampleBufferQueue"))
         frameHandler.captureSession.addOutput(videoOutput)
         videoOutput.connection(with: .video)?.videoOrientation = .portrait
-        // NOTE: .videoOrientation was depreciated in iOS 17 but
-        // still works as of the current version.
-        if frameHandler.sessionConfigured {
+    }
+    
+    // Setup the LiDAR device and add it to the capture session if available
+    private static func setupLiDARCapture(frameHandler: FrameHandler) {
+        guard let lidarDevice = AVCaptureDevice.default(.builtInLiDARDepthCamera, for: .video, position: .back) else {
+            print("Error: LiDAR device is not available")
             return
         }
-        // setup the lidar device and if there is input add that to the capture session
-        guard let lidarDevice = AVCaptureDevice.default(.builtInLiDARDepthCamera,
-            for: .video, position: .back) else {
-            print("Error: LiDar device is not available")
-            return
-        }
+
         guard let lidarInput = try? AVCaptureDeviceInput(device: lidarDevice) else { return }
         if frameHandler.captureSession.canAddInput(lidarInput) {
             frameHandler.captureSession.addInput(lidarInput)
         }
-        // find a good video format with good depth support
+        // Find the best supported format for LiDAR depth data
         guard let format = (lidarDevice.formats.last { format in
             format.formatDescription.dimensions.width == frameHandler.preferredWidthResolution &&
-            format.formatDescription.mediaSubType.rawValue ==
-                kCVPixelFormatType_420YpCbCr8BiPlanarFullRange &&
+            format.formatDescription.mediaSubType.rawValue == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange &&
             !format.isVideoBinned &&
             !format.supportedDepthDataFormats.isEmpty
         }) else {
             print("Error: Required format is unavailable")
             return
         }
+        
         guard let depthFormat = (format.supportedDepthDataFormats.last { depthFormat in
-            depthFormat.formatDescription.mediaSubType.rawValue ==
-                kCVPixelFormatType_DepthFloat16
+            depthFormat.formatDescription.mediaSubType.rawValue == kCVPixelFormatType_DepthFloat16
         }) else {
             print("Error: Required format for depth is unavailable")
             return
         }
-        // Begin the device configuration.
+        
+        // Configure the LiDAR camera with the selected format
         do {
             try lidarDevice.lockForConfiguration()
-            // Configure the device and depth formats.
             lidarDevice.activeFormat = format
             lidarDevice.activeDepthDataFormat = depthFormat
-            // Finish the device configuration.
             lidarDevice.unlockForConfiguration()
         } catch {
-            print("Error configuring the lidar camera")
-            return
+            print("Error configuring the LiDAR camera")
         }
-        // set up the video data output
+    }
+    
+    // Setup video and depth data outputs and synchronize them
+    private static func setupDataOutputs(frameHandler: FrameHandler) {
+        // Set up the video data output
         frameHandler.videoDataOutput = AVCaptureVideoDataOutput()
-        frameHandler.videoDataOutput.videoSettings = [
-            kCVPixelBufferPixelFormatTypeKey as String:
-                kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
-        ]
-        // Delegate for yolo detection if needed. Do not know if this will work
-        frameHandler.videoDataOutput.setSampleBufferDelegate(frameHandler,
-            queue: DispatchQueue(label: "videoQueue"))
+        frameHandler.videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange]
+        frameHandler.videoDataOutput.setSampleBufferDelegate(frameHandler, queue: DispatchQueue(label: "videoQueue"))
         if frameHandler.captureSession.canAddOutput(frameHandler.videoDataOutput) {
             frameHandler.captureSession.addOutput(frameHandler.videoDataOutput)
         }
         frameHandler.videoDataOutput.connection(with: .video)?.videoOrientation = .portrait
-        // set up the depth data output and add data if we can
+        
+        // Set up the depth data output
         frameHandler.depthDataOutput = AVCaptureDepthDataOutput()
         frameHandler.depthDataOutput.isFilteringEnabled = true
         if frameHandler.captureSession.canAddOutput(frameHandler.depthDataOutput) {
             frameHandler.captureSession.addOutput(frameHandler.depthDataOutput)
         }
-        // synchronize the video and depth outputs
-        frameHandler.outputVideoSync = AVCaptureDataOutputSynchronizer(
-            dataOutputs: [frameHandler.videoDataOutput, frameHandler.depthDataOutput])
-        frameHandler.outputVideoSync.setDelegate(frameHandler,
-            queue: DispatchQueue(label: "syncQueue"))
-        frameHandler.sessionConfigured = true
+        
+        // Synchronize video and depth outputs
+        frameHandler.outputVideoSync = AVCaptureDataOutputSynchronizer(dataOutputs: [frameHandler.videoDataOutput, frameHandler.depthDataOutput])
+        frameHandler.outputVideoSync.setDelegate(frameHandler, queue: DispatchQueue(label: "syncQueue"))
     }
-
 }
+
