@@ -19,7 +19,6 @@
 		917D06A72D6823CC00F596D2 /* Testing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 917D06A32D6823B800F596D2 /* Testing.framework */; platformFilter = ios; };
 		917D06A82D6823CC00F596D2 /* Testing.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 917D06A32D6823B800F596D2 /* Testing.framework */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		917D06AC2D6823FC00F596D2 /* DecisionBlockTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917D06AA2D6823FC00F596D2 /* DecisionBlockTest.swift */; };
-		917D06AE2D68277B00F596D2 /* Testing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 917D06A32D6823B800F596D2 /* Testing.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,14 +85,6 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		11BA3D522B7C2AA9006477A7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				917D06AE2D68277B00F596D2 /* Testing.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		11BA3D622B7C2AAC006477A7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -198,7 +189,6 @@
 			buildConfigurationList = 11BA3D792B7C2AAC006477A7 /* Build configuration list for PBXNativeTarget "obstacle_avoidance" */;
 			buildPhases = (
 				11BA3D512B7C2AA9006477A7 /* Sources */,
-				11BA3D522B7C2AA9006477A7 /* Frameworks */,
 				11BA3D532B7C2AA9006477A7 /* Resources */,
 			);
 			buildRules = (
@@ -594,7 +584,7 @@
 				DEVELOPMENT_TEAM = 5JDQ9ZJKCM;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidanceUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidanceUITest";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -612,7 +602,7 @@
 				DEVELOPMENT_TEAM = 5JDQ9ZJKCM;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidanceUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidanceUITest";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
