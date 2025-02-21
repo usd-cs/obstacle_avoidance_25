@@ -21,24 +21,24 @@ class DecisionBlock {
     // Properties
     var audio: AudioQueue?
     //Initialize an array of tuples to pass through logic
-    var detectedObject: [(name: String, distance: Int, angle: Int)]
+    var detectedObject: [(objID: Int, distance: Int, angle: Int)]
     // Queue to store AudioQueue objects
     private var audioQueueQueue: [AudioQueue] = []
     
     //Initializer
-    init(detectedObject: [(name:String, distance: Int, angle: Int)]){
+    init(detectedObject: [(objID: Int, distance: Int, angle: Int)]){
         self.detectedObject = detectedObject
         self.audioQueueQueue = []
     }
     
-    func computeThreatLevel(name: String, distance: Int, angle: Int)->Int{
-        let objThreat = ThreatLevelConfig.objectWeights[name] ?? 1
+    func computeThreatLevel(objID: Int, distance: Int, angle: Int)->Int{
+        let objThreat = ThreatLevelConfig.objectWeights[objID] ?? 1
         let angleWeight = ThreatLevelConfig.angleWeights[angle] ?? 1
         let distanceFactor = distance*2
         return objThreat * angleWeight + distanceFactor
     }
     
-    func selectHighestPriorityObj() -> (String, Int, Int)?{
+    func selectHighestPriorityObj() -> (Int, Int, Int)?{
         return detectedObject.min(by:{ $0.distance < $1.distance})
     }
 
