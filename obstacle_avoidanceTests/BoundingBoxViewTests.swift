@@ -6,10 +6,11 @@
 //
 
 import XCTest
+import Vision
 @testable import obstacle_avoidance
 
 
-class PresentationTests: XCTestCase{
+final class BoundingBoxViewTests: XCTestCase{
     
     func testInit() {
             let boundingBoxView = BoundingBoxView()
@@ -23,7 +24,7 @@ class PresentationTests: XCTestCase{
             XCTAssertEqual(boundingBoxView.textLayer.alignmentMode, .center)
         }
     
-    func hide() throws{
+    func testHide() throws{
         let bbv = BoundingBoxView()
         
         bbv.shapeLayer.isHidden = false
@@ -35,7 +36,7 @@ class PresentationTests: XCTestCase{
         XCTAssertTrue(bbv.textLayer.isHidden)
     }
     
-    func addLayers() throws{
+    func testAddLayers() throws{
         let bbv = BoundingBoxView()
         
         let parent = CALayer()
@@ -76,4 +77,6 @@ class PresentationTests: XCTestCase{
 
             XCTAssertEqual(boundingBoxView.textLayer.frame, expectedFrame)
         }
+    
+    
 }
