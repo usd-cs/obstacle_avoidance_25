@@ -83,7 +83,6 @@ struct AccountScreen: View {
                 editableRow(label: "Address", text: $address)
                 editableRow(label: "Password", text: $password, isSecure: true)
             }
-            
             if isEditing {
                 Button("Save Changes") {
                     saveChanges()
@@ -106,7 +105,6 @@ struct AccountScreen: View {
               "Phone Number=\(phone), Address=\(address), Password=\(password)")
         isEditing = false
     }
-    
     private func editableRow(
         label: String,
         text: Binding<String>,
@@ -178,7 +176,6 @@ struct PreferencesView: View {
             .navigationTitle("Preferences")
         }
     }
-    
     private func toggleOption(title: String, isOn: Binding<Bool>) -> some View {
         Toggle(isOn: isOn) {
             Text(title)

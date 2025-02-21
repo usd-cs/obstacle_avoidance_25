@@ -10,7 +10,6 @@ import Testing
 @testable import obstacle_avoidance
 import AVFoundation
 import SwiftUICore
-//comment so that it will let me push this file
 struct FrameHandlerTest {
     class MockFrameHandler: FrameHandler {
         override init() {
@@ -24,7 +23,7 @@ struct FrameHandlerTest {
     // Mock DetectionView to test UI initialization
     struct MockDetectionView: View {
         @ObservedObject var frameHandler: MockFrameHandler = MockFrameHandler()
-        //This is needed to create the DetectionView
+        // This is needed to create the DetectionView
         var body: some View {
             Text("Mock Detection View")
         }
@@ -75,7 +74,9 @@ struct FrameHandlerTest {
         let mockDepthOutput = AVCaptureDepthDataOutput()
         // Configure outputs
         mockVideoOutput.alwaysDiscardsLateVideoFrames = true
-        mockVideoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange]
+        mockVideoOutput.videoSettings =
+        [kCVPixelBufferPixelFormatTypeKey as String:
+            kCVPixelFormatType_420YpCbCr8BiPlanarFullRange]
         mockDepthOutput.isFilteringEnabled = true
         // Ensure outputs are added to the session before using them
         if captureSession.canAddOutput(mockVideoOutput) {
@@ -89,16 +90,18 @@ struct FrameHandlerTest {
         // Ensure valid connections
         guard let videoConnection = mockVideoOutput.connection(with: .video),
               let depthConnection = mockDepthOutput.connection(with: .depthData) else {
-            #expect(Bool(true), "Failed to create valid connections for data outputs")
+            #expect((true), "Failed to create valid connections for data outputs")
             return
         }
-        let synchronizer = MockAVCaptureDataOutputSynchronizer(dataOutputs: [mockVideoOutput, mockDepthOutput])
+        let synchronizer = MockAVCaptureDataOutputSynchronizer(dataOutputs:
+                                                                [mockVideoOutput, mockDepthOutput])
         let synchronizedData = MockAVCaptureSynchronizedDataCollection()
         do {
-            frameHandler.dataOutputSynchronizer(synchronizer, didOutput: synchronizedData as! AVCaptureSynchronizedDataCollection)
+            frameHandler.dataOutputSynchronizer(synchronizer, didOutput:
+                                                    synchronizedData as! AVCaptureSynchronizedDataCollection)
             #expect(true) // Just ensuring no crashes occur
         } catch {
-            #expect(Bool(false), "Unexpected error: \(error)")
+            #expect((false), "Unexpected error: \(error)")
         }
     }
     // Test to validate corrected depth calculation logic

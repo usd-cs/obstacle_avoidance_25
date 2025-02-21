@@ -136,7 +136,6 @@ class FrameHandler: NSObject, ObservableObject {
             self?.boundingBoxes = []
             let filteredResults = NMSHandler.performNMS(on: boundingBoxResults)
             self?.boundingBoxes = filteredResults
-            
             // // Find the observation with the highest confidence
             // if let highestObservation = results
             //     .compactMap({ $0 as? VNRecognizedObjectObservation })
@@ -327,7 +326,6 @@ class FrameHandler: NSObject, ObservableObject {
                         .scaledToFill()
                         .frame(width: geometry.size.width,
                                height: geometry.size.height)
-                    
                     BoundingBoxLayer(layer: frameHandler.detectionLayer)
                         .frame(width: geometry.size.width,
                                height: geometry.size.height)
@@ -428,17 +426,14 @@ struct CameraPreview: UIViewRepresentable {
 
 struct BoundingBoxLayer: UIViewRepresentable {
     var layer: CALayer?
-    
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
         return view
     }
-    
     func updateUIView(_ uiView: UIView, context: Context) {
         guard let layer = layer else { return }
         // Remove any existing sublayers
         uiView.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
-        
         // Scale the layer to match the size of the preview
         let scale = UIScreen.main.scale
         layer.frame = CGRect(
@@ -447,7 +442,6 @@ struct BoundingBoxLayer: UIViewRepresentable {
             width: uiView.bounds.width * scale,
             height: uiView.bounds.height * scale
         )
-        
         // Add the layer to the view's layer
         uiView.layer.addSublayer(layer)
     }
