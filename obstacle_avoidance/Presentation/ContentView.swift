@@ -6,7 +6,7 @@
 //
 //  Previous Authors: Alexander Guerrero, Avery Lenninger, Olivia Nolan Shafer, Cassidy Spencer
 
-//Current Authors: Jacob Fernandez
+// Current Authors: Jacob Fernandez
 //  Last modified: 12/10/2024
 //
 
@@ -38,24 +38,26 @@ struct TabbedView: View {
                 .tabItem {
                     Image(systemName: "house.fill")
                         .accessibility(label: Text("Home Tab"))
-                    Text("Home").font(.system(size: 50))
+                    Text("Home")
+                        .font(.system(size: 50))
                 }
             // Camera tab
             CameraView()
                 .tabItem {
                     Image(systemName: "camera.fill")
                         .accessibility(label: Text("Camera Tab"))
-                    Text("Camera").font(.system(size: 50))
+                    Text("Camera")
+                        .font(.system(size: 50))
                 }
             // Settings view, in a navigation stack so we can have a proper back button
             NavigationStack {
                 SettingsView()
             }
-                .tabItem {
-                    Image(systemName: "gear")
-                        .accessibility(label: Text("Settings Tab"))
-                    Text("Settings")
-                }
+            .tabItem {
+                Image(systemName: "gear")
+                    .accessibility(label: Text("Settings Tab"))
+                Text("Settings")
+            }
         }
     }
 }
@@ -100,12 +102,17 @@ struct AccountScreen: View {
     }
 
     private func saveChanges() {
-        // Logic to save changes to a database or user preferences
-        print("Changes saved: Username=\(username), Name=\(name), Email=\(email), Phone Number=\(phone), Address=\(address), Password=\(password)")
+        print("Changes saved: Username=\(username), Name=\(name), Email=\(email),",
+              "Phone Number=\(phone), Address=\(address), Password=\(password)")
         isEditing = false
     }
     
-    private func editableRow(label: String, text: Binding<String>, keyboard: UIKeyboardType = .default, isSecure: Bool = false) -> some View {
+    private func editableRow(
+        label: String,
+        text: Binding<String>,
+        keyboard: UIKeyboardType = .default,
+        isSecure: Bool = false
+    ) -> some View {
         HStack {
             Text("\(label):").fontWeight(.bold)
             Spacer()
@@ -126,16 +133,9 @@ struct AccountScreen: View {
     }
 }
 
-struct EmergencyContactView: View {
-    var body: some View {
-        Text("Emergency Contact screen")
-    }
-}
-
-// Allows for our picker to easily work. Still debating if we want to do it like this or with arrays.
+// Allows for our picker to easily work.
 enum MeasurementType: String, CaseIterable, Identifiable {
-    case feet = "feet"
-    case meters = "meters"
+    case feet, meters
     var id: String { self.rawValue }
 }
 
