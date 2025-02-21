@@ -20,6 +20,7 @@ import Foundation
 class DecisionBlock {
     // Properties
     var audio: AudioQueue?
+    var urgencyLevel: Int = 0
     //Initialize an array of tuples to pass through logic
     var detectedObject: [(objID: Int, distance: Int, angle: Int)]
     // Queue to store AudioQueue objects
@@ -34,23 +35,27 @@ class DecisionBlock {
     func computeThreatLevel(objID: Int, distance: Int, angle: Int)->Int{
         let objThreat = ThreatLevelConfig.objectWeights[objID] ?? 1
         let angleWeight = ThreatLevelConfig.angleWeights[angle] ?? 1
-        let distanceFactor = distance*2
+        let distanceFactor = distance * 2
         return objThreat * angleWeight + distanceFactor
     }
     
-    func selectHighestPriorityObj() -> (Int, Int, Int)?{
-        return detectedObject.min(by:{ $0.distance < $1.distance})
+    func prioritizeObjectIntoQueue(){
+        let prioritizedObject = detectedObject.map{obj in
+            return (
+                objID: obj.objID,
+                distance: obj.distance,
+                angle: obj.angle,
+                urgencyLevel: computeThreatLevel(objID: obj.objID, distance: obj.distance, angle: obj.angle)
+            )
+        }
+        
+        let sortedObject = prioritizedObject.sorted { (a, b) in a.urgencyLevel > b.urgencyLevel }
+        
+        audioQueueQueue = sortedObject.compactMap{ obj in
+            let objectName = ThreatLevelConfig.objectName[obj.objID] ?? "Unkown Object"
+            return try? AudioQueue(threatLevel: obj.urgencyLevel, objectName: objectName, angle: obj.angle, distance: obj.distance)
+        }
     }
-
-//    func processInput(objectName: String) {
-//         Process image and bounding boxes here...         //What does this even mean?
-//         Audio processing.work
-//        do {
-//            try audio = AudioQueue(threatLevel: 0, objectName: objectName, angle: 0, distance: 0)
-//        } catch {
-//            // there should be something here
-//        }
-//    }
 
     // Function to return and pop an AudioQueue object from the queue
     func popAudioQueue() -> AudioQueue? {
