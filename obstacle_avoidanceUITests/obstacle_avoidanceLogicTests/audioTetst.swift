@@ -8,7 +8,6 @@
 import Foundation
 import Testing // Replace with your actual testing framework import
 @testable import obstacle_avoidance
-// comment so that it will let me push this file
 struct AudioQueueTesting {
     var threatLevel: Int
     var objectName: String
@@ -31,7 +30,7 @@ struct AudioQueueTesting {
             #expect(audioQueue.angle == angle)
             #expect(audioQueue.distance == distance)
         } catch {
-            // This will always be false, but must catach try
+            // This will always be false, but must catch try
             #expect(Bool(false), "AudioQueue initialization threw an unexpected error")
         }
     }

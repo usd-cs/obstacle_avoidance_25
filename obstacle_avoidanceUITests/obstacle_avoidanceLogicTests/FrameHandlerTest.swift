@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Testing 
+import Testing
 @testable import obstacle_avoidance
 import AVFoundation
 import SwiftUICore
@@ -73,12 +73,10 @@ struct FrameHandlerTest {
         let captureSession = AVCaptureSession()
         let mockVideoOutput = AVCaptureVideoDataOutput()
         let mockDepthOutput = AVCaptureDepthDataOutput()
-        
         // Configure outputs
         mockVideoOutput.alwaysDiscardsLateVideoFrames = true
         mockVideoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange]
         mockDepthOutput.isFilteringEnabled = true
-        
         // Ensure outputs are added to the session before using them
         if captureSession.canAddOutput(mockVideoOutput) {
             captureSession.addOutput(mockVideoOutput)
@@ -86,20 +84,16 @@ struct FrameHandlerTest {
         if captureSession.canAddOutput(mockDepthOutput) {
             captureSession.addOutput(mockDepthOutput)
         }
-        
         // Start the session to ensure connections are created
         captureSession.startRunning()
-        
         // Ensure valid connections
         guard let videoConnection = mockVideoOutput.connection(with: .video),
               let depthConnection = mockDepthOutput.connection(with: .depthData) else {
             #expect(Bool(true), "Failed to create valid connections for data outputs")
             return
         }
-        
         let synchronizer = MockAVCaptureDataOutputSynchronizer(dataOutputs: [mockVideoOutput, mockDepthOutput])
         let synchronizedData = MockAVCaptureSynchronizedDataCollection()
-        
         do {
             frameHandler.dataOutputSynchronizer(synchronizer, didOutput: synchronizedData as! AVCaptureSynchronizedDataCollection)
             #expect(true) // Just ensuring no crashes occur
@@ -107,13 +101,10 @@ struct FrameHandlerTest {
             #expect(Bool(false), "Unexpected error: \(error)")
         }
     }
-
     // Test to validate corrected depth calculation logic
     @Test func testCorrectedDepthCalculation() {
         let depthValue: Float16 = 2.0
         let correctedDepth: Float16 = depthValue > 0 ? 1.0 / depthValue : 0
-        
         #expect(correctedDepth == 0.5, "Corrected depth should be 0.5 when depth value is 2.0")
     }
 }
-

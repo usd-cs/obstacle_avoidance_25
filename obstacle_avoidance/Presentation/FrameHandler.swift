@@ -17,7 +17,6 @@ class FrameHandler: NSObject, ObservableObject {
         case lidarDeviceUnavailable
         case requiredFormatUnavailable
     }
-    
     @Published var frame: CGImage?
     @Published var boundingBoxes: [BoundingBox] = []
     @Published var objectDistance: Float16 = 0.0
@@ -28,16 +27,12 @@ class FrameHandler: NSObject, ObservableObject {
     private let context = CIContext()
     private var requests = [VNRequest]() // To hold detection requests
     private var detectionLayer: CALayer! = nil
-   
     private var depthDataOutput: AVCaptureDepthDataOutput!
     private var videoDataOutput: AVCaptureVideoDataOutput!
     private var outputVideoSync: AVCaptureDataOutputSynchronizer!
-    
     private let preferredWidthResolution = 1920
     public var sessionConfigured = false
-
     var screenRect: CGRect!
-
     override init() {
         super.init()
         self.checkPermission()
@@ -49,23 +44,19 @@ class FrameHandler: NSObject, ObservableObject {
 ////            self.setupDetector()
 //        }
     }
-
     func stopCamera() {
         captureSession.stopRunning()
     }
-
     func startCamera() {
         setupCaptureSession()
         captureSession.startRunning() // this should run in a background thread
         setupDetector()
     }
-
     func setupDetector() {
         guard let modelURL = Bundle.main.url(forResource: "YOLOv3Tiny", withExtension: "mlmodelc") else {
             print("Error: Model file not found")
             return
         }
-        
         do {
             let visionModel = try VNCoreMLModel(for: MLModel(contentsOf: modelURL))
             let objectRecognition = VNCoreMLRequest(model: visionModel,
@@ -75,7 +66,6 @@ class FrameHandler: NSObject, ObservableObject {
             print("Error loading Core ML model: \(error)")
         }
     }
-
     func detectionDidComplete(request: VNRequest, error: Error?) {
         DispatchQueue.main.async {
             if let results = request.results {
@@ -84,7 +74,6 @@ class FrameHandler: NSObject, ObservableObject {
             }
         }
     }
-    
     private func createBoundingBoxes(from observation: VNRecognizedObjectObservation,
                                      screenRect: CGRect) -> [BoundingBox] {
         var boxes: [BoundingBox] = []
@@ -115,27 +104,22 @@ class FrameHandler: NSObject, ObservableObject {
         }
         return boxes
     }
-
     func extractDetections(_ results: [VNObservation]) {
         // Ensure screenRect is initialized
         guard let screenRect = self.screenRect else {
             print("Error: screenRect is nil")
             return
         }
-        
         // Initialize detectionLayer if needed
         if detectionLayer == nil {
             detectionLayer = CALayer()
             updateLayers() // Ensure detectionLayer frame is updated
         }
-        
         // Set up producer consumer for this part and set up unique ids for bounding boxes for tracking
         DispatchQueue.main.async { [weak self] in
             self?.detectionLayer?.sublayers = nil
-            
             // Create an array to store BoundingBox objects
             var boundingBoxResults: [BoundingBox] = []
-            
             // Iterate through all results
             for result in results {
                 // Check if the result is a recognized object observation
@@ -148,7 +132,6 @@ class FrameHandler: NSObject, ObservableObject {
                     }
                 }
             }
-            
             // Call the NMS function
             self?.boundingBoxes = []
             let filteredResults = NMSHandler.performNMS(on: boundingBoxResults)
@@ -187,7 +170,6 @@ class FrameHandler: NSObject, ObservableObject {
             // }
         }
     }
-
     // Helper function to calculate direction from percentage // RDA
     private func calculateDirection(_ percentage: CGFloat) -> String { // RDA
         switch percentage {
@@ -207,12 +189,10 @@ class FrameHandler: NSObject, ObservableObject {
             return "Unknown"
         }
     }
-
     private func calculateAngle(centerX: CGFloat) -> Int { // RDA
         let centerPercentage = (centerX / self.screenRect.width) * 100 // RDA
         return Int(centerPercentage * 360 / 100) // Simplified calculation for the angle // RDA
     }
-
     func updateLayers() {
         detectionLayer?.frame = CGRect(
             x: 0,
@@ -221,7 +201,6 @@ class FrameHandler: NSObject, ObservableObject {
             height: screenRect.size.height
         )
     }
-
     func drawBoundingBox(_ bounds: CGRect) -> CALayer {
         let boxLayer = CALayer()
         if bounds.isEmpty {
@@ -231,7 +210,6 @@ class FrameHandler: NSObject, ObservableObject {
         // Need to finish
         return boxLayer
     }
-
     // Function that checks to ensure that the user has agreed to allow the use of the camera.
     // Unavoidable as this is integral to Apple infrastructure
     func checkPermission() {
@@ -245,7 +223,6 @@ class FrameHandler: NSObject, ObservableObject {
             self.permissionGranted = false
         }
     }
-
     // Function that requests permission from the user to use the camera.
     func requestPermission() {
         // Strong reference not a problem here but might become one in the future.
@@ -253,12 +230,10 @@ class FrameHandler: NSObject, ObservableObject {
             self.permissionGranted = granted
         }
     }
-
     // Function that creates the variables needed for video capturing.
     func setupCaptureSession() {
         // old yolo code using that camera
         let videoOutput = AVCaptureVideoDataOutput()
-        
         // sets the Yolo camera
         guard permissionGranted else { return }
         guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,
@@ -266,11 +241,9 @@ class FrameHandler: NSObject, ObservableObject {
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
         guard captureSession.canAddInput(videoDeviceInput) else { return }
         captureSession.addInput(videoDeviceInput)
-        
         videoOutput.setSampleBufferDelegate(self,
             queue: DispatchQueue(label: "sampleBufferQueue"))
         captureSession.addOutput(videoOutput)
-        
         videoOutput.connection(with: .video)?.videoOrientation = .portrait
         // NOTE: .videoOrientation was depreciated in iOS 17 but
         // still works as of the current version.
@@ -317,7 +290,6 @@ class FrameHandler: NSObject, ObservableObject {
             print("Error configuring the lidar camera")
             return
         }
-        
         // set up the video data output
         videoDataOutput = AVCaptureVideoDataOutput()
         videoDataOutput.videoSettings = [
@@ -330,16 +302,13 @@ class FrameHandler: NSObject, ObservableObject {
         if captureSession.canAddOutput(videoDataOutput) {
             captureSession.addOutput(videoDataOutput)
         }
-        
         videoDataOutput.connection(with: .video)?.videoOrientation = .portrait
-        
         // set up the depth data output and add data if we can
         depthDataOutput = AVCaptureDepthDataOutput()
         depthDataOutput.isFilteringEnabled = true
         if captureSession.canAddOutput(depthDataOutput) {
             captureSession.addOutput(depthDataOutput)
         }
-        
         // synchronize the video and depth outputs
         outputVideoSync = AVCaptureDataOutputSynchronizer(
             dataOutputs: [videoDataOutput, depthDataOutput])
@@ -351,7 +320,6 @@ class FrameHandler: NSObject, ObservableObject {
     // SwiftUI View for displaying camera output
     struct DetectionView: View {
         @ObservedObject var frameHandler: FrameHandler = FrameHandler()
-        
         var body: some View {
             GeometryReader { geometry in
                 ZStack {
@@ -378,18 +346,15 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
               let syncedVideoData = synchronizedDataCollection
                 .synchronizedData(for: videoDataOutput) as? AVCaptureSynchronizedSampleBufferData
         else { return }
-        
         // Process the video frame for yolo
         if let cgImage = imageFromSampleBuffer(sampleBuffer: syncedVideoData.sampleBuffer) {
             DispatchQueue.main.async { [unowned self] in
                 self.frame = cgImage
             }
         }
-        
         let depthMap = syncedDepthData.depthData.depthDataMap
         let width = CVPixelBufferGetWidth(depthMap)
         let height = CVPixelBufferGetHeight(depthMap)
-        
         // Lock the pixel address so we are not moving around too much
         CVPixelBufferLockBaseAddress(depthMap, .readOnly)
         // Get the centerpoint distance and turn it into a Float16.
@@ -402,10 +367,10 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         // Gets what is in the center of the screen.
         let depthVal = centerPoint[centerY * width + centerX]
         CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
-        
+
         // This inverts the depth value as the distance is inversed naturally
         let correctedDepth: Float16 = depthVal > 0 ? 1.0 / depthVal : 0
-        
+
         DispatchQueue.main.async {
             // print("Measured distance: \(depthVal) meters")
             // print("Corrected distance: \(correctedDepth) meters")
@@ -420,13 +385,11 @@ extension FrameHandler: AVCaptureVideoDataOutputSampleBufferDelegate {
         guard let cgImage = imageFromSampleBuffer(sampleBuffer: sampleBuffer) else {
             return
         }
-        
         // All UI updates should be performed on the main queue.
         DispatchQueue.main.async { [unowned self] in
             self.frame = cgImage
             // self.boundingBoxes = []
         }
-        
         do {
             let requestHandler = VNImageRequestHandler(cgImage: cgImage) // Create an instance
             try requestHandler.perform(self.requests) // Use the instance
@@ -434,7 +397,6 @@ extension FrameHandler: AVCaptureVideoDataOutputSampleBufferDelegate {
             print(error)
         }
     }
-    
     // Private function that creates the sample buffer
     private func imageFromSampleBuffer(sampleBuffer: CMSampleBuffer) -> CGImage? {
         guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
@@ -451,7 +413,7 @@ extension FrameHandler: AVCaptureVideoDataOutputSampleBufferDelegate {
 // Everything below is me trying to figure out the display of bounding boxes on the screen
 struct CameraPreview: UIViewRepresentable {
     var session: AVCaptureSession
-    
+
     func makeUIView(context: Context) -> some UIView {
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
         previewLayer.videoGravity = .resizeAspectFill
@@ -460,7 +422,7 @@ struct CameraPreview: UIViewRepresentable {
         view.layer.addSublayer(previewLayer)
         return view
     }
-    
+
     func updateUIView(_ uiView: UIViewType, context: Context) {}
 }
 
