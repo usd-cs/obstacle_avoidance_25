@@ -1,0 +1,49 @@
+//
+//  ThreatLevelConfig.swift
+//  obstacle_avoidance
+//
+//  Created by Darien Aranda on 2/20/25.
+//
+
+import Foundation
+
+struct ThreatLevelConfig{
+    static let angleWeights: [Int: Int]=[
+        12: 5,  //Directly Ahead
+        11: 3,  //Slightly Off-Centered
+        1: 3,
+        10: 1,  //Closing in on Peripheral Vision
+        2: 1
+    ]
+    
+    //Setting up semi-arbitrary values just to run through the tree
+    //15-12 consist of non-stationary obstacles. 10 represent stationary items of priority
+    //7 we may encounter along a path, 6 is items we may find helpful, 0 is items we should disregard.
+    static let objectWeights: [String: Int]=[
+        "Bicycle": 15,
+        "Branch": 7,
+        "Bus": 12,
+        "Bushes": 6,
+        "Car": 12,
+        "Crosswalk": 7,
+        "Door": 7,
+        "Elevator": 5,
+        "Fire Hydrant": 6,
+        "Green Light": 6,
+        "Gun": 0,
+        "Motorcycle": 12,
+        "Person": 15,
+        "Pothole": 7,
+        "Rat": 0,
+        "Red Light": 6,
+        "Scooter": 15,
+        "Stairs": 15,
+        "Stop Sign": 10,
+        "Traffic Cone": 7,
+        "Train": 12,
+        "Tree": 10,
+        "Truck": 12,
+        "Umbrella": 0,
+        "Yellow Light": 6
+    ]
+}
