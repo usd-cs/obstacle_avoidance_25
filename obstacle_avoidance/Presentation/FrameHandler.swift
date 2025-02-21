@@ -33,7 +33,7 @@ class FrameHandler: NSObject, ObservableObject {
     private var outputVideoSync: AVCaptureDataOutputSynchronizer!
     
     private let preferredWidthResolution = 1920
-    private var sessionConfigured = false
+    public var sessionConfigured = false
 
     var screenRect: CGRect!
 
@@ -70,6 +70,7 @@ class FrameHandler: NSObject, ObservableObject {
             let objectRecognition = VNCoreMLRequest(model: visionModel, completionHandler: detectionDidComplete)
             self.requests = [objectRecognition]
         } catch let error {
+            
             print("Error loading Core ML model: \(error)")
         }
     }
@@ -106,7 +107,7 @@ class FrameHandler: NSObject, ObservableObject {
             // Iterate through all results
             for result in results {
                 // Check if the result is a recognized object observation
-                if let observation = result as? VNRecognizedObjectObservation {
+                if let observation = result as? VNRecognizedObjectObservation{
                     // Iterate through labels in the observation
                     for label in observation.labels {
                         // Extract label identifier, confidence, and bounding box
@@ -385,8 +386,8 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate{
         let correctedDepth: Float16 = depthVal > 0 ? 1.0 / depthVal : 0
         
         DispatchQueue.main.async{
-            print("Measured distance: \(depthVal) meters")
-            print("Corrected distance: \(correctedDepth) meters")
+            //print("Measured distance: \(depthVal) meters")
+//            print("Corrected distance: \(correctedDepth) meters")
         }
         
     }
