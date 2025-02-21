@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "Image Background Remover.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
