@@ -22,15 +22,15 @@ class FrameHandler: NSObject, ObservableObject {
     @Published var objectDistance: Float16 = 0.0
     // Initializing variables related to capturing image.
     private var permissionGranted = true
-    private let captureSession = AVCaptureSession()
+    public let captureSession = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private let context = CIContext()
     private var requests = [VNRequest]() // To hold detection requests
     private var detectionLayer: CALayer! = nil
-    private var depthDataOutput: AVCaptureDepthDataOutput!
-    private var videoDataOutput: AVCaptureVideoDataOutput!
-    private var outputVideoSync: AVCaptureDataOutputSynchronizer!
-    private let preferredWidthResolution = 1920
+    public var depthDataOutput: AVCaptureDepthDataOutput!
+    public var videoDataOutput: AVCaptureVideoDataOutput!
+    public var outputVideoSync: AVCaptureDataOutputSynchronizer!
+    public let preferredWidthResolution = 1920
     public var sessionConfigured = false
     var screenRect: CGRect!
     override init() {
@@ -48,7 +48,7 @@ class FrameHandler: NSObject, ObservableObject {
         captureSession.stopRunning()
     }
     func startCamera() {
-        setupCaptureSession()
+        CameraSetup.setupCaptureSession(frameHandler: self);
         captureSession.startRunning() // this should run in a background thread
         setupDetector()
     }
@@ -229,92 +229,6 @@ class FrameHandler: NSObject, ObservableObject {
             self.permissionGranted = granted
         }
     }
-    // Function that creates the variables needed for video capturing.
-    func setupCaptureSession() {
-        // old yolo code using that camera
-        let videoOutput = AVCaptureVideoDataOutput()
-        // sets the Yolo camera
-        guard permissionGranted else { return }
-        guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,
-            for: .video, position: .back) else { return }
-        guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
-        guard captureSession.canAddInput(videoDeviceInput) else { return }
-        captureSession.addInput(videoDeviceInput)
-        videoOutput.setSampleBufferDelegate(self,
-            queue: DispatchQueue(label: "sampleBufferQueue"))
-        captureSession.addOutput(videoOutput)
-        videoOutput.connection(with: .video)?.videoOrientation = .portrait
-        // NOTE: .videoOrientation was depreciated in iOS 17 but
-        // still works as of the current version.
-        if sessionConfigured {
-            return
-        }
-        // setup the lidar device and if there is input add that to the capture session
-        guard let lidarDevice = AVCaptureDevice.default(.builtInLiDARDepthCamera,
-            for: .video, position: .back) else {
-            print("Error: LiDar device is not available")
-            return
-        }
-        guard let lidarInput = try? AVCaptureDeviceInput(device: lidarDevice) else { return }
-        if captureSession.canAddInput(lidarInput) {
-            captureSession.addInput(lidarInput)
-        }
-        // find a good video format with good depth support
-        guard let format = (lidarDevice.formats.last { format in
-            format.formatDescription.dimensions.width == preferredWidthResolution &&
-            format.formatDescription.mediaSubType.rawValue ==
-                kCVPixelFormatType_420YpCbCr8BiPlanarFullRange &&
-            !format.isVideoBinned &&
-            !format.supportedDepthDataFormats.isEmpty
-        }) else {
-            print("Error: Required format is unavailable")
-            return
-        }
-        guard let depthFormat = (format.supportedDepthDataFormats.last { depthFormat in
-            depthFormat.formatDescription.mediaSubType.rawValue ==
-                kCVPixelFormatType_DepthFloat16
-        }) else {
-            print("Error: Required format for depth is unavailable")
-            return
-        }
-        // Begin the device configuration.
-        do {
-            try lidarDevice.lockForConfiguration()
-            // Configure the device and depth formats.
-            lidarDevice.activeFormat = format
-            lidarDevice.activeDepthDataFormat = depthFormat
-            // Finish the device configuration.
-            lidarDevice.unlockForConfiguration()
-        } catch {
-            print("Error configuring the lidar camera")
-            return
-        }
-        // set up the video data output
-        videoDataOutput = AVCaptureVideoDataOutput()
-        videoDataOutput.videoSettings = [
-            kCVPixelBufferPixelFormatTypeKey as String:
-                kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
-        ]
-        // Delegate for yolo detection if needed. Do not know if this will work
-        videoDataOutput.setSampleBufferDelegate(self,
-            queue: DispatchQueue(label: "videoQueue"))
-        if captureSession.canAddOutput(videoDataOutput) {
-            captureSession.addOutput(videoDataOutput)
-        }
-        videoDataOutput.connection(with: .video)?.videoOrientation = .portrait
-        // set up the depth data output and add data if we can
-        depthDataOutput = AVCaptureDepthDataOutput()
-        depthDataOutput.isFilteringEnabled = true
-        if captureSession.canAddOutput(depthDataOutput) {
-            captureSession.addOutput(depthDataOutput)
-        }
-        // synchronize the video and depth outputs
-        outputVideoSync = AVCaptureDataOutputSynchronizer(
-            dataOutputs: [videoDataOutput, depthDataOutput])
-        outputVideoSync.setDelegate(self,
-            queue: DispatchQueue(label: "syncQueue"))
-        sessionConfigured = true
-    }
 
     // SwiftUI View for displaying camera output
     struct DetectionView: View {
@@ -371,7 +285,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
 
         DispatchQueue.main.async {
             // print("Measured distance: \(depthVal) meters")
-            // print("Corrected distance: \(correctedDepth) meters")
+             print("Corrected distance: \(correctedDepth) meters")
         }
     }
 }
