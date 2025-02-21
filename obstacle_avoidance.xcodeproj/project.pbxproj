@@ -13,10 +13,12 @@
 		11BA3D6A2B7C2AAC006477A7 /* obstacle_avoidanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11BA3D692B7C2AAC006477A7 /* obstacle_avoidanceTests.swift */; };
 		11BA3D742B7C2AAC006477A7 /* obstacle_avoidanceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11BA3D732B7C2AAC006477A7 /* obstacle_avoidanceUITests.swift */; };
 		11BA3D762B7C2AAC006477A7 /* obstacle_avoidanceUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11BA3D752B7C2AAC006477A7 /* obstacle_avoidanceUITestsLaunchTests.swift */; };
-		57F668762D66FFD800EF75D3 /* NMSHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57F668752D66FFCD00EF75D3 /* NMSHandlerTests.swift */; };
-		57F668782D67E0F700EF75D3 /* BoundingBoxViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57F668772D67E0E400EF75D3 /* BoundingBoxViewTests.swift */; };
-		57F6687B2D6922DB00EF75D3 /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 57F6687A2D6922DB00EF75D3 /* ViewInspector */; };
-		57F6687D2D69296C00EF75D3 /* SettingsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57F6687C2D69296700EF75D3 /* SettingsViewTests.swift */; };
+		917D06A12D68231A00F596D2 /* audioTetst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917D069E2D68231A00F596D2 /* audioTetst.swift */; };
+		917D06A42D6823B800F596D2 /* Testing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 917D06A32D6823B800F596D2 /* Testing.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		917D06A52D6823B800F596D2 /* Testing.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 917D06A32D6823B800F596D2 /* Testing.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		917D06A72D6823CC00F596D2 /* Testing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 917D06A32D6823B800F596D2 /* Testing.framework */; platformFilter = ios; };
+		917D06A82D6823CC00F596D2 /* Testing.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 917D06A32D6823B800F596D2 /* Testing.framework */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		917D06AC2D6823FC00F596D2 /* DecisionBlockTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917D06AA2D6823FC00F596D2 /* DecisionBlockTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +38,31 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		917D06A62D6823B800F596D2 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				917D06A52D6823B800F596D2 /* Testing.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		917D06A92D6823CC00F596D2 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				917D06A82D6823CC00F596D2 /* Testing.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		11BA3D552B7C2AA9006477A7 /* obstacle_avoidance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = obstacle_avoidance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		11BA3D582B7C2AA9006477A7 /* obstacle_avoidanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = obstacle_avoidanceApp.swift; sourceTree = "<group>"; };
@@ -46,9 +73,9 @@
 		11BA3D6F2B7C2AAC006477A7 /* obstacle_avoidanceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = obstacle_avoidanceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		11BA3D732B7C2AAC006477A7 /* obstacle_avoidanceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = obstacle_avoidanceUITests.swift; sourceTree = "<group>"; };
 		11BA3D752B7C2AAC006477A7 /* obstacle_avoidanceUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = obstacle_avoidanceUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		57F668752D66FFCD00EF75D3 /* NMSHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NMSHandlerTests.swift; sourceTree = "<group>"; };
-		57F668772D67E0E400EF75D3 /* BoundingBoxViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxViewTests.swift; sourceTree = "<group>"; };
-		57F6687C2D69296700EF75D3 /* SettingsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewTests.swift; sourceTree = "<group>"; };
+		917D069E2D68231A00F596D2 /* audioTetst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = audioTetst.swift; sourceTree = "<group>"; };
+		917D06A32D6823B800F596D2 /* Testing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Testing.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/Testing.framework; sourceTree = DEVELOPER_DIR; };
+		917D06AA2D6823FC00F596D2 /* DecisionBlockTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionBlockTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -58,18 +85,11 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		11BA3D522B7C2AA9006477A7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		11BA3D622B7C2AAC006477A7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				57F6687B2D6922DB00EF75D3 /* ViewInspector in Frameworks */,
+				917D06A42D6823B800F596D2 /* Testing.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,6 +97,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				917D06A72D6823CC00F596D2 /* Testing.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,8 +108,10 @@
 			isa = PBXGroup;
 			children = (
 				11BA3D572B7C2AA9006477A7 /* obstacle_avoidance */,
+				917D069F2D68231A00F596D2 /* obstacle_avoidanceLogicTests */,
 				11BA3D682B7C2AAC006477A7 /* obstacle_avoidanceTests */,
 				11BA3D722B7C2AAC006477A7 /* obstacle_avoidanceUITests */,
+				917D06A22D6823B800F596D2 /* Frameworks */,
 				11BA3D562B7C2AA9006477A7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -144,6 +167,23 @@
 			path = obstacle_avoidanceUITests;
 			sourceTree = "<group>";
 		};
+		917D069F2D68231A00F596D2 /* obstacle_avoidanceLogicTests */ = {
+			isa = PBXGroup;
+			children = (
+				917D069E2D68231A00F596D2 /* audioTetst.swift */,
+				917D06AA2D6823FC00F596D2 /* DecisionBlockTest.swift */,
+			);
+			path = obstacle_avoidanceLogicTests;
+			sourceTree = "<group>";
+		};
+		917D06A22D6823B800F596D2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				917D06A32D6823B800F596D2 /* Testing.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -152,7 +192,6 @@
 			buildConfigurationList = 11BA3D792B7C2AAC006477A7 /* Build configuration list for PBXNativeTarget "obstacle_avoidance" */;
 			buildPhases = (
 				11BA3D512B7C2AA9006477A7 /* Sources */,
-				11BA3D522B7C2AA9006477A7 /* Frameworks */,
 				11BA3D532B7C2AA9006477A7 /* Resources */,
 			);
 			buildRules = (
@@ -176,6 +215,7 @@
 				11BA3D612B7C2AAC006477A7 /* Sources */,
 				11BA3D622B7C2AAC006477A7 /* Frameworks */,
 				11BA3D632B7C2AAC006477A7 /* Resources */,
+				917D06A62D6823B800F596D2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -194,6 +234,7 @@
 				11BA3D6B2B7C2AAC006477A7 /* Sources */,
 				11BA3D6C2B7C2AAC006477A7 /* Frameworks */,
 				11BA3D6D2B7C2AAC006477A7 /* Resources */,
+				917D06A92D6823CC00F596D2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -213,7 +254,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1520;
-				LastUpgradeCheck = 1520;
+				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					11BA3D542B7C2AA9006477A7 = {
 						CreatedOnToolsVersion = 15.2;
@@ -290,10 +331,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				917D06AC2D6823FC00F596D2 /* DecisionBlockTest.swift in Sources */,
 				11BA3D6A2B7C2AAC006477A7 /* obstacle_avoidanceTests.swift in Sources */,
-				57F6687D2D69296C00EF75D3 /* SettingsViewTests.swift in Sources */,
-				57F668782D67E0F700EF75D3 /* BoundingBoxViewTests.swift in Sources */,
-				57F668762D66FFD800EF75D3 /* NMSHandlerTests.swift in Sources */,
+				917D06A12D68231A00F596D2 /* audioTetst.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,7 +489,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"obstacle_avoidance/Preview Content\"";
-				DEVELOPMENT_TEAM = PCZ9W49BUR;
+				DEVELOPMENT_TEAM = 5JDQ9ZJKCM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Obstacle Avoidance would like to use your camera";
@@ -463,7 +503,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ObstacleAvoidance.CB;
+				PRODUCT_BUNDLE_IDENTIFIER = ObstacleAvoidance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -479,7 +519,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"obstacle_avoidance/Preview Content\"";
-				DEVELOPMENT_TEAM = PCZ9W49BUR;
+				DEVELOPMENT_TEAM = 5JDQ9ZJKCM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Obstacle Avoidance would like to use your camera";
@@ -493,7 +533,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ObstacleAvoidance.CB;
+				PRODUCT_BUNDLE_IDENTIFIER = ObstacleAvoidance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -504,12 +544,11 @@
 		11BA3D7D2B7C2AAC006477A7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9XL7UZP46H;
+				DEVELOPMENT_TEAM = 5JDQ9ZJKCM;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				MARKETING_VERSION = 1.0;
@@ -525,12 +564,11 @@
 		11BA3D7E2B7C2AAC006477A7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9XL7UZP46H;
+				DEVELOPMENT_TEAM = 5JDQ9ZJKCM;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				MARKETING_VERSION = 1.0;
@@ -546,14 +584,13 @@
 		11BA3D802B7C2AAC006477A7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9XL7UZP46H;
+				DEVELOPMENT_TEAM = 5JDQ9ZJKCM;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidanceUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidanceUITest";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -565,14 +602,13 @@
 		11BA3D812B7C2AAC006477A7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9XL7UZP46H;
+				DEVELOPMENT_TEAM = 5JDQ9ZJKCM;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidanceUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "school.obstacle-avoidanceUITest";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
