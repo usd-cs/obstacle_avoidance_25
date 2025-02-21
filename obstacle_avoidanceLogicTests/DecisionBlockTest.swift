@@ -43,4 +43,16 @@ class MockDecisionBlock: DecisionBlock {
         let result = mockBlock.selectHighestPriorityObj()
         #expect(result == nil)
     }
+    
+    @Test("computeThreatLevel_CarAt11")
+    func testComputeThreatLevel(){
+        let mockBlock = MockDecisionBlock(detectedObject: [])
+        let computeThreat = mockBlock.computeThreatLevel(name: "Car", distance: 3, angle: 11)
+        let expectedThreatLevel = ((ThreatLevelConfig.objectWeights["Car"] ?? 1) * (ThreatLevelConfig.angleWeights[11] ?? 1) + (3*2))
+        print("Car Weight:", ThreatLevelConfig.objectWeights["Car"] ?? 1)
+        print("Angle Weight:", ThreatLevelConfig.angleWeights[11] ?? 1)
+        print("Computed Threat Level:", computeThreat)
+        print("Expected Threat Level:", expectedThreatLevel)
+        #expect(computeThreat == expectedThreatLevel)
+    }
 }

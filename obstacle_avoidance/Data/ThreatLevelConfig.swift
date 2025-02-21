@@ -1,22 +1,21 @@
 //
-//  ThreatValueConfig.xcconfig
+//  ThreatLevelConfig.swift
 //  obstacle_avoidance
 //
 //  Created by Darien Aranda on 2/20/25.
 //
 
-// Configuration settings file format documentation can be found at:
-// https://help.apple.com/xcode/#/dev745c5c974
+import Foundation
 
-struct ThreatValueConfig{
-    static let angleWeights: [Int: Float]=[
+struct ThreatLevelConfig{
+    static let angleWeights: [Int: Int]=[
         12: 5,  //Directly Ahead
         11: 3,  //Slightly Off-Centered
         1: 3,
         10: 1,  //Closing in on Peripheral Vision
         2: 1
     ]
-
+    
     //Setting up semi-arbitrary values just to run through the tree
     //15-12 consist of non-stationary obstacles. 10 represent stationary items of priority
     //7 we may encounter along a path, 6 is items we may find helpful, 0 is items we should disregard.
@@ -46,4 +45,5 @@ struct ThreatValueConfig{
         "Truck": 12,
         "Umbrella": 0,
         "Yellow Light": 6
-]
+    ]
+}

@@ -31,11 +31,16 @@ class DecisionBlock {
         self.audioQueueQueue = []
     }
     
+    func computeThreatLevel(name: String, distance: Int, angle: Int)->Int{
+        let objThreat = ThreatLevelConfig.objectWeights[name] ?? 1
+        let angleWeight = ThreatLevelConfig.angleWeights[angle] ?? 1
+        let distanceFactor = distance*2
+        return objThreat * angleWeight + distanceFactor
+    }
+    
     func selectHighestPriorityObj() -> (String, Int, Int)?{
         return detectedObject.min(by:{ $0.distance < $1.distance})
     }
-    
-    
 
 //    func processInput(objectName: String) {
 //         Process image and bounding boxes here...         //What does this even mean?
@@ -49,9 +54,7 @@ class DecisionBlock {
 
     // Function to return and pop an AudioQueue object from the queue
     func popAudioQueue() -> AudioQueue? {
-//        guard !audioQueueQueue.isEmpty else {
-//            return nil
-//        }
-        return nil
+        guard !audioQueueQueue.isEmpty else {return nil}
+        return audioQueueQueue.removeFirst()
     }
 }
