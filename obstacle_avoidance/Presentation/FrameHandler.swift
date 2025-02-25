@@ -32,6 +32,10 @@ class FrameHandler: NSObject, ObservableObject {
     public var outputVideoSync: AVCaptureDataOutputSynchronizer!
     public let preferredWidthResolution = 1920
     public var sessionConfigured = false
+    public var boxCoordinates: [CGRect] = []
+    public var boxCenter = CGPoint(x: 0, y: 0)
+    public var objectName: String = ""
+//    public var middlePoint: (Int, Int) = ()
     var screenRect: CGRect!
     override init() {
         super.init()
@@ -136,6 +140,14 @@ class FrameHandler: NSObject, ObservableObject {
             self?.boundingBoxes = []
             let filteredResults = NMSHandler.performNMS(on: boundingBoxResults)
             self?.boundingBoxes = filteredResults
+//            print(self?.boundingBoxes)
+//            self?.boxCoordinates = self!.boundingBoxes.map{$0.rect}
+//            self?.middlePoint = (Int(self!.boundingBoxes.map{$0.rect.midX}), Int(self!.boundingBoxes.map{$0.rect.midY}))
+            
+            
+            
+
+            
             // // Find the observation with the highest confidence
             // if let highestObservation = results
             //     .compactMap({ $0 as? VNRecognizedObjectObservation })
@@ -264,20 +276,36 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
                 self.frame = cgImage
             }
         }
+//        print("Boundy box Cordinates: \(self.boxCoordinates)")
+        
+//        let boxCenter = (self.middlePoint)
+//        let boxCenters = CGPoint(x: self.boundingBoxes.map{$0.rect.midX}, y: self.boundingBoxes.map{$0.rect.midY})
+        //get the first boundy box and get its center point. If let allows for nil values
+        if let firstBoundingBox = self.boundingBoxes.first {
+            boxCenter = CGPoint(x: firstBoundingBox.rect.midX, y: firstBoundingBox.rect.midY)
+            self.objectName = firstBoundingBox.name
+        }
+
+//        print("Box center Y: \(boxCenter.1)" )
+//        print("Box center X \(boxCenter.0)")
+        
         let depthMap = syncedDepthData.depthData.depthDataMap
-        let width = CVPixelBufferGetWidth(depthMap)
+        let width = Float(CVPixelBufferGetWidth(depthMap))
         let height = CVPixelBufferGetHeight(depthMap)
         // Lock the pixel address so we are not moving around too much
         CVPixelBufferLockBaseAddress(depthMap, .readOnly)
         // Get the centerpoint distance and turn it into a Float16.
-        let centerPoint = unsafeBitCast(
+        let baseAddress = unsafeBitCast(
             CVPixelBufferGetBaseAddress(depthMap),
             to: UnsafeMutablePointer<Float16>.self
         )
-        let centerX = width / 2
-        let centerY = height / 2
+        
+        let centerX = Float(CGFloat(width) * boxCenter.x / screenRect.width)
+        let centerY = Float(CGFloat(height) * boxCenter.y / screenRect.height)
+//        let centerX = width / 2
+//        let centerY = height / 2
         // Gets what is in the center of the screen.
-        let depthVal = centerPoint[centerY * width + centerX]
+        let depthVal = baseAddress[Int(centerY * width + centerX)]
         CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
 
         // This inverts the depth value as the distance is inversed naturally
@@ -285,7 +313,8 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
 
         DispatchQueue.main.async {
             // print("Measured distance: \(depthVal) meters")
-             print("Corrected distance: \(correctedDepth) meters")
+            print("Object detected: \(self.objectName)")
+            print("Corrected distance: \(correctedDepth) meters")
         }
     }
 }
