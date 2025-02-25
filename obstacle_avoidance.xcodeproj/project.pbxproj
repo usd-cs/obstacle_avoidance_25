@@ -151,6 +151,9 @@
 			isa = PBXGroup;
 			children = (
 				11BA3D692B7C2AAC006477A7 /* obstacle_avoidanceTests.swift */,
+				57F668752D66FFCD00EF75D3 /* NMSHandlerTests.swift */,
+				57F668772D67E0E400EF75D3 /* BoundingBoxViewTests.swift */,
+				57F6687C2D69296700EF75D3 /* SettingsViewTests.swift */,
 			);
 			path = obstacle_avoidanceTests;
 			sourceTree = "<group>";
@@ -275,6 +278,9 @@
 				Base,
 			);
 			mainGroup = 11BA3D4C2B7C2AA9006477A7;
+			packageReferences = (
+				57F668792D6922DB00EF75D3 /* XCRemoteSwiftPackageReference "ViewInspector" */,
+			);
 			productRefGroup = 11BA3D562B7C2AA9006477A7 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -651,6 +657,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		57F668792D6922DB00EF75D3 /* XCRemoteSwiftPackageReference "ViewInspector" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nalexn/ViewInspector";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		57F6687A2D6922DB00EF75D3 /* ViewInspector */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 57F668792D6922DB00EF75D3 /* XCRemoteSwiftPackageReference "ViewInspector" */;
+			productName = ViewInspector;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 11BA3D4D2B7C2AA9006477A7 /* Project object */;
 }
