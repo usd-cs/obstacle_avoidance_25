@@ -64,22 +64,38 @@ class YOLOPipeline:
         if not self.model:
             logging.error("Model not loaded. Please load the model before testing")
             return
-
-        logging.info("Running tests on the model")
+        
+        logging.info("running tests on the model")
         
         try:
+            testCounter: int = 0
             for image in self.test_image:
+                logging.info(f"test {testCounter} begins")
                 result = self.model.predict(source=image)
-                logging.info(f"Model test completed. result: {result}")
+                logging.info(f"test {testCounter} completed with result: {result}")
+                testCounter +=1
         except Exception as e:
-            logging.error(f"Testing failed: {e}")
+            logging.error(f"test {testCounter} failed, {e}")
             raise
+
+        logging.info("all tests completed successfully!")
+        
+        # try:
+        #     for image in self.test_image:
+        #         result = self.model.predict(source=image)
+        #         logging.info(f"Model test completed. result: {result}")
+        # except Exception as e:
+        #     logging.error(f"Testing failed: {e}")
+        #     raise
     
     
     def build_export_command(self) -> list:
         pass
     
     def convert_to_coreml(self) -> None:
+        
+        logging.info("Converting model to coreml format...")
+        
         pass
     
     def compress_model(self) -> None:
