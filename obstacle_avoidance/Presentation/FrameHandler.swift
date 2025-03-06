@@ -282,9 +282,9 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         var count = 0
         var depthSamples = [Float16]()
         //For each X and Y value find the depth and add it to a list to find the median value
-        for y in Int(bottomY)...Int(topY) {
-            for x in Int(leftX)...Int(rightX){
-                depthSamples.append(baseAddress[y * Int(width) + x])
+        for yVal in Int(bottomY)...Int(topY) {
+            for xVal in Int(leftX)...Int(rightX){
+                depthSamples.append(baseAddress[yVal * Int(width) + xVal])
 //                totalDepth += baseAddress[y * Int(width) + x]
                 count += 1
             }
