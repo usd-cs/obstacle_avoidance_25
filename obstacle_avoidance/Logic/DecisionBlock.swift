@@ -7,7 +7,7 @@ Data in:
     Distance
     Direction
 
-Returns: An optional AudioQueue object (will be empty if no need to announce)
+Returns: ProcessedObject which is the detectedObject with a computed threat levelt o be passed to AudioQueue
 
 Testing something
 
@@ -17,7 +17,6 @@ Last modfiied: 2/21/2025
  */
 
 import SwiftUI
-import AVFoundation
 import Foundation
 
 //Create a struct holding parameters that pass through logic
@@ -27,61 +26,40 @@ struct  DetectedObject {
     let angle: Int
 }
 
-struct  PrioritizedObject {
+struct  ProcessedObject {
     let objID: Int
     let distance: Int
     let angle: Int
-    let urgencyLevel: Int
+    let threatLevel: Int
 }
 
 class DecisionBlock {
-    //What would this be reffered to as?
-    var audio: AudioQueue?
-    var urgencyLevel: Int = 0
-    private var audioQueueQueue: [AudioQueue] = []
-    var detectedObject: [DetectedObject]
+    var detectedObject: DetectedObject
+    var processed: ProcessedObject!
 
-    
     //Initializer
-    init(detectedObject: [DetectedObject]){
+    init(detectedObject: DetectedObject){
         self.detectedObject = detectedObject
-        self.audioQueueQueue = []
     }
-    
+
+    // Does the mathmatics to create a threat heuristic for the objects
     func computeThreatLevel(for object: DetectedObject) -> Int {
         let objThreat = ThreatLevelConfig.objectWeights[object.objID] ?? 1
         let angleWeight = ThreatLevelConfig.angleWeights[object.angle] ?? 1
         let distanceFactor = object.distance * 2
         return objThreat * angleWeight + distanceFactor
     }
-    
-    func prioritizeObjectIntoQueue() {
-        let prioritizedObject = detectedObject.map { obj in
-            PrioritizedObject(
-                objID: obj.objID,
-                distance: obj.distance,
-                angle: obj.angle,
-                urgencyLevel: computeThreatLevel(for: obj)
-            )
-        }
-        
-        let sortedObjects = prioritizedObject.sorted { (obj1, obj2) in obj1.urgencyLevel > obj2.urgencyLevel }
-        
-        audioQueueQueue = sortedObjects.compactMap{ obj in
-            //"Unkown Object" works to infer different types, and avoids crashing if objID is missing
-            let objectName = ThreatLevelConfig.objectName[obj.objID] ?? "Unkown Object"
-            return try? AudioQueue(
-                threatLevel: obj.urgencyLevel,
-                objectName: objectName,
-                angle: obj.angle,
-                distance: obj.distance
-            )
-        }
-    }
 
-    // Function to return and pop an AudioQueue object from the queue
-    func popAudioQueue() -> AudioQueue? {
-        guard !audioQueueQueue.isEmpty else {return nil}
-        return audioQueueQueue.removeFirst()
+    // Given the provided information about the object, computes the threat level to create a processedObject
+    func processDetectedObjects() {
+        processed = ProcessedObject(
+            objID: detectedObject.objID,
+            distance: detectedObject.distance,
+            angle: detectedObject.angle,
+            threatLevel: computeThreatLevel(for: detectedObject)
+            )
+
+        // Passes each instance of a detected object into the Queue
+        AudioQueue.addToheap(processed)
     }
 }
