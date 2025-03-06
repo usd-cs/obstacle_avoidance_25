@@ -9,6 +9,7 @@
 
 import SwiftUI
 import AVFoundation
+import Foundation
 import CoreImage
 import Vision
 
@@ -35,6 +36,11 @@ class FrameHandler: NSObject, ObservableObject {
     public var boxCoordinates: [CGRect] = []
     public var boxCenter = CGPoint(x: 0, y: 0)
     public var objectName: String = ""
+    public var detectionTimestamps: [TimeInterval] = []
+    public var objectCoordinates: CGRect = CGRect(x: 0, y: 0, width: 0, height: 0)
+    public var confidence: Float = 0.0
+    public var angle: String = ""
+
 //    public var middlePoint: (Int, Int) = ()
     var screenRect: CGRect!
     override init() {
@@ -140,45 +146,6 @@ class FrameHandler: NSObject, ObservableObject {
             self?.boundingBoxes = []
             let filteredResults = NMSHandler.performNMS(on: boundingBoxResults)
             self?.boundingBoxes = filteredResults
-//            print(self?.boundingBoxes)
-//            self?.boxCoordinates = self!.boundingBoxes.map{$0.rect}
-//            self?.middlePoint = (Int(self!.boundingBoxes.map{$0.rect.midX}), Int(self!.boundingBoxes.map{$0.rect.midY}))
-            
-            
-            
-
-            
-            // // Find the observation with the highest confidence
-            // if let highestObservation = results
-            //     .compactMap({ $0 as? VNRecognizedObjectObservation })
-            //     .max(by: { $0.confidence < $1.confidence }) {
-            //
-            //     // Extract the label with the highest confidence
-            //     let highestLabel = highestObservation.labels.first?.identifier ?? "Unknown"
-            //     print("Highest Confidence Label: \(highestLabel)")
-            //     self?.objectName = highestLabel
-            //
-            //     // Transform bounding box
-            //     let objectBounds = VNImageRectForNormalizedRect(highestObservation.boundingBox,
-            //         Int(screenRect.size.width), Int(screenRect.size.height))
-            //     let transformedBounds = CGRect(
-            //         x: objectBounds.minX,
-            //         y: screenRect.size.height - objectBounds.maxY,
-            //         width: objectBounds.maxX - objectBounds.minX,
-            //         height: objectBounds.maxY - objectBounds.minY
-            //     )
-            //
-            //     self?.boundingBoxes = []
-            //     let transformedBox = BoundingBox(rect: transformedBounds)
-            //     self?.boundingBoxes.append(transformedBox)
-            //
-            //     let boxLayer = self?.drawBoundingBox(transformedBounds)
-            //
-            //     // Safely unwrap detectionLayer before accessing
-            //     if let detectionLayer = self?.detectionLayer {
-            //         detectionLayer.addSublayer(boxLayer ?? CALayer())
-            //     }
-            // }
         }
     }
     // Helper function to calculate direction from percentage // RDA
@@ -276,48 +243,108 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
                 self.frame = cgImage
             }
         }
-//        print("Boundy box Cordinates: \(self.boxCoordinates)")
-        
-//        let boxCenter = (self.middlePoint)
-//        let boxCenters = CGPoint(x: self.boundingBoxes.map{$0.rect.midX}, y: self.boundingBoxes.map{$0.rect.midY})
-        //get the first boundy box and get its center point. If let allows for nil values
-        if let firstBoundingBox = self.boundingBoxes.first {
-            boxCenter = CGPoint(x: firstBoundingBox.rect.midX, y: firstBoundingBox.rect.midY)
-            self.objectName = firstBoundingBox.name
-        }
-
-//        print("Box center Y: \(boxCenter.1)" )
-//        print("Box center X \(boxCenter.0)")
+        //creates array that will hold the recent detections to help us parse out outlers.
+        var recentDetections: [DetectionOutput] = []
         
         let depthMap = syncedDepthData.depthData.depthDataMap
+        CVPixelBufferLockBaseAddress(depthMap, .readOnly)
         let width = Float(CVPixelBufferGetWidth(depthMap))
         let height = CVPixelBufferGetHeight(depthMap)
         // Lock the pixel address so we are not moving around too much
-        CVPixelBufferLockBaseAddress(depthMap, .readOnly)
-        // Get the centerpoint distance and turn it into a Float16.
+        guard let largestBox = self.boundingBoxes.max(by: {
+            ($0.rect.width * $0.rect.height) < ($1.rect.width * $1.rect.height)
+        }) else {
+            // No bounding box detected; skip processing.
+            CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
+            return
+        }
+        boxCenter = CGPoint(x: largestBox.rect.midX, y: largestBox.rect.midY)
+        self.objectName = largestBox.name
+        self.objectCoordinates = largestBox.rect
+        self.confidence = largestBox.score
+        self.angle = largestBox.direction
+        
+        // Get the baseadress of pixel and turn it into a Float16 so it is readable.
         let baseAddress = unsafeBitCast(
             CVPixelBufferGetBaseAddress(depthMap),
             to: UnsafeMutablePointer<Float16>.self
         )
-        
-        let centerX = Float(CGFloat(width) * boxCenter.x / screenRect.width)
-        let centerY = Float(CGFloat(height) * boxCenter.y / screenRect.height)
-//        let centerX = width / 2
-//        let centerY = height / 2
-        // Gets what is in the center of the screen.
-        let depthVal = baseAddress[Int(centerY * width + centerX)]
-        CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
-
+    
+        let centerX = Float(CGFloat(width) * (boxCenter.x / screenRect.width))
+        let centerY = Float(CGFloat(height) * (boxCenter.y / screenRect.height))
+        let windowSize = 5
+        //Max and min ensure that when the bounty box is far left or far right of screen we do not get nevative value or values taht exceed the width
+        let leftX = max(centerX - Float(windowSize), 0)
+        let rightX = min(centerX + Float(windowSize), width - 1)
+        let bottomY = max(centerY - Float(windowSize), 0)
+        let topY = min(centerY + Float(windowSize), width - 1)
+//        var totalDepth: Float16 = 0
+        var count = 0
+        var depthSamples = [Float16]()
+        //For each X and Y value find the depth and add it to a list to find the median value
+        for y in Int(bottomY)...Int(topY) {
+            for x in Int(leftX)...Int(rightX){
+                depthSamples.append(baseAddress[y * Int(width) + x])
+//                totalDepth += baseAddress[y * Int(width) + x]
+                count += 1
+            }
+        }
+//        let averageDepth = count > 0 ? totalDepth / Float16(count) : 0
+        let medianDepth = self.findMedian(distances: depthSamples)
         // This inverts the depth value as the distance is inversed naturally
-        let correctedDepth: Float16 = depthVal > 0 ? 1.0 / depthVal : 0
-
+        let correctedDepth: Float16 = medianDepth > 0 ? 1.0 / medianDepth : 0
+        CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
+           
         DispatchQueue.main.async {
             // print("Measured distance: \(depthVal) meters")
+//            print("Coordinates: \(self.objectCoordinates)")
+//            print("Detections per second: \(self.detectionTimestamps.count)")
+            let newDetection = DetectionOutput(objcetName: self.objectName, distance: correctedDepth, angle: self.angle)
+            if recentDetections.count > 5 {
+                recentDetections.removeFirst()
+            }
+            recentDetections.append(newDetection)
+            var frequency: [String: Int] = [ :]
+            var simplifiedDetection: [Float16] = []
+            //Finds the string that appears the most
+            for detection in recentDetections {
+                frequency[detection.objcetName, default: 0] += 1
+            }
+            let sortedFrequency = frequency.sorted(by: {$0.value < $1.value})
+            let commonLabel = sortedFrequency[0].key
+            for detection in recentDetections {
+                if detection.objcetName == commonLabel {
+                    simplifiedDetection.append(detection.distance)
+                    //gets the last, and most accuract angle of the common object
+                    self.angle = detection.angle
+                }
+            }
+            self.objectDistance = self.findMedian(distances: simplifiedDetection)
+            self.objectName = commonLabel
             print("Object detected: \(self.objectName)")
-            print("Corrected distance: \(correctedDepth) meters")
+//            print("Box centerX: \(self.boxCenter.x) Box CenterY: \(self.boxCenter.y)")
+//            print("Confidence score: \(self.confidence)")
+            print("Corrected distance: \(self.objectDistance) meters")
+            print("angle: \(self.angle) o'clock")
+
+        }
+    }
+    func findMedian(distances: [Float16]) -> Float16
+    {
+        let count = distances.count
+        guard count > 0 else { return 0 }
+        if count % 2 == 1 {
+            // Odd number of elements: return the middle one.
+            return distances[count / 2]
+        } else {
+            // Even number of elements: average the two middle ones.
+            let lower = distances[count / 2 - 1]
+            let upper = distances[count / 2]
+            return (lower + upper) / 2
         }
     }
 }
+
 
 extension FrameHandler: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput,
@@ -388,4 +415,10 @@ struct BoundingBoxLayer: UIViewRepresentable {
         // Add the layer to the view's layer
         uiView.layer.addSublayer(layer)
     }
+}
+
+struct DetectionOutput{
+    let objcetName: String
+    let distance: Float16
+    let angle: String
 }
