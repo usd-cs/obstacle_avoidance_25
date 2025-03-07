@@ -60,6 +60,6 @@ class DecisionBlock {
             )
 
         // Passes each instance of a detected object into the Queue
-        AudioQueue.addToheap(processed)
+        AudioQueue.addToHeap(processed)
     }
 }

@@ -7,87 +7,37 @@
 import Testing
 @testable import obstacle_avoidance
 
-class MockDecisionBlock: DecisionBlock {
-
-    override init(detectedObject: [DetectedObject] = []){
-        super.init(detectedObject: detectedObject)
+struct DecisionBlockTest {
+    // Mocks `DecisionBlock` to test it's intended behavior
+    class MockDecisionBlock: DecisionBlock {
+        override init(detectedObject: DetectedObject) {
+            super.init(detectedObject: detectedObject)
+        }
     }
 
-    @Test
+    // Test Case: Test that `DecisionBlock` initializes correctly
+    @Test("testDecisionBlockInit")
     func testDecisionBlockInit() {
-        // Initializes an empty object list
-        let block1 = MockDecisionBlock(detectedObject: [])
-        #expect(block1.detectedObject.isEmpty)
-        #expect(block1.popAudioQueue()==nil)
-        
-        // Initialized a populated object list and verifies we can access it
-        let detectedObjects = [
-            DetectedObject(objID: 22, distance: 5, angle: 11),
-            DetectedObject(objID: 5, distance: 3, angle: 12)
-            ]
-        let block2 = MockDecisionBlock(detectedObject: detectedObjects)
-        #expect(block2.detectedObject.count==2)
-        #expect(block2.detectedObject[0].objID == 22)
+        // Creates an instance of detectedObject
+        let detectedObject = DetectedObject(objID: 10, distance: 6, angle: 9)
+        let block = DecisionBlock(detectedObject: detectedObject)
+
+        // Verify the object is stored correctly
+        #expect(block.detectedObject.objID == 10, "Object ID does not match")
+        #expect(block.detectedObject.distance == 6, "Distance does not match")
+        #expect(block.detectedObject.angle == 9, "Angle does not match")
     }
-    
-    // Struggled through all of these tests just to remove the function after implementing it in a different way );
-//    @Test("selectHighestPriorityObject_CompleteList")
-//    func selectHighestPriorityObjComplete(){
-//        let mockBlock = MockDecisionBlock(detectedObject: [
-//            (22, 5, 11),
-//            (5, 3, 12),
-//            (13, 2, 12) //Target value
-//        ])
-//        let result = mockBlock.selectHighestPriorityObj()
-//        #expect(result?.0 == 13)
-//    }
-//    
-//    @Test("selectHighestPriorityObject_EmptyList")
-//    func selectHighestPriorityObjEmpty(){
-//        let mockBlock = MockDecisionBlock(detectedObject: [])
-//        let result = mockBlock.selectHighestPriorityObj()
-//        #expect(result == nil)
-//    }
-    
-    @Test("computeThreatLevel_CarAt11")
+
+    // Test Case: Compute threat level for a single object
+    @Test("testComputeThreatLevel")
     func testComputeThreatLevel() {
-        // Create a mock instance of the detecedObject
-        let mockBlock = MockDecisionBlock(detectedObject: [])
-        // Runs the mocked object through computeThreatLevel & then compute the expected value
         let detectedObject = DetectedObject(objID: 5, distance: 3, angle: 11)
-        let computeThreat = mockBlock.computeThreatLevel(for: detectedObject)
-        let expectedThreatLevel = ((ThreatLevelConfig.objectWeights[5] ?? 1) * (ThreatLevelConfig.angleWeights[11] ?? 1) + (3*2))
+        let block = DecisionBlock(detectedObject: detectedObject)
 
-        // Print statements to ensure we're retrieving the proper weights
-        print("Car Weight:", ThreatLevelConfig.objectWeights[5] ?? 1)
-        print("Angle Weight:", ThreatLevelConfig.angleWeights[11] ?? 1)
-        print("Computed Threat Level:", computeThreat)
-        print("Expected Threat Level:", expectedThreatLevel)
-        
-        // Assert statment to ensure our computed value is the same as our expectations
-        #expect(computeThreat == expectedThreatLevel)
-    }
-    
-    @Test("prioritizedObjectIntoQueue_CorrectOrder")
-    func testPrioritizedObjectIntoQueue() {
-        // Create mocked object list
-        let mockBlock = MockDecisionBlock(detectedObject: [
-            DetectedObject(objID: 22, distance: 5, angle: 11),
-            DetectedObject(objID: 5, distance: 3, angle: 12),
-            DetectedObject(objID: 13, distance: 2, angle: 12)  //Desired Object
-        ])        // Place the objects into a queue based on threat level
-        mockBlock.prioritizeObjectIntoQueue()
+        let computedThreat = block.computeThreatLevel(for: detectedObject)
 
-        // Assign audioQueue for each instance of items popped off the stack
-        let firstAudioQueue = mockBlock.popAudioQueue()
-        let secondAudioQueue = mockBlock.popAudioQueue()
-        let thirdAudioQueue = mockBlock.popAudioQueue()
+        let expectedThreatLevel = (ThreatLevelConfig.objectWeights[5] ?? 1) * (ThreatLevelConfig.angleWeights[11] ?? 1) + (3 * 2)
 
-        // Assert statment to ensure we're traversing the Queue and return nil when empty
-        //Uses ThreatLevelConfig.objectName[#]! to froce unwrap since all objects should be in config for test
-        #expect(firstAudioQueue?.objectName == ThreatLevelConfig.objectName[13]!)
-        #expect(secondAudioQueue?.objectName == ThreatLevelConfig.objectName[5]!)
-        #expect(thirdAudioQueue?.objectName == ThreatLevelConfig.objectName[22]!)
-        #expect(mockBlock.popAudioQueue() == nil)
+        #expect(computedThreat == expectedThreatLevel, "Threat level computation is incorrect")
     }
 }

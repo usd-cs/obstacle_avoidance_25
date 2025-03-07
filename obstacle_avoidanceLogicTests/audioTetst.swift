@@ -1,87 +1,69 @@
 //
-//  obstacle_avoidanceLogicTests.swift
-//  obstacle_avoidanceLogicTests
+//  audioQueueTests.swift
+//  obstacle_avoidanceTests
 //
 //  Created by Jacob Fernandez on 12/12/24.
+//  Altered by Darien Aranda on 03/05/2025
 //
 
 import Foundation
-import Testing // Replace with your actual testing framework import
+import HeapModule
+import Testing
 @testable import obstacle_avoidance
-//comment so that it will let me push this file
-struct AudioQueueTesting {
-    var threatLevel: Int
-    var objectName: String
-    var angle: Int
-    var distance: Int
 
-    init() {
-        threatLevel = 50
-        objectName = "Obstacle"
-        angle = 12
-        distance = 10
+struct AudioQueueTests {
+
+    @Test
+    func testAudioQueueOrdering() {
+        // Reset the heap before testing
+        obstacle_avoidance.AudioQueue.queue = Heap<AudioQueueVertex>()
+
+        // Create an unordered list of mock objects
+        let mockObjects = [
+            ProcessedObject(objID: 1, distance: 5, angle: 12, threatLevel: 90), // High threat
+            ProcessedObject(objID: 2, distance: 10, angle: 1, threatLevel: 30), // Low threat
+            ProcessedObject(objID: 4, distance: 3, angle: 2, threatLevel: 95),  // Highest threat
+            ProcessedObject(objID: 3, distance: 7, angle: 9, threatLevel: 70) // Medium threat
+        ]
+
+        // Adds objects to the heap
+        for object in mockObjects {
+            AudioQueue.addToHeap(object)
+        }
+
+        // Expected ordering: descending threat level
+        let expectedOrder = [4, 1, 3, 2]
+        var actualOrder: [Int] = []
+
+        // Pop elements and verify they are in the correct order
+        while let highestThreatObject = AudioQueue.popHighestPriorityObject() {
+            actualOrder.append(highestThreatObject.objID)
+        }
+
+        #expect(actualOrder == expectedOrder, "AudioQueue did not return objects in expected priority order.")
     }
 
-    @Test func testAudioQueueInitializationWithValidData() {
-        do {
-            let audioQueue = try AudioQueue(threatLevel: threatLevel, objectName: objectName, angle: angle, distance: distance)
-            #expect(audioQueue.threatLevel == threatLevel)
-            #expect(audioQueue.objectName == objectName)
-            #expect(audioQueue.angle == angle)
-            #expect(audioQueue.distance == distance)
-        } catch {
-            //This will always be false, but must catach try
-            #expect(Bool(false), "AudioQueue initialization threw an unexpected error")
+    @Test
+    func testPopHighestThreatLevel() {
+        // Reset the heap before testing
+        obstacle_avoidance.AudioQueue.queue = Heap<AudioQueueVertex>()
+
+        // Insert mock objects
+        let mockObjects = [
+            ProcessedObject(objID: 6, distance: 6, angle: 3, threatLevel: 60),   // Lower threat
+            ProcessedObject(objID: 7, distance: 4, angle: 9, threatLevel: 80)  ,  // Medium threat
+            ProcessedObject(objID: 5, distance: 2, angle: 12, threatLevel: 100) // Max threat
+        ]
+
+        for object in mockObjects {
+            AudioQueue.addToHeap(object)
         }
+
+        // Pop the highest-priority object and assert it's the one with highest threat level
+        let highestThreatObject = AudioQueue.popHighestPriorityObject()
+
+        print(highestThreatObject?.objID)
+        #expect(highestThreatObject?.objID == 5, "Failed: Highest threat object was not popped first.")
+        #expect(highestThreatObject?.threatLevel == 100, "Failed: Threat level does not match expected value.")
     }
-    @Test func testAudioQueueInitializationThrowsInvalidThreatLevelError() {
-        //tests that we get audioqueue of invalid threat level
-            let invalidThreatLevel = 150
-            do {
-                let threatlevel = try AudioQueue(threatLevel: invalidThreatLevel, objectName: objectName, angle: angle, distance: distance)
-                #expect(Bool(false), "Expected invalidThreatLevel error but none was thrown")
-            } catch AudioQueueError.invalidThreatLevel {
-                #expect(true)
-            } catch {
-                #expect(Bool(false), "Unexpected error type: \(error)")
-            }
-        }
-
-    @Test func testAudioQueueInitializationThrowsInvalidAngleError() {
-            //tets that we get an audioqueue error of invalid angle
-            let invalidAngle = 5
-            do {
-                let angle = try AudioQueue(threatLevel: threatLevel, objectName: objectName, angle: invalidAngle, distance: distance)
-                #expect(Bool(false), "Expected invalidAngle error but none was thrown")
-            } catch AudioQueueError.invalidAngle {
-                #expect(true)
-            } catch {
-                #expect(Bool(false), "Unexpected error type: \(error)")
-            }
-        }
-    @Test func testAudioQueueInitializationWithBoundaryThreatLevel() {
-        //Test verifies that the AudioQueue initializer works correctly for the boundary values of the threat level (0 and 100).
-
-            do {
-                let minThreatLevelQueue = try AudioQueue(threatLevel: 0, objectName: objectName, angle: angle, distance: distance)
-                #expect(minThreatLevelQueue.threatLevel == 0)
-
-                let maxThreatLevelQueue = try AudioQueue(threatLevel: 100, objectName: objectName, angle: angle, distance: distance)
-                #expect(maxThreatLevelQueue.threatLevel == 100)
-            } catch {
-                #expect(Bool(false), "AudioQueue initialization threw an unexpected error")
-            }
-        }
-
-    @Test func testAudioQueueInitializationWithBoundaryAngle() {
-        //Test: Confirms that the AudioQueue initializer works for all valid angle values (9-12, 1-3).
-            for validAngle in [9, 10, 11, 12, 1, 2, 3] {
-                do {
-                    let audioQueue = try AudioQueue(threatLevel: threatLevel, objectName: objectName, angle: validAngle, distance: distance)
-                    #expect(audioQueue.angle == validAngle)
-                } catch {
-                    #expect(Bool(false), "AudioQueue initialization threw an unexpected error for angle: \(validAngle)")
-                }
-            }
-        }
 }
