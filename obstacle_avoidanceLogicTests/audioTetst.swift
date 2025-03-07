@@ -62,7 +62,6 @@ struct AudioQueueTests {
         // Pop the highest-priority object and assert it's the one with highest threat level
         let highestThreatObject = AudioQueue.popHighestPriorityObject()
 
-        print(highestThreatObject?.objID)
         #expect(highestThreatObject?.objID == 5, "Failed: Highest threat object was not popped first.")
         #expect(highestThreatObject?.threatLevel == 100, "Failed: Threat level does not match expected value.")
     }

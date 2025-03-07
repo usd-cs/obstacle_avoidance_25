@@ -7,33 +7,33 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "596A0AD4-1544-410B-BF14-23C0977567E6"
+            uuid = "05149E9B-F349-4677-8B66-C2EF9E233CA2"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "obstacle_avoidanceLogicTests/DecisionBlockTest.swift"
+            filePath = "obstacle_avoidance/Data/ThreatLevelConfig.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "11"
-            endingLineNumber = "11"
-            landmarkName = "MockDecisionBlock"
-            landmarkType = "3">
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "objectWeights"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "60422A8E-B782-40E9-B077-20DF07FB5A02"
+            uuid = "F12E24DB-5EFE-40CA-8DB1-99C33E316857"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "obstacle_avoidanceLogicTests/DecisionBlockTest.swift"
+            filePath = "obstacle_avoidance/Logic/AudioQueue.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "selectHighestPriorityObjComplete()"
-            landmarkType = "7">
+            startingLineNumber = "12"
+            endingLineNumber = "12"
+            landmarkName = "AudioQueueVertex"
+            landmarkType = "14">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
