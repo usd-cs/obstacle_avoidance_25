@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 GREEN = "\033[92m"
 RESET = "\033[0m"
 YELLOW = "\033[93m"
+
 """
     This file is where the testing script will reside, the pipeline as well as the logging functions will be in this unique file
     
@@ -24,7 +25,28 @@ YELLOW = "\033[93m"
 #logging config
 logging.basicConfig(level=logging.INFO, format = '[%(levelname)s] %(message)s')
 
-
+"""
+    The following is a full pipeline that loads a given moadel and tests its inference capabilities
+    against a dataset that it hasn't yet seen. 
+    The pipeline breaks down the testing results and writes them into a csv file to be easily accessible 
+    
+    
+    @param
+    model_path --> the path where the model is stored
+    export_path --> the path to an export command
+    test_image --> the list of images that the model will be tested against
+    labels --> the list of labels corresponding to the testing images (will be used to compared results)
+    test_comparison --> a list containing the result of the prediction (True/False) whether or not the prediction was accurate
+    export_format --> the format to which the model will be exported to
+    imsz --> the size of the images in pixels (must be the same size as the image size the model was trained in)
+    predicted_class --> model inference to a given image
+    actual_class --> the actual class id of the image the model was tested against
+    half --> enables half-precision for inference (reduces model size)
+    int8 --> compression size of the image (looses quality but reduces model size)
+    nms --> flag to determine whether nms active in the model
+    batch --> number of images the model can recognize at a time
+    logToTerminal = --> bool flag to determine whether the logging will be made to the terminal or not
+"""
 class YOLOPipeline:
     def __init__(
             self,
@@ -136,7 +158,10 @@ class YOLOPipeline:
         logging.info(f"{GREEN}Results saved to {csv_filename} successfully{RESET}✅")
         
         
-    
+    """
+        compares the infered results to the actual image classification.
+        takes the inference produced by the model given an image and compares it to the label associated to said image
+    """
     def compareResults(self, image: str, result) -> None:
         
         for label in self.labels:
@@ -173,7 +198,9 @@ class YOLOPipeline:
                     raise
                 
                 
-    
+    """
+        loads the images from the image array into the model one by one and performs an inference test for every image
+    """
     def runTests(self) -> None:
         """
         runs an inference test on a test image to verify that the model is working as expected
@@ -212,7 +239,9 @@ class YOLOPipeline:
     
     
         
-    
+    """
+        exports the model into a coreml suitable format
+    """
     def convertToCoreml(self) -> None:
         
         logging.info("Converting model to coreml format...")
@@ -233,6 +262,10 @@ class YOLOPipeline:
         
         logging.info("CoreMl conversion succeeded!")
     
+    
+    """
+        compresses the model if needed. There is no need for our model to be compressed at the time 
+    """
     def compressModel(self) -> None:
         """
             We might not need this since our model is quite small
@@ -240,17 +273,22 @@ class YOLOPipeline:
         """
         pass
     
+    """
+        runs the entire pipeline to perform the model testing entirely 
+    """
     def fullPipeline(self) -> None:
         """
             Runs the entire pipeline: loading, testing, converting and compressing the model
         """
         self.loadModel()
         self.runTests() #tests model before conversion
-        #self.convertToCoreml()
+        self.convertToCoreml()
         #self.runTests() #test the model after conversion correct performance
         self.logToFile()
     
-    
+        """
+            populates the image and label array to perform testing
+        """
 def populateArr(directoryPath: str) -> list[str]:
     
     testingList : list[str] = []
@@ -276,7 +314,7 @@ if __name__ == "__main__":
         populateArr("testingSet/general/labels"),
         "coreml",
         640,
-        logToTerminal=False) 
+        logToTerminal=True) 
     pipeline.fullPipeline()
         
         
