@@ -526,7 +526,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"obstacle_avoidance/Preview Content\"";
-				DEVELOPMENT_TEAM = 5JDQ9ZJKCM;
+				DEVELOPMENT_TEAM = PCZ9W49BUR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Obstacle Avoidance would like to use your camera";
@@ -557,7 +557,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"obstacle_avoidance/Preview Content\"";
-				DEVELOPMENT_TEAM = 5JDQ9ZJKCM;
+				DEVELOPMENT_TEAM = PCZ9W49BUR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Obstacle Avoidance would like to use your camera";
