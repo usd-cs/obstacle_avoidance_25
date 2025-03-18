@@ -9,9 +9,9 @@ import Foundation
 
 struct EmergencyContact: Codable{
     let name: String
-    let phone_number: String
+    let phoneNumber: String
     
-    static let empty = EmergencyContact(name: "", phone_number: "")
+    static let empty = EmergencyContact(name: "", phoneNumber: "")
 }
 
 struct User: Codable{
@@ -20,5 +20,5 @@ struct User: Codable{
     let username: String
     let phoneNumber: String
     let emergencyContact: EmergencyContact
-    let created_at: String?
+    let createdAt: String?
 }

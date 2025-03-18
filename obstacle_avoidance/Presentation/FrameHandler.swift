@@ -1,18 +1,11 @@
 // Obstacle Avoidance App
 // FrameHandler.swift
-//
-//
-//  Swift file that is used to setup the camera/frame capture.
-// This is what will likely be modified for CoreML implementation.
-//
-//
-
+//  Swift file that is used to setup the camera/frame capture. This is what will likely be modified for CoreML implementation.
 import SwiftUI
 import AVFoundation
 import Foundation
 import CoreImage
 import Vision
-
 class FrameHandler: NSObject, ObservableObject {
     enum ConfigurationError: Error {
         case lidarDeviceUnavailable
@@ -40,7 +33,6 @@ class FrameHandler: NSObject, ObservableObject {
     public var objectCoordinates: CGRect = CGRect(x: 0, y: 0, width: 0, height: 0)
     public var confidence: Float = 0.0
     public var angle: String = ""
-
 //    public var middlePoint: (Int, Int) = ()
     var screenRect: CGRect!
     override init() {
@@ -84,8 +76,7 @@ class FrameHandler: NSObject, ObservableObject {
             }
         }
     }
-    private func createBoundingBoxes(from observation: VNRecognizedObjectObservation,
-                                     screenRect: CGRect) -> [BoundingBox] {
+    private func createBoundingBoxes(from observation: VNRecognizedObjectObservation, screenRect: CGRect) -> [BoundingBox] {
         var boxes: [BoundingBox] = []
         for label in observation.labels {
             let labelIdentifier = label.identifier
@@ -185,8 +176,7 @@ class FrameHandler: NSObject, ObservableObject {
             print("Error: Invalid bounds in drawBoundingBox")
             return boxLayer  // Return an empty layer
         }
-        // Need to finish
-        return boxLayer
+        return boxLayer // Need to finish
     }
     // Function that checks to ensure that the user has agreed to allow the use of the camera.
     // Unavoidable as this is integral to Apple infrastructure
@@ -208,7 +198,6 @@ class FrameHandler: NSObject, ObservableObject {
             self.permissionGranted = granted
         }
     }
-
     // SwiftUI View for displaying camera output
     struct DetectionView: View {
         @ObservedObject var frameHandler: FrameHandler = FrameHandler()
@@ -227,7 +216,6 @@ class FrameHandler: NSObject, ObservableObject {
         }
     }
 }
-
 extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
     func dataOutputSynchronizer(_ synchronizer: AVCaptureDataOutputSynchronizer,
                                 didOutput synchronizedDataCollection: AVCaptureSynchronizedDataCollection) {
@@ -245,7 +233,6 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         }
         //creates array that will hold the recent detections to help us parse out outlers.
         var recentDetections: [DetectionOutput] = []
-        
         let depthMap = syncedDepthData.depthData.depthDataMap
         CVPixelBufferLockBaseAddress(depthMap, .readOnly)
         let width = Float(CVPixelBufferGetWidth(depthMap))
@@ -263,13 +250,11 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         self.objectCoordinates = largestBox.rect
         self.confidence = largestBox.score
         self.angle = largestBox.direction
-        
         // Get the baseadress of pixel and turn it into a Float16 so it is readable.
         let baseAddress = unsafeBitCast(
             CVPixelBufferGetBaseAddress(depthMap),
             to: UnsafeMutablePointer<Float16>.self
         )
-    
         let centerX = Float(CGFloat(width) * (boxCenter.x / screenRect.width))
         let centerY = Float(CGFloat(height) * (boxCenter.y / screenRect.height))
         let windowSize = 5
@@ -294,7 +279,6 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         // This inverts the depth value as the distance is inversed naturally
         let correctedDepth: Float16 = medianDepth > 0 ? 1.0 / medianDepth : 0
         CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
-           
         DispatchQueue.main.async {
             // print("Measured distance: \(depthVal) meters")
 //            print("Coordinates: \(self.objectCoordinates)")
@@ -315,8 +299,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             for detection in recentDetections {
                 if detection.objcetName == commonLabel {
                     simplifiedDetection.append(detection.distance)
-                    //gets the last, and most accuract angle of the common object
-                    self.angle = detection.angle
+                    self.angle = detection.angle //gets the last, and most accuract angle of the common object
                 }
             }
             self.objectDistance = self.findMedian(distances: simplifiedDetection)
@@ -334,8 +317,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         let count = distances.count
         guard count > 0 else { return 0 }
         if count % 2 == 1 {
-            // Odd number of elements: return the middle one.
-            return distances[count / 2]
+            return distances[count / 2] // Odd number of elements: return the middle one.
         } else {
             // Even number of elements: average the two middle ones.
             let lower = distances[count / 2 - 1]
@@ -344,8 +326,6 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         }
     }
 }
-
-
 extension FrameHandler: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput,
                        didOutput sampleBuffer: CMSampleBuffer,
@@ -377,7 +357,6 @@ extension FrameHandler: AVCaptureVideoDataOutputSampleBufferDelegate {
         return cgImage
     }
 }
-
 // Everything below is me trying to figure out the display of bounding boxes on the screen
 struct CameraPreview: UIViewRepresentable {
     var session: AVCaptureSession
@@ -393,7 +372,6 @@ struct CameraPreview: UIViewRepresentable {
 
     func updateUIView(_ uiView: UIViewType, context: Context) {}
 }
-
 struct BoundingBoxLayer: UIViewRepresentable {
     var layer: CALayer?
     func makeUIView(context: Context) -> UIView {
@@ -412,11 +390,9 @@ struct BoundingBoxLayer: UIViewRepresentable {
             width: uiView.bounds.width * scale,
             height: uiView.bounds.height * scale
         )
-        // Add the layer to the view's layer
-        uiView.layer.addSublayer(layer)
+        uiView.layer.addSublayer(layer)  // Add the layer to the view's layer
     }
 }
-
 struct DetectionOutput{
     let objcetName: String
     let distance: Float16
