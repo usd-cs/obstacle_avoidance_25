@@ -14,7 +14,7 @@ class Database{
     let client: SupabaseClient
     
     public init(){
-        self.client = SupabaseClient(supabaseURL: URL(string: "https://fcifaepenormdpkdqypw.supabase.co")!, supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjaWZhZXBlbm9ybWRwa2RxeXB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1MjY5NDksImV4cCI6MjA1NjEwMjk0OX0.zkrh1J8WPY8iMMp01e3xOR5NpyCNXEzk1QFg6bcBmQw")
+        self.client = SupabaseClient(supabaseURL: URL(string: "https://fcifaepenormdpkdqypw.supabase.co")!, supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjaWZhZXBlbm9ybWRwa2RxeXB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1MjY5NDksImV4cCI6MjA1NjEwMjk0OX.zkrh1J8WPY8iMMp01e3xOR5NpyCNXEzk1QFg6bcBmQw")
     }
 }
 
@@ -27,11 +27,11 @@ extension Database{
             let newUser = User(
                             id: nil,
                             username: username,
-                            phone_number: phoneNumber,
-                            emergency_contact: emergencyContact,
+                            phoneNumber: phoneNumber,
+                            emergencyContact: emergencyContact,
                             created_at: nil
                         )
-            
+
             let response = try await client
                            .from("users")
                            .insert([newUser])
@@ -60,7 +60,7 @@ extension Database{
                 print("Error updating user:", error)
             }
         }
-    
+
     func deleteUser(userId: Int) async {
         do {
             let response = try await client
@@ -74,7 +74,6 @@ extension Database{
             print("Error deleting user:", error)
         }
     }
-    
 }
 
 //Extension for modifying emergency contaacts
@@ -93,7 +92,7 @@ extension Database {
         }
     }
     func deleteEmergencyContact(userId: UUID) async {
-        
+
         do {
             let response = try await client
                 .from("users")
@@ -129,7 +128,6 @@ extension Database {
         }
     }
 
-
     func fetchUserById(userId: Int) async -> User? {
         do {
             let response = try await client
@@ -147,9 +145,3 @@ extension Database {
         }
     }
 }
-
-
-
-
-
-

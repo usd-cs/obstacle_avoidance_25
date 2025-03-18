@@ -33,7 +33,7 @@ final class DatabaseTests: XCTestCase {
 
        
             let updatedUser = await Database.shared.fetchUserById(userId: testUserId)
-            XCTAssertEqual(updatedUser?.emergency_contact.name, "Joe", "Emergency contact update failed!")
+            XCTAssertEqual(updatedUser?.emergencyContact.name, "Joe", "Emergency contact update failed!")
             print("Emergency contact updated successfully.")
 
             await Database.shared.deleteUser(userId: testUserId)

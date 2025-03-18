@@ -18,8 +18,7 @@ struct User: Codable{
     
     let id: Int?
     let username: String
-    let phone_number: String
-    let emergency_contact: EmergencyContact
+    let phoneNumber: String
+    let emergencyContact: EmergencyContact
     let created_at: String?
-    
 }
