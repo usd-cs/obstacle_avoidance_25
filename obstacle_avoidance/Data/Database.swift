@@ -14,7 +14,7 @@ class Database{
     let client: SupabaseClient
     
     public init(){
-        self.client = SupabaseClient(supabaseURL: URL(string: "https://fcifaepenormdpkdqypw.supabase.co")!, supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjaWZhZXBlbm9ybWRwa2RxeXB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1MjY5NDksImV4cCI6MjA1NjEwMjk0OX.zkrh1J8WPY8iMMp01e3xOR5NpyCNXEzk1QFg6bcBmQw")
+        self.client = SupabaseClient(supabaseURL: URL(string: "https://fcifaepenormdpkdqypw.supabase.co")!, supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjaWZhZXBlbm9ybWRwa2RxeXB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1MjY5NDksImV4cCI6MjA1NjEwMjk0OX0.zkrh1J8WPY8iMMp01e3xOR5NpyCNXEzk1QFg6bcBmQw")
     }
 }
 
