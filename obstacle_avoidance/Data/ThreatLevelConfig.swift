@@ -16,9 +16,9 @@ struct ThreatLevelConfig{
         2: 1
     ]
     
-    //Setting up semi-arbitrary values just to run through the tree
-    //15-12 consist of non-stationary obstacles. 10 represent stationary items of priority
-    //7 we may encounter along a path, 6 is items we may find helpful, 0 is items we should disregard.
+//Setting up semi-arbitrary values just to run through the tree
+//15-12 consist of non-stationary obstacles. 10 represent stationary items of priority
+//7 we may encounter along a path, 6 is items we may find helpful, 0 is items we should disregard.
     static let objectWeights: [Int: Int]=[
         0: 7,                   //Bench
         1: 15,                  //Bicycle
