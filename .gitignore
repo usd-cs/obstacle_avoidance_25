@@ -150,4 +150,11 @@ iOSInjectionProject/
 /*.gcno
 **/xcshareddata/WorkspaceSettings.xcsettings
 
+# Environment Variables
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
 # End of https://www.toptal.com/developers/gitignore/api/swift,macos,xcode,visualstudiocode
