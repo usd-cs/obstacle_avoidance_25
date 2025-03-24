@@ -8,17 +8,65 @@
 import Supabase
 import Foundation
 
-class Database{
-    static let shared = Database()
-    
-    let client: SupabaseClient
-  
-    // swiftlint:disable line_length
-    public init(){
-        self.client = SupabaseClient(supabaseURL: URL(string: "https://fcifaepenormdpkdqypw.supabase.co")!, supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjaWZhZXBlbm9ybWRwa2RxeXB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1MjY5NDksImV4cCI6MjA1NjEwMjk0OX0.zkrh1J8WPY8iMMp01e3xOR5NpyCNXEzk1QFg6bcBmQw")
+struct EnvLoader {
+    static func loadEnv() -> [String: String] {
+        let fileManager = FileManager.default
+
+        // Try to get path dynamically from Bundle
+        let possiblePaths = [
+            Bundle.main.path(forResource: ".env", ofType: nil),  
+            FileManager.default.currentDirectoryPath + "/.env"
+        ]
+
+        let filePath = possiblePaths.compactMap { $0 }.first
+
+        guard let path = filePath, fileManager.fileExists(atPath: path) else {
+            print("Warning: .env file not found at \(filePath ?? "unknown path")!")
+            return [:]
+        }
+
+        do {
+            let contents = try String(contentsOfFile: path, encoding: .utf8)
+            var envDict = [String: String]()
+
+            for line in contents.split(separator: "\n") {
+                let parts = line.split(separator: "=", maxSplits: 1).map { String($0) }
+                if parts.count == 2 {
+                    envDict[parts[0].trimmingCharacters(in: .whitespaces)] = parts[1].trimmingCharacters(in: .whitespaces)
+                }
+            }
+
+            return envDict
+        } catch {
+            print("Error loading .env file: \(error)")
+            return [:]
+        }
     }
-    // swiftlint:enable line_length
 }
+
+
+
+
+class Database {
+    static let shared: Database = {
+        return Database()
+    }()
+
+    private let client: SupabaseClient
+
+    private init() {
+        let env = EnvLoader.loadEnv()
+
+        guard let supabaseURLString = env["SUPABASE_URL"],
+              let supabaseKey = env["SUPABASE_KEY"],
+              let supabaseURL = URL(string: supabaseURLString) else {
+            fatalError("Missing or invalid Supabase credentials in .env file!")
+        }
+
+        self.client = SupabaseClient(supabaseURL: supabaseURL, supabaseKey: supabaseKey)
+    }
+}
+
 
 
 extension Database{
