@@ -63,7 +63,7 @@ class FrameHandler: NSObject, ObservableObject {
         setupDetector()
     }
     func setupDetector() {
-        guard let modelURL = Bundle.main.url(forResource: "YOLOv3Tiny", withExtension: "mlmodelc") else {
+        guard let modelURL = Bundle.main.url(forResource: "nonchalant", withExtension: "mlmodelc") else {
             print("Error: Model file not found")
             return
         }
@@ -79,8 +79,13 @@ class FrameHandler: NSObject, ObservableObject {
     func detectionDidComplete(request: VNRequest, error: Error?) {
         DispatchQueue.main.async {
             if let results = request.results {
-                /* print("Detection Results:", results) */ // Check detection results
-                self.extractDetections(results)
+                print("Detection Results:", results) // Check detection results
+
+                /**if we switch to the old model we uncomment this line, we will have to latter make this modular
+                    so that the logic can decide what path to take depending on the model of choice.
+                 **/
+                //self.extractDetections(results)
+                self.handleRawModelOutput(from: results)
             }
         }
     }
@@ -113,6 +118,19 @@ class FrameHandler: NSObject, ObservableObject {
             boxes.append(box)
         }
         return boxes
+    }
+    /**handleRawModelOutout takes the raw tensors returned by the YOLOV8 model and puts them in a suitable format
+        for our NMSHandler function.
+     **/
+    func handleRawModelOutput(from results: [VNObservation]){
+        for result in results{
+            if let observation = result as? VNCoreMLFeatureValueObservation,
+               let multiArray = observation.featureValue.multiArrayValue{
+                let decodedBoxes = YOLODecoder.decodeOutput(multiArray: multiArray)
+                let nmsBoxes = NMSHandler.performNMS(on: decodedBoxes)
+                self.boundingBoxes = nmsBoxes
+            }
+        }
     }
     func extractDetections(_ results: [VNObservation]) {
         // Ensure screenRect is initialized
