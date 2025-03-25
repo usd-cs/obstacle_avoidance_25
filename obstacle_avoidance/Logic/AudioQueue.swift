@@ -9,10 +9,10 @@ import Foundation
 import HeapModule
 
 struct AudioQueueVertex: Comparable {
-    let threatLevel: Int  // Threat level of the obstacle between 0-100, with 100 being the greatest threat.
-    let objID: Int // Name of the obstacle
-    let angle: Int // Angle of the obstacle in clock terms. Ex. 12 O'clock would be straight forward.
-    let distance: Int // Distance calculated from the person holding phone to the obstacle (in feet).
+    let threatLevel: Float16  // Threat level of the obstacle between 0-100, with 100 being the greatest threat.
+    let objName: String // Name of the obstacle
+    let angle: String // Angle of the obstacle in clock terms. Ex. 12 O'clock would be straight forward.
+    let distance: Float16 // Distance calculated from the person holding phone to the obstacle (in feet).
 
     // Auto Generate by Swift; Appears to reverse the order of the Queue since it's min-head by default
     static func < (lhs: AudioQueueVertex, rhs: AudioQueueVertex) -> Bool {
@@ -26,7 +26,7 @@ class AudioQueue {
     static func addToHeap(_ processedObject: ProcessedObject){
         let newVertex = AudioQueueVertex(
             threatLevel: processedObject.threatLevel,
-            objID: processedObject.objID,
+            objName: processedObject.objName,
             angle: processedObject.angle,
             distance: processedObject.distance
         );

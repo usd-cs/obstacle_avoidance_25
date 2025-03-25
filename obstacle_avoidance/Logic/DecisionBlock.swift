@@ -21,16 +21,16 @@ import Foundation
 
 //Create a struct holding parameters that pass through logic
 struct  DetectedObject {
-    let objID: Int
-    let distance: Int
-    let angle: Int
+    let objName: String
+    let distance: Float16
+    let angle: String
 }
 
 struct  ProcessedObject {
-    let objID: Int
-    let distance: Int
-    let angle: Int
-    let threatLevel: Int
+    let objName: String
+    let distance: Float16
+    let angle: String
+    let threatLevel: Float16
 }
 
 class DecisionBlock {
@@ -43,17 +43,18 @@ class DecisionBlock {
     }
 
     // Does the mathmatics to create a threat heuristic for the objects
-    func computeThreatLevel(for object: DetectedObject) -> Int {
-        let objThreat = ThreatLevelConfigV3.objectWeights[object.objID] ?? 1
+    func computeThreatLevel(for object: DetectedObject) -> Float16 {
+        let objectID = ThreatLevelConfigV3.objectName[object.objName] ?? 1
+        let objThreat = ThreatLevelConfigV3.objectWeights[objectID] ?? 1
         let angleWeight = ThreatLevelConfigV3.angleWeights[object.angle] ?? 1
         let distanceFactor = object.distance * 2
-        return objThreat * angleWeight + distanceFactor
+        return Float16(objThreat) * Float16(angleWeight) + distanceFactor
     }
 
     // Given the provided information about the object, computes the threat level to create a processedObject
-    func processDetectedObjects() {
-        processed = ProcessedObject(
-            objID: detectedObject.objID,
+    func processDetectedObjects(processed: ProcessedObject) {
+        let processed = ProcessedObject(
+            objName: detectedObject.objName,
             distance: detectedObject.distance,
             angle: detectedObject.angle,
             threatLevel: computeThreatLevel(for: detectedObject)

@@ -33,6 +33,7 @@ class FrameHandler: NSObject, ObservableObject {
     public var objectCoordinates: CGRect = CGRect(x: 0, y: 0, width: 0, height: 0)
     public var confidence: Float = 0.0
     public var angle: String = ""
+    public var objectIDD: Int = -1
 //    public var middlePoint: (Int, Int) = ()
     var screenRect: CGRect!
     override init() {
@@ -250,6 +251,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         self.objectCoordinates = largestBox.rect
         self.confidence = largestBox.score
         self.angle = largestBox.direction
+        self.objectIDD = largestBox.classIndex
         // Get the baseadress of pixel and turn it into a Float16 so it is readable.
         let baseAddress = unsafeBitCast(
             CVPixelBufferGetBaseAddress(depthMap),
@@ -279,11 +281,11 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         // This inverts the depth value as the distance is inversed naturally
         let correctedDepth: Float16 = medianDepth > 0 ? 1.0 / medianDepth : 0
         CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
-        DispatchQueue.main.async {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             // print("Measured distance: \(depthVal) meters")
 //            print("Coordinates: \(self.objectCoordinates)")
 //            print("Detections per second: \(self.detectionTimestamps.count)")
-            let newDetection = DetectionOutput(objcetName: self.objectName, distance: correctedDepth, angle: self.angle)
+            let newDetection = DetectionOutput(objcetName: self.objectName, distance: correctedDepth, angle: self.angle, id: self.objectIDD)
             if recentDetections.count > 5 {
                 recentDetections.removeFirst()
             }
@@ -300,15 +302,30 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
                 if detection.objcetName == commonLabel {
                     simplifiedDetection.append(detection.distance)
                     self.angle = detection.angle //gets the last, and most accuract angle of the common object
+                    self.objectIDD = detection.id
                 }
             }
             self.objectDistance = self.findMedian(distances: simplifiedDetection)
             self.objectName = commonLabel
-            print("Object detected: \(self.objectName)")
-//            print("Box centerX: \(self.boxCenter.x) Box CenterY: \(self.boxCenter.y)")
-//            print("Confidence score: \(self.confidence)")
-            print("Corrected distance: \(self.objectDistance) meters")
-            print("angle: \(self.angle) o'clock")
+//            print("Object detected: \(self.objectName)")
+////            print("Box centerX: \(self.boxCenter.x) Box CenterY: \(self.boxCenter.y)")
+////            print("Confidence score: \(self.confidence)")
+//            print("Corrected distance: \(self.objectDistance) meters")
+//            print("angle: \(self.angle) o'clock")
+            let objectDetected = DetectedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle)
+            let block = DecisionBlock(detectedObject: objectDetected)
+            let objectThreatLevel = block.computeThreatLevel(for: objectDetected)
+            let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, threatLevel: objectThreatLevel)
+            block.processDetectedObjects(processed: processedObject)
+            let audioOutput = AudioQueue.popHighestPriorityObject()
+            print("Object name: \(audioOutput!.objName)")
+            print("Object angle: \(audioOutput!.angle)")
+            print("Object distance: \(audioOutput!.distance)")
+            print("Threat level: \(audioOutput!.threatLevel)")
+
+
+            
+            
 
         }
     }
@@ -397,4 +414,5 @@ struct DetectionOutput{
     let objcetName: String
     let distance: Float16
     let angle: String
+    let id: Int
 }
