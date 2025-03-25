@@ -44,8 +44,8 @@ class DecisionBlock {
 
     // Does the mathmatics to create a threat heuristic for the objects
     func computeThreatLevel(for object: DetectedObject) -> Int {
-        let objThreat = ThreatLevelConfig.objectWeights[object.objID] ?? 1
-        let angleWeight = ThreatLevelConfig.angleWeights[object.angle] ?? 1
+        let objThreat = ThreatLevelConfigV3.objectWeights[object.objID] ?? 1
+        let angleWeight = ThreatLevelConfigV3.angleWeights[object.angle] ?? 1
         let distanceFactor = object.distance * 2
         return objThreat * angleWeight + distanceFactor
     }
