@@ -45,8 +45,11 @@ class DecisionBlock {
         let objectID = ThreatLevelConfigV3.objectName[object.objName] ?? 1
         let objThreat = ThreatLevelConfigV3.objectWeights[objectID] ?? 1
         let angleWeight = ThreatLevelConfigV3.angleWeights[object.angle] ?? 1
-        let distanceFactor = object.distance * 2
-        return Float16(objThreat) * Float16(angleWeight) + distanceFactor
+        //This iverts distance so the closer something is the more dangerous it is.
+        let distanceClamped = max(0.1, Float(object.distance))
+        let inverseDistance = 1.0 / distanceClamped
+        let threat = Float(objThreat) * Float(angleWeight) * inverseDistance
+        return Float16(threat)
     }
 
     // Given the provided information about the object, computes the threat level to create a processedObject

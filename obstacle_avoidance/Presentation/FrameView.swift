@@ -9,6 +9,11 @@
 import SwiftUI
 
 struct FrameView: View {
+    
+    //Keep track of when we last announced
+    @State private var lastAnnounceTime: Date = .distantPast
+    // How many seconds between announcements
+    private let announceInterval: TimeInterval = 1.2
     var image: CGImage?
     var boundingBoxes: [BoundingBox]
     // hate hte linter 
@@ -39,8 +44,13 @@ struct FrameView: View {
                         .accessibility(addTraits: .isStaticText)
                 }
                 .onAppear {
-                    UIAccessibility.post(notification:
-                            .announcement, argument: "\(biggestBox.name) at \(biggestBox.direction)")
+                    let now = Date()
+                    if now.timeIntervalSince(lastAnnounceTime) > announceInterval {
+                        
+                        UIAccessibility.post(notification:
+                                .announcement, argument: "\(biggestBox.name) at \(biggestBox.direction)")
+                        lastAnnounceTime = now
+                    }
                 }
             }
         }

@@ -328,8 +328,8 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             let objectThreatLevel = block.computeThreatLevel(for: objectDetected)
             let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, threatLevel: objectThreatLevel)
             block.processDetectedObjects(processed: processedObject)
-            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 30)
-            if audioOutput?.threatLevel ?? 0 > 30{
+            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 45)
+            if audioOutput?.threatLevel ?? 0 > 45{
                 print("Object name: \(audioOutput!.objName)")
                 print("Object angle: \(audioOutput!.angle)")
                 print("Object distance: \(audioOutput!.distance)")
