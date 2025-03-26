@@ -48,12 +48,23 @@ class FrameHandler: NSObject, ObservableObject {
 //        }
     }
     func stopCamera() {
-        captureSession.stopRunning()
+//        captureSession.stopRunning()
+        if captureSession.isRunning {
+            captureSession.stopRunning()
+        }
     }
     func startCamera() {
-        CameraSetup.setupCaptureSession(frameHandler: self)
-        captureSession.startRunning() // this should run in a background thread
-        setupDetector()
+//        CameraSetup.setupCaptureSession(frameHandler: self)
+//        captureSession.startRunning() // this should run in a background thread
+//        setupDetector()
+        if !sessionConfigured {
+              CameraSetup.setupCaptureSession(frameHandler: self)
+              sessionConfigured = true
+          }
+          if !captureSession.isRunning {
+              captureSession.startRunning()
+          }
+          setupDetector()
     }
     func setupDetector() {
         guard let modelURL = Bundle.main.url(forResource: "YOLOv3Tiny", withExtension: "mlmodelc") else {
@@ -317,12 +328,13 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             let objectThreatLevel = block.computeThreatLevel(for: objectDetected)
             let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, threatLevel: objectThreatLevel)
             block.processDetectedObjects(processed: processedObject)
-            let audioOutput = AudioQueue.popHighestPriorityObject()
-            print("Object name: \(audioOutput!.objName)")
-            print("Object angle: \(audioOutput!.angle)")
-            print("Object distance: \(audioOutput!.distance)")
-            print("Threat level: \(audioOutput!.threatLevel)")
-
+            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 30)
+            if audioOutput?.threatLevel ?? 0 > 30{
+                print("Object name: \(audioOutput!.objName)")
+                print("Object angle: \(audioOutput!.angle)")
+                print("Object distance: \(audioOutput!.distance)")
+                print("Threat level: \(audioOutput!.threatLevel)")
+            }
 
             
             
