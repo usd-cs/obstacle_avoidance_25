@@ -9,11 +9,9 @@ Data in:
 
 Returns: ProcessedObject which is the detectedObject with a computed threat levelt o be passed to AudioQueue
 
-Testing something
-
 Inital Author: Scott Schnieders
 Current Author: Darien Aranda
-Last modfiied: 2/21/2025
+Last modfiied: 3/26/2025
  */
 
 import SwiftUI

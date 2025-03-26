@@ -33,7 +33,14 @@ class AudioQueue {
         queue.insert(newVertex)
     }
 
-    static func popHighestPriorityObject() -> AudioQueueVertex? {
-        return queue.popMin()
+    static func popHighestPriorityObject(threshold: Float16) -> AudioQueueVertex? {
+        guard let candidate = queue.popMin() else{
+            return nil
+        }
+        if candidate.threatLevel >= threshold{
+            return candidate
+        } else {
+            return nil
+        }
     }
 }
