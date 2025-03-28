@@ -73,6 +73,9 @@ class FrameHandler: NSObject, ObservableObject {
             if let results = request.results {
                 /* print("Detection Results:", results) */ // Check detection results
                 self.extractDetections(results)
+
+                /**commented out since the v8 decoder is not yet functional, **/
+                //self.handleRawModelOutput(from: results)
             }
         }
     }
@@ -105,6 +108,35 @@ class FrameHandler: NSObject, ObservableObject {
         }
         return boxes
     }
+
+    /**handleRawModelOutout takes the raw tensors returned by the YOLOV8 model and puts them in a suitable format
+            for our NMSHandler function.
+         **/
+    func handleRawModelOutput(from results: [VNObservation]){
+        for result in results{
+
+            if let observation = result as? VNCoreMLFeatureValueObservation,
+               let multiArray = observation.featureValue.multiArrayValue{
+                print("name???: ",observation.featureName)
+                let decodedBoxes = YOLODecoder.decodeOutput(multiArray: multiArray, confidenceThreshold: 0.5)
+                let filteredIndices = nonMaxSuppressionMultiClass(
+                                numClasses: YOLODecoder.labels.count,
+                                boundingBoxes: decodedBoxes,
+                                scoreThreshold: 0.5,
+                                iouThreshold: 0.4,
+                                maxPerClass: 5,
+                                maxTotal: 20
+                            )
+                let filteredBoxes = filteredIndices.map { decodedBoxes[$0] }
+                self.boundingBoxes = filteredBoxes
+
+                //let nmsBoxes = NMSHandler.performNMS(on: decodedBoxes)
+                //self.boundingBoxes = nmsBoxes
+            }
+        }
+    }
+
+
     func extractDetections(_ results: [VNObservation]) {
         // Ensure screenRect is initialized
         guard let screenRect = self.screenRect else {
