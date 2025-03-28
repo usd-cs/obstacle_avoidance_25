@@ -8,47 +8,58 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @State private var meters = false
-    @State private var clock = false
-    @State private var username = "JacobTF"
-    @State private var name = "Jacob"
-    @State private var phone = "111-111-1111"
-    @State private var email = "fakeemail.com"
-    @State private var address = "fakeaddress"
+    let user: User?
+    @AppStorage("isLoggedIn") private var isLoggedIn = false
+    @AppStorage("username") private var username = ""
 
     var body: some View {
-            NavigationStack {
-                List {
-                    NavigationLink(destination: AccountScreen()) {
-                        Label("Account", systemImage: "arrow.right.circle")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.black)
-                            .padding(.top, 50)
-                            .padding(.bottom, 30)
-                            .accessibility(addTraits: .isStaticText)
-                    }
-                    NavigationLink(destination: EmergencyContactView()) {
-                        Label("Emergency Contacts", systemImage: "arrow.right.circle")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.black)
-                            .padding(.top, 50)
-                            .padding(.bottom, 30)
-                            .accessibility(addTraits: .isStaticText)
-                    }
-                    NavigationLink(destination: PreferencesView()) {
-                        Label("System Prefrences", systemImage: "arrow.right.circle")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.black)
-                            .padding(.top, 50)
-                            .padding(.bottom, 30)
-                            .accessibility(addTraits: .isStaticText)
-                    }
+        NavigationStack {
+            List {
+                NavigationLink(destination: AccountScreen(user: user)) {
+                    Label("Account", systemImage: "arrow.right.circle")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                        .padding(.top, 50)
+                        .padding(.bottom, 30)
+                        .accessibility(addTraits: .isStaticText)
+                }
+                NavigationLink(destination: EmergencyContactView(user: user)) {
+                    Label("Emergency Contacts", systemImage: "arrow.right.circle")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                        .padding(.top, 50)
+                        .padding(.bottom, 30)
+                        .accessibility(addTraits: .isStaticText)
+                }
+                NavigationLink(destination: PreferencesView()) {
+                    Label("System Preferences", systemImage: "arrow.right.circle")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                        .padding(.top, 50)
+                        .padding(.bottom, 30)
+                        .accessibility(addTraits: .isStaticText)
+                }
+                
+                Button(action: logout) {
+                    Label("Logout", systemImage: "arrow.backward.circle")
+                        .font(.headline)
+                        .foregroundColor(.red)
+                        .padding(.top, 50)
+                        .padding(.bottom, 30)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .accessibility(label: Text("Logout"))
                 }
             }
-            .navigationTitle("Settings")
-
+        }
+        .navigationTitle("Settings")
+    }
+    
+    private func logout() {
+        isLoggedIn = false
+        username = ""  // Reset stored username
     }
 }
+

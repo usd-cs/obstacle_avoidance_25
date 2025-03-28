@@ -4,9 +4,18 @@
 //
 //  Created by Austin Lim on 2/27/25.
 //
+// IMPORTANT!!!
+// For next year's team, the database we're using is Supabase. That database closes down after 60 days of inactivity (I believe)
+// You will need to make a new one and can be free, but the paid one might have more perks like no shutting down.
+// The school will pay for it so don't worry about that. Creating the table is fairly easy, just make sure the table name is 'users'
+// or you will run into errors. Every variable needs to be named exactly the same as written in struct and all of their types
+// are listed next to them. You will also need to add RLS policies for select, insert, delete, and update. You will also store the
+// key and URL in a local file called '.env', no .swift at the end, and place it in the root directory for this file to work. Also emergency
+// contacts will not need its own table.
 
 import Supabase
 import Foundation
+
 
 struct EnvLoader {
     static func loadEnv() -> [String: String] {
@@ -70,17 +79,31 @@ class Database {
 
 
 extension Database{
-    func addUser(username: String, phoneNumber: String, emergencyContact: EmergencyContact) async{
+    func addUser(name: String, username: String, password: String, phoneNumber: String, emergencyContacts: [EmergencyContact], email: String, address: String) async{
         print("Adding user:", username)
+        
+        let salt = createSalt()
+        let hashedPassword = hashSaltPassword(password: password, salt: salt)
+        
+        guard let jsonData = try? JSONEncoder().encode(emergencyContacts),
+                  let jsonString = String(data: jsonData, encoding: .utf8) else {
+                print("Failed to encode emergency contacts")
+                return
+            }
         
         do{
             let newUser = User(
-                            id: nil,
-                            username: username,
-                            phoneNumber: phoneNumber,
-                            emergencyContact: emergencyContact,
-                            createdAt: nil
-                        )
+                id: nil,
+                name: name,
+                username: username,
+                phoneNumber: phoneNumber,
+                emergencyContacts: emergencyContacts,
+                createdAt: nil,
+                hashedPassword: hashedPassword,
+                saltedPassword: salt,
+                address: address,
+                email: email
+            )
 
             let response = try await client
                            .from("users")
@@ -93,16 +116,48 @@ extension Database{
         }
     }
     
-    func updateUser(userId: UUID, newUsername: String?, newPhoneNumber: String?) async {
+    func updateUser(userId: Int, newName: String?, newUsername: String?, newPhoneNumber: String?, newEmail: String?, newAddress: String?) async {
             var updateValues: [String: String] = [:]
-            if let newUsername = newUsername { updateValues["username"] = newUsername }
-            if let newPhoneNumber = newPhoneNumber { updateValues["phone_number"] = newPhoneNumber }
+        
+            if let newUsername = newUsername {
+                let existingUser = await checkIfExists(column: "username", value: newUsername, userId: userId)
+                if existingUser {
+                    print("Error: Username is already taken.")
+                    return
+                }
+                updateValues["username"] = newUsername
+            }
+
+            if let newPhoneNumber = newPhoneNumber {
+                let existingUser = await checkIfExists(column: "phone_number", value: newPhoneNumber, userId: userId)
+                if existingUser {
+                    print("Error: Phone number is already in use.")
+                    return
+                }
+                updateValues["phone_number"] = newPhoneNumber
+            }
+
+            if let newEmail = newEmail {
+                let existingUser = await checkIfExists(column: "email", value: newEmail, userId: userId)
+                if existingUser {
+                    print("Error: Email is already in use.")
+                    return
+                }
+                updateValues["email"] = newEmail
+            }
+            if let newAddress = newAddress { updateValues["address"] = newAddress }
+            if let newName = newName { updateValues["name"] = newName }
+
+            // Check if there are values to update
+            guard !updateValues.isEmpty else {
+                return
+            }
 
             do {
                 let response = try await client
                     .from("users")
                     .update(updateValues)
-                    .eq("id", value: userId.uuidString)
+                    .eq("id", value: userId)
                     .execute()
 
                 print("User updated:", response)
@@ -124,15 +179,63 @@ extension Database{
             print("Error deleting user:", error)
         }
     }
+    
+    func checkIfExists(column: String, value: String, userId: Int) async -> Bool {
+        do {
+            let response = try await Database.shared.client
+                .from("users")
+                .select("id")
+                .eq(column, value: value)
+                .neq("id", value: userId)  // Exclude the current user
+                .execute()
+
+            return !response.data.isEmpty  // If data exists, it means the value is already taken
+        } catch {
+            print("Error checking for existing \(column):", error)
+            return false
+        }
+    }
 }
 
 //Extension for modifying emergency contaacts
 extension Database {
-    func updateEmergencyContact(userId: Int, newEC: EmergencyContact) async {
+    func addEmergencyContact(userId: Int, newEC: EmergencyContact) async {
         do {
+            let user = await fetchUserById(userId: userId)
+            var currentContacts = user?.emergencyContacts ?? []
+
+            currentContacts.append(newEC)
+
+            guard let jsonData = try? JSONEncoder().encode(currentContacts),
+                  let jsonString = String(data: jsonData, encoding: .utf8) else {
+                print("Failed to encode updated emergency contacts")
+                return
+            }
+
             let response = try await client
                 .from("users")
-                .update(["emergency_contact": newEC])
+                .update(["emergencyContacts": jsonString])
+                .eq("id", value: userId)
+                .execute()
+
+            print("Emergency contact added successfully:", response)
+        } catch {
+            print("Error adding emergency contact:", error)
+        }
+    }
+
+    func updateEmergencyContact(userId: Int, newECs: [EmergencyContact]) async {
+        do {
+            
+            guard let jsonData = try? JSONEncoder().encode(newECs),
+                          let jsonString = String(data: jsonData, encoding: .utf8) else {
+                        print("Failed to encode emergency contacts")
+                        return
+                    }
+            
+            let response = try await client
+                .from("users")
+                .update(["emergencyContacts": jsonString])
                 .eq("id", value: userId)
                 .execute()
 
@@ -141,13 +244,26 @@ extension Database {
             print("Error updating emergency contact:", error)
         }
     }
-    func deleteEmergencyContact(userId: UUID) async {
-
+    func deleteEmergencyContact(userId: Int, contactName: String) async {
         do {
+            // Fetch the current contacts
+            guard let user = await fetchUserById(userId: userId),
+                  var currentContacts = user.emergencyContacts else {
+                print("User or emergency contacts not found.")
+                return
+            }
+            currentContacts.removeAll { $0.name == contactName }
+
+            guard let jsonData = try? JSONEncoder().encode(currentContacts),
+                  let jsonString = String(data: jsonData, encoding: .utf8) else {
+                print("Failed to encode updated emergency contacts")
+                return
+            }
+
             let response = try await client
                 .from("users")
-                .update(["emergency_contact": EmergencyContact.empty])
-                .eq("id", value: userId.uuidString)
+                .update(["emergencyContacts": jsonString])
+                .eq("id", value: userId)
                 .execute()
 
             print("Emergency contact removed:", response)
@@ -155,22 +271,26 @@ extension Database {
             print("Error deleting emergency contact:", error)
         }
     }
+
 }
 
 //Extension for fetching data
 extension Database {
     func fetchUsers() async -> [User] {
-
         do {
             let response = try await client
                 .from("users")
                 .select()
                 .execute()
+            
+            guard !response.data.isEmpty else {
+                print("Error: No users found.")
+                return []
+            }
 
-            let jsonString = String(data: response.data, encoding: .utf8) ?? "No data"
-            print("Raw JSON Response:", jsonString)
-
+            // Decode users directly (Supabase should return JSON fields properly)
             let users = try JSONDecoder().decode([User].self, from: response.data)
+
             return users
         } catch {
             print("Error fetching users:", error)
@@ -187,11 +307,30 @@ extension Database {
                 .single()
                 .execute()
 
-            let user = try JSONDecoder().decode(User.self, from: response.data)
+            var user = try JSONDecoder().decode(User.self, from: response.data)
+
+            if let jsonString = String(data: response.data, encoding: .utf8),
+               let jsonData = jsonString.data(using: .utf8) {
+                let contacts = try JSONDecoder().decode([EmergencyContact].self, from: jsonData)
+                user = User(  // Recreate user with emergencyContacts
+                    id: user.id,
+                    name: user.name,
+                    username: user.username,
+                    phoneNumber: user.phoneNumber,
+                    emergencyContacts: contacts,
+                    createdAt: user.createdAt,
+                    hashedPassword: user.hashedPassword,
+                    saltedPassword: user.saltedPassword,
+                    address: user.address,
+                    email: user.email
+                )
+            }
+
             return user
         } catch {
             print("Error fetching user:", error)
             return nil
         }
     }
+
 }
