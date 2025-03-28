@@ -35,12 +35,12 @@ struct DecisionBlockTest {
         let block = DecisionBlock(detectedObject: detectedObject)
 
         let computedThreat = block.computeThreatLevel(for: detectedObject)
-
-        let expectedThreatLevel = (ThreatLevelConfigV3.objectWeights[ThreatLevelConfigV3.objectName[detectedObject.objName]!]!) * (ThreatLevelConfigV3.angleWeights[detectedObject.angle]!) + (Int(detectedObject.distance) * 2)
-
+        let distanceClamped = max(0.1, Float16(detectedObject.distance))
+        let inverseDistance = 1.0 / distanceClamped
+        let expectedThreatLevel = Float16((ThreatLevelConfigV3.objectWeights[ThreatLevelConfigV3.objectName[detectedObject.objName]!]!)) * Float16((ThreatLevelConfigV3.angleWeights[detectedObject.angle]!)) * ((inverseDistance))
         print("Expected Threat level\(expectedThreatLevel)")
         print("Computed Threat Level\(computedThreat)")
 
-        #expect(Int(computedThreat) == expectedThreatLevel, "Threat level computation is incorrect")
+        #expect(computedThreat == expectedThreatLevel, "Threat level computation is incorrect")
     }
 }

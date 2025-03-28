@@ -46,9 +46,9 @@ class DecisionBlock {
         let objThreat = ThreatLevelConfigV3.objectWeights[objectID] ?? 1
         let angleWeight = ThreatLevelConfigV3.angleWeights[object.angle] ?? 1
         //This iverts distance so the closer something is the more dangerous it is.
-        let distanceClamped = max(0.1, Float(object.distance))
+        let distanceClamped = max(0.1, Float16(object.distance))
         let inverseDistance = 1.0 / distanceClamped
-        let threat = Float(objThreat) * Float(angleWeight) * inverseDistance
+        let threat = Float16(objThreat) * Float16(angleWeight) * inverseDistance
         return Float16(threat)
     }
 
