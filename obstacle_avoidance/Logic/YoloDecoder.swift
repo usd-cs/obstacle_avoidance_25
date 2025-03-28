@@ -36,10 +36,10 @@ struct YOLODecoder{
 
         var boundingBoxes = [BoundingBox]()
 
-        for i in 0..<boxes {
-            let base = i * channels
-            let x = pointer[base]
-            let y = pointer[base + 1]
+        for index in 0..<boxes {
+            let base = index * channels
+            let xCord = pointer[base]
+            let yCord = pointer[base + 1]
             let width = pointer[base + 2]
             let height = pointer[base + 3]
             let objectnessScore = sigmoid(pointer[base + 4]) // Apply sigmoid early
@@ -48,11 +48,11 @@ struct YOLODecoder{
             var classIndex = -1  // Instead of optional
 
             // Find the best class index and score
-            for c in 0..<classNum {
-                let score = sigmoid(pointer[base + 5 + c])  // Apply sigmoid
+            for window in 0..<classNum {
+                let score = sigmoid(pointer[base + 5 + window])  // Apply sigmoid
                 if score > maxClassScore {
                     maxClassScore = score
-                    classIndex = c
+                    classIndex = window
                 }
             }
 
@@ -63,10 +63,10 @@ struct YOLODecoder{
             if confidence < confidenceThreshold { continue } // Skip low-confidence detections
 
             // Compute bounding box coordinates efficiently
-            let x1 = max(min(x - width / 2, 1), 0)
-            let y1 = max(min(y - height / 2, 1), 0)
-            let x2 = max(min(x + width / 2, 1), 0)
-            let y2 = max(min(y + height / 2, 1), 0)
+            let x1 = max(min(xCord - width / 2, 1), 0)
+            let y1 = max(min(yCord - height / 2, 1), 0)
+            let x2 = max(min(xCord + width / 2, 1), 0)
+            let y2 = max(min(yCord + height / 2, 1), 0)
 
             let rect = CGRect(
                 x: CGFloat(x1),
