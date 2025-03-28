@@ -19,8 +19,8 @@ struct YOLODecoder{
             "scooter", "stairs", "stop_sign", "traffic_cone", "train", "tree", "truck", "umbrella"
         ]
 
-   static func sigmoid(_ x: Float) -> Float {
-        return 1 / (1 + exp(-x))
+   static func sigmoid(_ num: Float) -> Float {
+        return 1 / (1 + exp(-num))
     }
 
     static func decodeOutput(multiArray: MLMultiArray, confidenceThreshold: Float = 0.5) -> [BoundingBox] {
