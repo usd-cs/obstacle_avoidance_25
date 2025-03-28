@@ -83,8 +83,6 @@ class CameraSetup {
         if frameHandler.captureSession.canAddOutput(frameHandler.videoDataOutput) {
             frameHandler.captureSession.addOutput(frameHandler.videoDataOutput)
         }
-        frameHandler.videoDataOutput.connection(with: .video)?.videoOrientation = .portrait
-        
         // Set up the depth data output
         frameHandler.depthDataOutput = AVCaptureDepthDataOutput()
         frameHandler.depthDataOutput.isFilteringEnabled = true
@@ -95,6 +93,8 @@ class CameraSetup {
         // Synchronize video and depth outputs
         frameHandler.outputVideoSync = AVCaptureDataOutputSynchronizer(dataOutputs: [frameHandler.videoDataOutput, frameHandler.depthDataOutput])
         frameHandler.outputVideoSync.setDelegate(frameHandler, queue: DispatchQueue(label: "syncQueue"))
+        frameHandler.videoDataOutput.connection(with: .video)?.videoOrientation = .portrait
+
     }
 }
 
