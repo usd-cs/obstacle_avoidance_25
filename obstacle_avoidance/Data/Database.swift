@@ -23,7 +23,7 @@ struct EnvLoader {
 
         // Try to get path dynamically from Bundle
         let possiblePaths = [
-            Bundle.main.path(forResource: ".env", ofType: nil),  
+            Bundle.main.path(forResource: ".env", ofType: nil),
             FileManager.default.currentDirectoryPath + "/.env"
         ]
 
@@ -78,20 +78,18 @@ class Database {
 
 
 
-extension Database{
-    func addUser(name: String, username: String, password: String, phoneNumber: String, emergencyContacts: [EmergencyContact], email: String, address: String) async{
+extension Database {
+    func addUser(name: String, username: String, password: String, phoneNumber: String, emergencyContacts: [EmergencyContact], email: String, address: String) async {
         print("Adding user:", username)
-        
         let salt = createSalt()
         let hashedPassword = hashSaltPassword(password: password, salt: salt)
-        
         guard let jsonData = try? JSONEncoder().encode(emergencyContacts),
                   let jsonString = String(data: jsonData, encoding: .utf8) else {
                 print("Failed to encode emergency contacts")
                 return
-            }
+        }
         
-        do{
+        do {
             let newUser = User(
                 id: nil,
                 name: name,
@@ -111,7 +109,7 @@ extension Database{
                            .execute()
 
             print("User added successfully:", response)
-        }catch{
+        } catch {
             print("Error adding user:", error)
         }
     }
@@ -197,7 +195,7 @@ extension Database{
     }
 }
 
-//Extension for modifying emergency contaacts
+// Extension for modifying emergency contaacts
 extension Database {
     func addEmergencyContact(userId: Int, newEC: EmergencyContact) async {
         do {
@@ -226,20 +224,21 @@ extension Database {
 
     func updateEmergencyContact(userId: Int, newECs: [EmergencyContact]) async {
         do {
-            
             guard let jsonData = try? JSONEncoder().encode(newECs),
-                          let jsonString = String(data: jsonData, encoding: .utf8) else {
-                        print("Failed to encode emergency contacts")
-                        return
-                    }
+                  let jsonString = String(data: jsonData, encoding: .utf8) else {
+                print("Failed to encode emergency contacts")
+                return
+            }
             
+            print("Updating user \(userId) with new emergency contacts JSON:", jsonString)
+
             let response = try await client
                 .from("users")
                 .update(["emergencyContacts": jsonString])
                 .eq("id", value: userId)
                 .execute()
 
-            print("Emergency contact updated:", response)
+            print("Update response:", response)
         } catch {
             print("Error updating emergency contact:", error)
         }
@@ -274,7 +273,7 @@ extension Database {
 
 }
 
-//Extension for fetching data
+// Extension for fetching data
 extension Database {
     func fetchUsers() async -> [User] {
         do {
@@ -288,7 +287,6 @@ extension Database {
                 return []
             }
 
-            // Decode users directly (Supabase should return JSON fields properly)
             let users = try JSONDecoder().decode([User].self, from: response.data)
 
             return users
@@ -302,35 +300,34 @@ extension Database {
         do {
             let response = try await client
                 .from("users")
-                .select()
+                .select("id, name, username, phoneNumber, emergencyContacts, createdAt, hashedPassword, saltedPassword, address, email")
                 .eq("id", value: userId)
                 .single()
                 .execute()
 
+            print("Fetched user response (raw JSON):", String(data: response.data, encoding: .utf8) ?? "No data")
+
             var user = try JSONDecoder().decode(User.self, from: response.data)
 
-            if let jsonString = String(data: response.data, encoding: .utf8),
-               let jsonData = jsonString.data(using: .utf8) {
-                let contacts = try JSONDecoder().decode([EmergencyContact].self, from: jsonData)
-                user = User(  // Recreate user with emergencyContacts
-                    id: user.id,
-                    name: user.name,
-                    username: user.username,
-                    phoneNumber: user.phoneNumber,
-                    emergencyContacts: contacts,
-                    createdAt: user.createdAt,
-                    hashedPassword: user.hashedPassword,
-                    saltedPassword: user.saltedPassword,
-                    address: user.address,
-                    email: user.email
-                )
+            if let jsonDict = try JSONSerialization.jsonObject(with: response.data, options: []) as? [String: Any],
+               let ecString = jsonDict["emergencyContacts"] as? String,
+               let ecData = ecString.data(using: .utf8) {
+
+                do {
+                    let contacts = try JSONDecoder().decode([EmergencyContact].self, from: ecData)
+
+                    user.emergencyContacts = contacts
+
+                } catch {
+                    print("Failed to decode emergencyContacts JSON string:", error)
+                }
             }
 
+            print("Successfully parsed user object:", user)
             return user
         } catch {
             print("Error fetching user:", error)
             return nil
         }
     }
-
 }

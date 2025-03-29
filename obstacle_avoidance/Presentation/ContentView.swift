@@ -6,7 +6,7 @@
 //
 //  Previous Authors: Alexander Guerrero, Avery Lenninger, Olivia Nolan Shafer, Cassidy Spencer
 
-//Current Authors: Jacob Fernandez, Austin Lim
+// Current Authors: Jacob Fernandez, Austin Lim
 //  Last modified: 3/27/2025
 //
 
@@ -25,14 +25,14 @@ struct ContentView: View {
         VStack {
             TabbedView(user: user)
         }
-        .onAppear{
-            Task{
+        .onAppear {
+            Task {
                 await getUserInfo()
             }
         }
     }
     
-    private func getUserInfo() async{
+    private func getUserInfo() async {
         let users = await Database.shared.fetchUsers()
         user = users.first(where: { $0.username == username })
     }
@@ -97,7 +97,7 @@ struct AccountScreen: View {
                     editableRow(label: "Email", text: $updatedEmail, keyboard: .emailAddress)
                     editableRow(label: "Phone Number", text: $updatedPhoneNumber, keyboard: .phonePad)
                     editableRow(label: "Address", text: $updatedAddress)
-                    //editableRow(label: "Password", text: "********", isSecure: true)
+                    // editableRow(label: "Password", text: "********", isSecure: true)
                     HStack {
                             Text("Password:").fontWeight(.bold)
                             Spacer()
@@ -186,7 +186,7 @@ struct AccountScreen: View {
         }
     }
     
-    private func deleteAccount(userId: Int) async{
+    private func deleteAccount(userId: Int) async {
         await Database.shared.deleteUser(userId: userId)
         isLoggedIn = false
     }

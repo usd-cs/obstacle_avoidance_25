@@ -23,8 +23,8 @@ struct SignUpView: View{
     @State private var nameFilled = false
     @State private var goToECView = false
     
-    var body: some View{
-        VStack(alignment: .leading, spacing: 4){
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
             
             Text("User Information")
                 .font(.largeTitle)
@@ -140,7 +140,7 @@ struct SignUpView: View{
 
     }
     
-    func confirmUser(username: String, phoneNumber: String, email: String) async{
+    func confirmUser(username: String, phoneNumber: String, email: String) async {
         let users = await Database.shared.fetchUsers()
         
         if users.contains(where: { $0.username == username }) {
@@ -160,11 +160,11 @@ struct SignUpView: View{
             print("Email already taken")
         } else if email.isEmpty {
             emailAccepted = true
-        } else{
+        } else {
             emailAccepted = true
         }
         
-        if (nameFilled == true && usernameAccepted == true && emailAccepted == true && phoneNumberAccepted == true && passwordAccepted == true){
+        if (nameFilled == true && usernameAccepted == true && emailAccepted == true && phoneNumberAccepted == true && passwordAccepted == true) {
             goToECView = true
         }
         

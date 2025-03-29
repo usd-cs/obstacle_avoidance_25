@@ -20,10 +20,10 @@ struct ECView: View {
     let phoneNumber: String
     @AppStorage("isLoggedIn") private var isLoggedIn = false
     
-    var body: some View{
-        NavigationStack{
+    var body: some View {
+        NavigationStack {
                         
-            VStack{
+            VStack {
                 
                 Text("Emergency Contact Information")
                     .padding()
@@ -69,7 +69,7 @@ struct ECView: View {
         }
     }
     
-    func addUserDatabase(name: String, username: String, password: String, phoneNumber: String, emergencyContact: EmergencyContact, address: String, email: String) async{
+    func addUserDatabase(name: String, username: String, password: String, phoneNumber: String, emergencyContact: EmergencyContact, address: String, email: String) async {
         await Database.shared.addUser(name: name, username: username, password: password, phoneNumber: phoneNumber, emergencyContacts: [emergencyContact], email: email, address:address)
     }
     

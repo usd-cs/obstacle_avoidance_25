@@ -12,13 +12,11 @@ import CryptoKit
 
 
 
-func createSalt()->String
-{
+func createSalt()->String{
     let characters = "abcdefghijklmnopqrtsuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()?<>."
     var salt = ""
     var i = 0
-    while i <= 20
-    {
+    while i <= 20{
         let index = Int(arc4random_uniform(UInt32(characters.count)))
         let randomCharacter = characters[characters.index(characters.startIndex, offsetBy: index)]
         salt.append(randomCharacter)
@@ -27,18 +25,18 @@ func createSalt()->String
     return salt
 }
 
-func hashSaltPassword(password:String, salt: String) ->String
-{
-    //Converts the password to Data to store it in bytes
+func hashSaltPassword(password:String, salt: String) ->String{
+    // Converts the password to Data to store it in bytes
     let passwordData = Data(password.utf8)
     let saltData = Data(salt.utf8)
     var saltPassword = passwordData
     saltPassword.append(saltData)
-    //hashes password
+    // hashes password
     let hash = SHA256.hash(data: saltPassword)
-    //takes bytes and converts them to strings
-    let byteConverter = hash.compactMap{ String(format: "%02x", $0)}
-    //Combines all invidual strings to a single string
+    // takes bytes and converts them to strings
+    let byteConverter = hash.compactMap {
+        String(format: "%02x", $0)}
+    // Combines all invidual strings to a single string
     let hashedPassword = byteConverter.joined()
     
     return hashedPassword
