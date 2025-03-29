@@ -38,7 +38,6 @@ func hashSaltPassword(password:String, salt: String) ->String{
         String(format: "%02x", $0)}
     // Combines all invidual strings to a single string
     let hashedPassword = byteConverter.joined()
-    
     return hashedPassword
 }
 

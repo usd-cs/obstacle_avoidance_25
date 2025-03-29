@@ -22,20 +22,16 @@ struct SignUpView: View{
     let minPasswordLength = 8
     @State private var nameFilled = false
     @State private var goToECView = false
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            
             Text("User Information")
                 .font(.largeTitle)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding()
-            
             VStack(alignment: .leading, spacing: 4) {
                             Text("Name: required")
                                 .font(.caption)
                                 .foregroundColor(.red)
-                            
                             TextField("Enter name", text: $name)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .frame(width: 370)  // Set a fixed width
@@ -45,19 +41,16 @@ struct SignUpView: View{
                                 }
                         }
             .frame(maxWidth: .infinity, alignment: .center)
-            
             VStack(alignment: .leading, spacing: 4) {
                            Text("Username: required")
                                .font(.caption)
                                .foregroundColor(.red)
-                           
                            TextField("Enter username", text: $username)
                                .textFieldStyle(RoundedBorderTextFieldStyle())
                                .frame(width: 370)  // Set a fixed width
                                .padding(.bottom, 8)
                        }
             .frame(maxWidth: .infinity, alignment: .center)
-            
             VStack(alignment: .leading, spacing: 4) {
                             Text("Password: required")
                                 .font(.caption)
@@ -90,42 +83,34 @@ struct SignUpView: View{
             }
             .textFieldStyle(RoundedBorderTextFieldStyle())
             .padding()
-            
             VStack(alignment: .leading, spacing: 4) {
                             Text("Phone Number: required")
                                 .font(.caption)
                                 .foregroundColor(.red)
-                            
                             TextField("Enter phone number", text: $phoneNumber)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .frame(width: 370)
                                 .padding(.bottom, 8)
                         }
-            
             .frame(maxWidth: .infinity, alignment: .center)
-            
             VStack(alignment: .leading, spacing: 4) {
                             Text("Email: Optional")
                                 .font(.caption)
-                            
                             TextField("Enter email", text: $email)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .frame(width: 370)
                                 .padding(.bottom, 8)
                         }
             .frame(maxWidth: .infinity, alignment: .center)
-            
             VStack(alignment: .leading, spacing: 4) {
                             Text("Address: Optional")
                                 .font(.caption)
-                            
                             TextField("Enter address", text: $address)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .frame(width: 370)
                                 .padding(.bottom, 8)
                         }
             .frame(maxWidth: .infinity, alignment: .center)
-            
         }
         Button("Next") {
             Task {
@@ -137,12 +122,9 @@ struct SignUpView: View{
         .navigationDestination(isPresented: $goToECView) {
             ECView(name:name, password: password, address: address, email: email, phoneNumber: phoneNumber)
         }
-
     }
-    
     func confirmUser(username: String, phoneNumber: String, email: String) async {
         let users = await Database.shared.fetchUsers()
-        
         if users.contains(where: { $0.username == username }) {
             usernameAccepted = false
             print("Username already taken")
@@ -163,13 +145,10 @@ struct SignUpView: View{
         } else {
             emailAccepted = true
         }
-        
         if (nameFilled == true && usernameAccepted == true && emailAccepted == true && phoneNumberAccepted == true && passwordAccepted == true) {
             goToECView = true
         }
-        
     }
-    
 }
 
 #Preview {

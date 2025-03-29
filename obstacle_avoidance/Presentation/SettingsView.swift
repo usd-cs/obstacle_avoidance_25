@@ -42,7 +42,6 @@ struct SettingsView: View {
                         .padding(.bottom, 30)
                         .accessibility(addTraits: .isStaticText)
                 }
-                
                 Button(action: logout) {
                     Label("Logout", systemImage: "arrow.backward.circle")
                         .font(.headline)
@@ -55,8 +54,7 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
-    }
-    
+    }    
     private func logout() {
         isLoggedIn = false
         username = ""  // Reset stored username
