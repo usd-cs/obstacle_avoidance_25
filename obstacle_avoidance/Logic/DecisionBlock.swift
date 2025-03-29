@@ -17,7 +17,7 @@ Last modfiied: 3/26/2025
 import SwiftUI
 import Foundation
 
-//Create a struct holding parameters that pass through logic
+// Create a struct holding parameters that pass through logic
 struct  DetectedObject {
     let objName: String
     let distance: Float16
@@ -35,7 +35,7 @@ class DecisionBlock {
     var detectedObject: DetectedObject
     var processed: ProcessedObject!
 
-    //Initializer
+    // Initializer
     init(detectedObject: DetectedObject){
         self.detectedObject = detectedObject
     }

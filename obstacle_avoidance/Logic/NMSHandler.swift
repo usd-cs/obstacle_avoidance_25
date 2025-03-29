@@ -19,7 +19,7 @@ struct NMSHandler {
         let scoreThreshold: Float = 0.1
         let iouThreshold: Float = 0.5
         //    var boundingBoxViews: [BoundingBoxView] = []
-        //let multiClass = true
+        // let multiClass = true
         // Perform non-maximum suppression to find the best bounding boxes.
         let selected: [Int]
         if multiClass {

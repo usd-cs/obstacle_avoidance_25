@@ -14,7 +14,20 @@ final class SettingsViewTests: XCTestCase {
     
     func testSettingsViewShowsNavigationLinks() throws {
         
-        let set = SettingsView()
+        let mockUser = User(
+                    id: 1,
+                    name: "Test User",
+                    username: "testuser",
+                    phoneNumber: "123-456-7890",
+                    emergencyContacts: [],
+                    createdAt: "2024-03-28T12:00:00Z",
+                    hashedPassword: "hashed",
+                    saltedPassword: "salt",
+                    address: "123 Test St",
+                    email: "test@example.com"
+                )
+        
+        let set = SettingsView(user: mockUser)
         
         
         let inspect = try set.inspect()
