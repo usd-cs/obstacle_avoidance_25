@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-struct SignUpView: View{
+struct SignUpView: View {
     @AppStorage("isLoggedIn") private var isLoggedIn = false
     @AppStorage("username") private var username = ""
     @State private var phoneNumber = ""
@@ -55,7 +55,6 @@ struct SignUpView: View{
                             Text("Password: required")
                                 .font(.caption)
                                 .foregroundColor(.red)
-                            
                             ZStack(alignment: .trailing) {
                                 if isPasswordVisible {
                                     TextField("Enter password", text: $password)
@@ -65,7 +64,7 @@ struct SignUpView: View{
                                         .accessibilityLabel("Password field currently hidden")
                                 }
 
-                                Button(action: { isPasswordVisible.toggle() }) {
+                                Button(action: {isPasswordVisible.toggle()}) {
                                     Image(systemName: isPasswordVisible ? "eye.slash.fill" : "eye.fill")
                                         .foregroundColor(.gray)
                                         .padding(.trailing, 10)
@@ -120,7 +119,7 @@ struct SignUpView: View{
         .buttonStyle(.borderedProminent)
         .padding()
         .navigationDestination(isPresented: $goToECView) {
-            ECView(name:name, password: password, address: address, email: email, phoneNumber: phoneNumber)
+            ECView(name: name, password: password, address: address, email: email, phoneNumber: phoneNumber)
         }
     }
     func confirmUser(username: String, phoneNumber: String, email: String) async {
@@ -145,7 +144,11 @@ struct SignUpView: View{
         } else {
             emailAccepted = true
         }
-        if (nameFilled == true && usernameAccepted == true && emailAccepted == true && phoneNumberAccepted == true && passwordAccepted == true) {
+        if (nameFilled == true
+            && usernameAccepted == true
+            && emailAccepted == true
+            && phoneNumberAccepted == true
+            && passwordAccepted == true) {
             goToECView = true
         }
     }
@@ -156,4 +159,3 @@ struct SignUpView: View{
             SignUpView()
         }
 }
-

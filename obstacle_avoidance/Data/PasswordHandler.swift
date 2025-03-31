@@ -12,11 +12,11 @@ import CryptoKit
 
 
 
-func createSalt()->String{
+func createSalt()->String {
     let characters = "abcdefghijklmnopqrtsuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()?<>."
     var salt = ""
     var i = 0
-    while i <= 20{
+    while i <= 20 {
         let index = Int(arc4random_uniform(UInt32(characters.count)))
         let randomCharacter = characters[characters.index(characters.startIndex, offsetBy: index)]
         salt.append(randomCharacter)
@@ -25,7 +25,7 @@ func createSalt()->String{
     return salt
 }
 
-func hashSaltPassword(password:String, salt: String) ->String{
+func hashSaltPassword(password: String, salt: String) ->String {
     // Converts the password to Data to store it in bytes
     let passwordData = Data(password.utf8)
     let saltData = Data(salt.utf8)
@@ -40,9 +40,7 @@ func hashSaltPassword(password:String, salt: String) ->String{
     let hashedPassword = byteConverter.joined()
     return hashedPassword
 }
-
-func verifyPassword(input: String, storedHash: String, salt: String)-> Bool
-{
+func verifyPassword(input: String, storedHash: String, salt: String)-> Bool {
     let hashSaltPassword = hashSaltPassword(password: input, salt: salt)
     return hashSaltPassword == storedHash
 }

@@ -5,12 +5,15 @@
 //  Created by Austin Lim on 2/27/25.
 //
 // IMPORTANT!!!
-// For next year's team, the database we're using is Supabase. That database closes down after 60 days of inactivity (I believe)
-// You will need to make a new one and can be free, but the paid one might have more perks like no shutting down.
-// The school will pay for it so don't worry about that. Creating the table is fairly easy, just make sure the table name is 'users'
-// or you will run into errors. Every variable needs to be named exactly the same as written in struct and all of their types
-// are listed next to them. You will also need to add RLS policies for select, insert, delete, and update. You will also store the
-// key and URL in a local file called '.env', no .swift at the end, and place it in the root directory for this file to work. Also emergency
+// For next year's team, the database we're using is Supabase. That database closes down
+// after 60 days of inactivity (I believe) You will need to make a new one and can be
+// free, but the paid one might have more perks like no shutting down.
+// The school will pay for it so don't worry about that. Creating the table is fairly
+// easy, just make sure the table name is 'users' or you will run into errors. Every variable
+// needs to be named exactly the same as written in struct and all of their types
+// are listed next to them. You will also need to add RLS policies for select, insert, delete, and update.
+// You will also store the key and URL in a local file called '.env', no .swift at the end, and place
+// it in the root directory for this file to work. Also emergency
 // contacts will not need its own table.
 
 import Supabase
@@ -52,10 +55,6 @@ struct EnvLoader {
         }
     }
 }
-
-
-
-
 class Database {
     static let shared: Database = {
         return Database()
@@ -75,11 +74,14 @@ class Database {
         self.client = SupabaseClient(supabaseURL: supabaseURL, supabaseKey: supabaseKey)
     }
 }
-
-
-
 extension Database {
-    func addUser(name: String, username: String, password: String, phoneNumber: String, emergencyContacts: [EmergencyContact], email: String, address: String) async {
+    func addUser(name: String,
+                 username: String,
+                 password: String,
+                 phoneNumber: String,
+                 emergencyContacts: [EmergencyContact],
+                 email: String,
+                 address: String) async {
         print("Adding user:", username)
         let salt = createSalt()
         let hashedPassword = hashSaltPassword(password: password, salt: salt)
@@ -88,7 +90,6 @@ extension Database {
                 print("Failed to encode emergency contacts")
                 return
         }
-        
         do {
             let newUser = User(
                 id: nil,
@@ -113,10 +114,13 @@ extension Database {
             print("Error adding user:", error)
         }
     }
-    
-    func updateUser(userId: Int, newName: String?, newUsername: String?, newPhoneNumber: String?, newEmail: String?, newAddress: String?) async {
+    func updateUser(userId: Int,
+                    newName: String?,
+                    newUsername: String?,
+                    newPhoneNumber: String?,
+                    newEmail: String?,
+                    newAddress: String?) async {
             var updateValues: [String: String] = [:]
-        
             if let newUsername = newUsername {
                 let existingUser = await checkIfExists(column: "username", value: newUsername, userId: userId)
                 if existingUser {
@@ -177,7 +181,6 @@ extension Database {
             print("Error deleting user:", error)
         }
     }
-    
     func checkIfExists(column: String, value: String, userId: Int) async -> Bool {
         do {
             let response = try await Database.shared.client
@@ -229,7 +232,6 @@ extension Database {
                 print("Failed to encode emergency contacts")
                 return
             }
-            
             print("Updating user \(userId) with new emergency contacts JSON:", jsonString)
 
             let response = try await client
@@ -281,7 +283,6 @@ extension Database {
                 .from("users")
                 .select()
                 .execute()
-            
             guard !response.data.isEmpty else {
                 print("Error: No users found.")
                 return []

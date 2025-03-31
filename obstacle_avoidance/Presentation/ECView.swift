@@ -57,8 +57,20 @@ struct ECView: View {
             }
         }
     }
-    func addUserDatabase(name: String, username: String, password: String, phoneNumber: String, emergencyContact: EmergencyContact, address: String, email: String) async {
-        await Database.shared.addUser(name: name, username: username, password: password, phoneNumber: phoneNumber, emergencyContacts: [emergencyContact], email: email, address:address)
+    func addUserDatabase(name: String,
+                         username: String,
+                         password: String,
+                         phoneNumber: String,
+                         emergencyContact: EmergencyContact,
+                         address: String,
+                         email: String) async {
+        await Database.shared.addUser(name: name,
+                                      username: username,
+                                      password: password,
+                                      phoneNumber: phoneNumber,
+                                      emergencyContacts: [emergencyContact],
+                                      email: email,
+                                      address: address)
     }
 }
 
