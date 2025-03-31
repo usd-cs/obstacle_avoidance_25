@@ -9,18 +9,15 @@ import SwiftUI
 import SwiftData
 import Foundation
 import CryptoKit
-
-
-
 func createSalt()->String {
     let characters = "abcdefghijklmnopqrtsuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()?<>."
     var salt = ""
-    var i = 0
-    while i <= 20 {
+    var identify = 0
+    while identify <= 20 {
         let index = Int(arc4random_uniform(UInt32(characters.count)))
         let randomCharacter = characters[characters.index(characters.startIndex, offsetBy: index)]
         salt.append(randomCharacter)
-        i+=1
+        identify+=1
     }
     return salt
 }

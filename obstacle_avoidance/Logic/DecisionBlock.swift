@@ -38,7 +38,7 @@ class DecisionBlock {
     var processed: ProcessedObject!
 
     // Initializer
-    init(detectedObject: DetectedObject){
+    init(detectedObject: DetectedObject) {
         self.detectedObject = detectedObject
     }
 

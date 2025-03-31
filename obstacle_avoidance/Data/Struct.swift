@@ -7,16 +7,14 @@
 
 import Foundation
 
-struct EmergencyContact: Codable{
+struct EmergencyContact: Codable {
     let name: String
     let phoneNumber: String
     let address: String
-    
     static let empty = EmergencyContact(name: "", phoneNumber: "", address: "")
 }
 
-struct User: Codable{
-    
+struct User: Codable {
     let id: Int?
     let name: String
     let username: String

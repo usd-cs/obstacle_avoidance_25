@@ -9,9 +9,7 @@ import Foundation
 import UIKit
 
 struct NMSHandler {
-    
     static var multiClass: Bool = true
-    
     static func performNMS(on boundingBoxes: [BoundingBox]) -> [BoundingBox] {
         let numClasses = 4
         let selectHowMany = 6

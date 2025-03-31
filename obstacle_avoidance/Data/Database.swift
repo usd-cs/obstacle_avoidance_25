@@ -19,7 +19,6 @@
 import Supabase
 import Foundation
 
-
 struct EnvLoader {
     static func loadEnv() -> [String: String] {
         let fileManager = FileManager.default
