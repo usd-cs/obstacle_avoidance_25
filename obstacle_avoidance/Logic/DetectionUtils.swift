@@ -19,4 +19,12 @@ struct DetectionUtils {
         let index = min(Int(percentage / 16.67), directions.count - 1)
         return directions[index]
     }
+    static func calculateScreenSection(_ percentage:CGFloat) -> String{
+        // checks for unknown or nill values
+        guard percentage >= 0, percentage <= 100 else { return "Unknown" }
+        //sets devides the screen into 3 sections
+        let section = ["Left", "Center", "Right"]
+        let index = min(Int(percentage/33.33), section.count-1)
+        return section[index]
+    }
 }
