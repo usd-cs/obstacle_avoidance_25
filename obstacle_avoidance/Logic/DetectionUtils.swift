@@ -8,6 +8,9 @@
 import Foundation
 
 struct DetectionUtils {
+    /*
+     calculateDirection sections the screen into 5 equal segments along the X axis and determines at what possition is the object.
+     */
     static func calculateDirection(_ percentage: CGFloat) -> String {
         // what about if you somehow get a value greater or less than expected?
         guard percentage >= 0, percentage <= 100 else { return "Unknown" }
@@ -27,6 +30,18 @@ struct DetectionUtils {
         let index = min(Int(percentage/33.33), section.count-1)
         return section[index]
     }
+    /*
+     similar to how @calculateDirection works, verticalCorridor segments the screen in 3
+     sections of equal size, and uses the object's centerYpercentage to determine its
+     position relative to the screen.
+
+        PS: combining these two functions should be enough to acomplish our corridor
+     calculation....
+     basically we can determine an object's X and Y possition and determine if its on a
+     significant treat zone. distance from LiDar will be crutial for this as we don't want
+     to compute something as being in the in the upper hald of the screen if the object
+     is far away...
+     */
     static func verticalCorridor(_ percentage: CGFloat) -> String{
         //we might need to switch the upper and lower values, as i'm not too sure whether
         // a low percentage indicates top of the screen or vice versa
