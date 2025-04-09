@@ -108,7 +108,9 @@ class FrameHandler: NSObject, ObservableObject {
                 height: objectBounds.maxY - objectBounds.minY
             )
             let centerXPercentage = (transformedBounds.midX / screenRect.width) * 100
+            let centerYPercentage = (transformedBounds.midY / screenRect.height) * 100
             let direction = DetectionUtils.calculateDirection(centerXPercentage)
+            let verticalLocation = DetectionUtils.verticalCorridor(centerYPercentage)
             let box = BoundingBox(
                 classIndex: 0,
                 score: confidence,
