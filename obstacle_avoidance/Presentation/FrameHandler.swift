@@ -108,7 +108,7 @@ class FrameHandler: NSObject, ObservableObject {
                 height: objectBounds.maxY - objectBounds.minY
             )
             let centerXPercentage = (transformedBounds.midX / screenRect.width) * 100
-            let direction = calculateDirection(centerXPercentage)
+            let direction = DetectionUtils.calculateDirection(centerXPercentage)
             let box = BoundingBox(
                 classIndex: 0,
                 score: confidence,
@@ -276,6 +276,8 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             }
         }
         //creates array that will hold the recent detections to help us parse out outlers.
+        var content = ""
+        let fileName = "logs.txt"
         var recentDetections: [DetectionOutput] = []
         let depthMap = syncedDepthData.depthData.depthDataMap
         CVPixelBufferLockBaseAddress(depthMap, .readOnly)
@@ -324,7 +326,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         // This inverts the depth value as the distance is inversed naturally
         let correctedDepth: Float16 = medianDepth > 0 ? 1.0 / medianDepth : 0
         CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+        DispatchQueue.main.async {
             // print("Measured distance: \(depthVal) meters")
 //            print("Coordinates: \(self.objectCoordinates)")
 //            print("Detections per second: \(self.detectionTimestamps.count)")
@@ -350,6 +352,9 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             }
             self.objectDistance = self.findMedian(distances: simplifiedDetection)
             self.objectName = commonLabel
+
+            //get XY coords
+            let objectCoords = DetectionUtils.polarToCartesian(distance: Float(self.objectDistance), direction: self.angle)
 //            print("Object detected: \(self.objectName)")
 ////            print("Box centerX: \(self.boxCenter.x) Box CenterY: \(self.boxCenter.y)")
 ////            print("Confidence score: \(self.confidence)")
@@ -360,13 +365,34 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             let objectThreatLevel = block.computeThreatLevel(for: objectDetected)
             let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, threatLevel: objectThreatLevel)
             block.processDetectedObjects(processed: processedObject)
-            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 45)
-            if audioOutput?.threatLevel ?? 0 > 45{
-                print("Object name: \(audioOutput!.objName)")
-                print("Object angle: \(audioOutput!.angle)")
-                print("Object distance: \(audioOutput!.distance)")
-                print("Threat level: \(audioOutput!.threatLevel)")
+            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 1)
+            if audioOutput?.threatLevel ?? 0 > 1{
+//                print("Object name: \(audioOutput!.objName)")
+//                print("Object angle: \(audioOutput!.angle)")
+//                print("Object distance: \(audioOutput!.distance)")
+//                print("Threat level: \(audioOutput!.threatLevel)")
+//                print("Distance as a Float: \(Float(audioOutput!.distance))")
+//                print("Object coords X and Y \(objectCoords)")
+                content.append("Object name: \(audioOutput!.objName),")
+                content.append("Object angle: \(audioOutput!.angle),")
+                content.append("Object distance: \(audioOutput!.distance),")
+                content.append("Threat level: \(audioOutput!.threatLevel),")
+                content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")
+                print(content)
+
             }
+
+//            // Get the Documents directory
+//            if let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+//                let fileURL = documentsURL.appendingPathComponent(fileName)
+//
+//                do {
+//                    try content.write(to: fileURL, atomically: true, encoding: .utf8)
+//                    print("Successfully wrote to file at: \(fileURL)")
+//                } catch {
+//                    print("Error writing to file: \(error)")
+//                }
+//            }
 
             
             
