@@ -269,8 +269,10 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         let width = Float(CVPixelBufferGetWidth(depthMap))
         let height = CVPixelBufferGetHeight(depthMap)
         // Lock the pixel address so we are not moving around too much
+        //            ($0.rect.width * $0.rect.height) < ($1.rect.width * $1.rect.height)
+        //WE ARE USING SCORE BUT IT SAYS LARGEST
         guard let largestBox = self.boundingBoxes.max(by: {
-            ($0.rect.width * $0.rect.height) < ($1.rect.width * $1.rect.height)
+            ($0.score < $1.score)
         }) else {
             // No bounding box detected; skip processing.
             CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
@@ -316,7 +318,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             // print("Measured distance: \(depthVal) meters")
 //            print("Coordinates: \(self.objectCoordinates)")
 //            print("Detections per second: \(self.detectionTimestamps.count)")
-            let newDetection = DetectionOutput(objcetName: self.objectName, distance: correctedDepth, angle: self.angle, id: self.objectIDD)
+            let newDetection = DetectionOutput(objcetName: self.objectName, distance: correctedDepth, angle: self.angle, id: self.objectIDD, vert: self.vert)
             if recentDetections.count > 5 {
                 recentDetections.removeFirst()
             }
@@ -351,15 +353,15 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             let objectThreatLevel = block.computeThreatLevel(for: objectDetected)
             let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, vert: self.vert, threatLevel: objectThreatLevel)
             block.processDetectedObjects(processed: processedObject)
-            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10)
-            if audioOutput?.threatLevel ?? 0 > 1{
-                print("Object name: \(audioOutput!.objName)")
-                print("Object angle: \(audioOutput!.angle)")
-                print("Object distance: \(audioOutput!.distance)")
-                print("Threat level: \(audioOutput!.threatLevel)")
-                print("Distance as a Float: \(Float(audioOutput!.distance))")
-                print("Object coords X and Y \(objectCoords)")
-                print("Object Vertical: \(audioOutput!.vert) \n")
+//            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10)
+//            if audioOutput?.threatLevel ?? 0 > 1{
+//                print("Object name: \(audioOutput!.objName)")
+//                print("Object angle: \(audioOutput!.angle)")
+//                print("Object distance: \(audioOutput!.distance)")
+//                print("Threat level: \(audioOutput!.threatLevel)")
+//                print("Distance as a Float: \(Float(audioOutput!.distance))")
+//                print("Object coords X and Y \(objectCoords)")
+//                print("Object Vertical: \(audioOutput!.vert) \n")
 //                content.append("Object name: \(audioOutput!.objName),")
 //                content.append("Object angle: \(audioOutput!.angle),")
 //                content.append("Object Verticality: \(audioOutput!.vert),")
@@ -368,7 +370,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
 //                content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")
 //                print(content)
 
-            }
+//            }
 
 //            // Get the Documents directory
 //            if let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -473,4 +475,5 @@ struct DetectionOutput{
     let distance: Float16
     let angle: String
     let id: Int
+    let vert: String
 }

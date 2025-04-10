@@ -34,6 +34,9 @@ class AudioQueue {
         );
         queue.insert(newVertex)
     }
+    static func clearQueue(){
+        return queue = Heap<AudioQueueVertex>()
+    }
 
     static func popHighestPriorityObject(threshold: Float16) -> AudioQueueVertex? {
         guard let candidate = queue.popMin() else{
