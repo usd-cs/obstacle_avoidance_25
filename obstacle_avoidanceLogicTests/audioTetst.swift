@@ -20,10 +20,10 @@ struct AudioQueueTests {
 
         // Create an unordered list of mock objects
         let mockObjects = [
-            ProcessedObject(objName: "person", distance: 0.284, angle: "12 o'clock", threatLevel: 10.568), // Medium threat
-            ProcessedObject(objName: "stop sign", distance: 1.243, angle: "1 o'clock", threatLevel: 11.486), // High threat
-            ProcessedObject(objName: "kite", distance: 0.568, angle: "2 o'clock", threatLevel: 17.136),  // Highest threat
-            ProcessedObject(objName: "potted Pland", distance: 1.456, angle: "11 o'clock", threatLevel: 8.912) // Low threat
+            ProcessedObject(objName: "person", distance: 0.284, angle: "12 o'clock", vert: "lower third", threatLevel: 10.568), // Medium threat
+            ProcessedObject(objName: "stop sign", distance: 1.243, angle: "1 o'clock", vert: "lower third", threatLevel: 11.486), // High threat
+            ProcessedObject(objName: "kite", distance: 0.568, angle: "2 o'clock", vert: "lower third", threatLevel: 17.136),  // Highest threat
+            ProcessedObject(objName: "potted Pland", distance: 1.456, angle: "11 o'clock", vert: "lower third", threatLevel: 8.912) // Low threat
         ]
 
         // Adds objects to the heap
@@ -50,10 +50,10 @@ struct AudioQueueTests {
 
         // Insert mock objects
         let mockObjects = [
-            ProcessedObject(objName: "person", distance: 0.284, angle: "12 o'clock", threatLevel: 10.568), // Medium threat
-            ProcessedObject(objName: "stop sign", distance: 1.243, angle: "1 o'clock", threatLevel: 11.486), // High threat
-            ProcessedObject(objName: "kite", distance: 0.568, angle: "2 o'clock", threatLevel: 17.136),  // Highest threat
-            ProcessedObject(objName: "potted Pland", distance: 1.456, angle: "11 o'clock", threatLevel: 8.912) // Low threat
+            ProcessedObject(objName: "person", distance: 0.284, angle: "12 o'clock", vert: "lower third", threatLevel: 10.568), // Medium threat
+            ProcessedObject(objName: "stop sign", distance: 1.243, angle: "1 o'clock", vert: "lower third", threatLevel: 11.486), // High threat
+            ProcessedObject(objName: "kite", distance: 0.568, angle: "2 o'clock", vert: "lower third", threatLevel: 17.136),  // Highest threat
+            ProcessedObject(objName: "potted Pland", distance: 1.456, angle: "11 o'clock", vert: "lower third", threatLevel: 8.912) // Low threat
         ]
 
         for object in mockObjects {

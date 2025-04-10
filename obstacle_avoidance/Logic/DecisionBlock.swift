@@ -22,12 +22,14 @@ struct  DetectedObject {
     let objName: String
     let distance: Float16
     let angle: String
+    let vert: String
 }
 
 struct  ProcessedObject {
     let objName: String
     let distance: Float16
     let angle: String
+    let vert: String
     let threatLevel: Float16
 }
 
@@ -48,7 +50,11 @@ class DecisionBlock {
         //This iverts distance so the closer something is the more dangerous it is.
         let distanceClamped = max(0.1, Float16(object.distance))
         let inverseDistance = 1.0 / distanceClamped
-        let threat = Float16(objThreat) * Float16(angleWeight) * inverseDistance
+        var threat = Float16(objThreat) * Float16(angleWeight) * inverseDistance
+
+        if(detectedObject.vert == "upper third" && distanceClamped < 1.75){
+            threat *= 2
+        }
         return Float16(threat)
     }
 
@@ -58,6 +64,7 @@ class DecisionBlock {
             objName: detectedObject.objName,
             distance: detectedObject.distance,
             angle: detectedObject.angle,
+            vert: detectedObject.vert,
             threatLevel: computeThreatLevel(for: detectedObject)
             )
 

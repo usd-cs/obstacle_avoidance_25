@@ -9,8 +9,8 @@ import Foundation
 
 struct ThreatLevelConfig{
     static let angleWeights: [Int: Int]=[
-        12: 5,  // Directly Ahead
-        11: 3,  // Slightly Off-Centered
+        12: 10,  //Directly Ahead
+        11: 3,  //Slightly Off-Centered
         1: 3,
         10: 1,  // Closing in on Peripheral Vision
         2: 1
