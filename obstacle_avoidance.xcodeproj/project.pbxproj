@@ -557,7 +557,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"obstacle_avoidance/Preview Content\"";
-				DEVELOPMENT_TEAM = PCZ9W49BUR;
+				DEVELOPMENT_TEAM = 5JDQ9ZJKCM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Obstacle Avoidance would like to use your camera";
@@ -571,7 +571,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ObstacleAvoidance;
+				PRODUCT_BUNDLE_IDENTIFIER = ObstacleAvoidance25;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_SKIP_AUTOLINKING_FRAMEWORKS = "";
@@ -588,7 +588,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"obstacle_avoidance/Preview Content\"";
-				DEVELOPMENT_TEAM = PCZ9W49BUR;
+				DEVELOPMENT_TEAM = 5JDQ9ZJKCM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Obstacle Avoidance would like to use your camera";
@@ -602,7 +602,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ObstacleAvoidance;
+				PRODUCT_BUNDLE_IDENTIFIER = ObstacleAvoidance25;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_SKIP_AUTOLINKING_FRAMEWORKS = "";

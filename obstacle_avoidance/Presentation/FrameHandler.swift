@@ -33,6 +33,7 @@ class FrameHandler: NSObject, ObservableObject {
     public var objectCoordinates: CGRect = CGRect(x: 0, y: 0, width: 0, height: 0)
     public var confidence: Float = 0.0
     public var angle: String = ""
+    public var vert: String = ""
     public var objectIDD: Int = -1
 //    public var middlePoint: (Int, Int) = ()
     var screenRect: CGRect!
@@ -124,7 +125,7 @@ class FrameHandler: NSObject, ObservableObject {
     }
 
     /**handleRawModelOutout takes the raw tensors returned by the YOLOV8 model and puts them in a suitable format
-            for our NMSHandler function.
+       for our NMSHandler function.
          **/
     func handleRawModelOutput(from results: [VNObservation]){
         for result in results{
@@ -183,25 +184,6 @@ class FrameHandler: NSObject, ObservableObject {
             self?.boundingBoxes = []
             let filteredResults = NMSHandler.performNMS(on: boundingBoxResults)
             self?.boundingBoxes = filteredResults
-        }
-    }
-    // Helper function to calculate direction from percentage // RDA
-    private func calculateDirection(_ percentage: CGFloat) -> String { // RDA
-        switch percentage {
-        case 0..<16.67:
-            return "9 o'clock"
-        case 16.67..<33.33:
-            return "10 o'clock"
-        case 33.33..<50:
-            return "11 o'clock"
-        case 50..<66.67:
-            return "12 o'clock"
-        case 66.67..<83.33:
-            return "1 o'clock"
-        case 83.33..<100:
-            return "2 o'clock"
-        default:
-            return "Unknown"
         }
     }
     private func calculateAngle(centerX: CGFloat) -> Int { // RDA
@@ -362,12 +344,12 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
 ////            print("Confidence score: \(self.confidence)")
 //            print("Corrected distance: \(self.objectDistance) meters")
 //            print("angle: \(self.angle) o'clock")
-            let objectDetected = DetectedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle)
+            let objectDetected = DetectedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, vert: self.vert)
             let block = DecisionBlock(detectedObject: objectDetected)
             let objectThreatLevel = block.computeThreatLevel(for: objectDetected)
-            let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, threatLevel: objectThreatLevel)
+            let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, vert: self.vert, threatLevel: objectThreatLevel)
             block.processDetectedObjects(processed: processedObject)
-            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 1)
+            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 20)
             if audioOutput?.threatLevel ?? 0 > 1{
 //                print("Object name: \(audioOutput!.objName)")
 //                print("Object angle: \(audioOutput!.angle)")
@@ -377,6 +359,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
 //                print("Object coords X and Y \(objectCoords)")
                 content.append("Object name: \(audioOutput!.objName),")
                 content.append("Object angle: \(audioOutput!.angle),")
+                content.append("Object Verticality: \(audioOutput!.vert),")
                 content.append("Object distance: \(audioOutput!.distance),")
                 content.append("Threat level: \(audioOutput!.threatLevel),")
                 content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")

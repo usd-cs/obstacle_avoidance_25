@@ -46,9 +46,9 @@ struct DetectionUtils {
         //we might need to switch the upper and lower values, as i'm not too sure whether
         // a low percentage indicates top of the screen or vice versa
         let sections = [
-            "upper half",
-            "middle half",
-            "lower half"
+            "upper third",
+            "middle third",
+            "lower third"
         ]
         let index = min(Int(percentage/33.33), sections.count-1)
         return sections[index]

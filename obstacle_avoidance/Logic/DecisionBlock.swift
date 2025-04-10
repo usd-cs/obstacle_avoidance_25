@@ -22,12 +22,14 @@ struct  DetectedObject {
     let objName: String
     let distance: Float16
     let angle: String
+    let vert: String
 }
 
 struct  ProcessedObject {
     let objName: String
     let distance: Float16
     let angle: String
+    let vert: String
     let threatLevel: Float16
 }
 
@@ -58,6 +60,7 @@ class DecisionBlock {
             objName: detectedObject.objName,
             distance: detectedObject.distance,
             angle: detectedObject.angle,
+            vert: detectedObject.vert,
             threatLevel: computeThreatLevel(for: detectedObject)
             )
 
