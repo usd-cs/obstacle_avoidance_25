@@ -25,6 +25,7 @@ struct ECView: View {
                 Text("Emergency Contact Information")
                     .padding()
                     .font(.title2)
+                    .accessibilityAddTraits(.isHeader)
                 Text("Not required, but fill out all fields if you add one")
                     .padding()
                     .font(.footnote)

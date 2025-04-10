@@ -5,6 +5,8 @@
 //  Created by Austin Lim on 3/25/25.
 //
 import SwiftUI
+import UIKit
+
 
 struct SignUpView: View {
     @AppStorage("isLoggedIn") private var isLoggedIn = false
@@ -22,12 +24,19 @@ struct SignUpView: View {
     let minPasswordLength = 8
     @State private var nameFilled = false
     @State private var goToECView = false
+    @State private var errorMessage = ""
+    @State private var usernameError = ""
+    @State private var phoneError = ""
+    @State private var emailError = ""
+    @State private var userError = false
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("User Information")
                 .font(.largeTitle)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding()
+                .accessibilityAddTraits(.isHeader)
             VStack(alignment: .leading, spacing: 4) {
                             Text("Name: required")
                                 .font(.caption)
@@ -110,9 +119,17 @@ struct SignUpView: View {
                                 .padding(.bottom, 8)
                         }
             .frame(maxWidth: .infinity, alignment: .center)
+            
+            if userError{
+                Text(errorMessage)
+                    .foregroundColor(.red)
+                    .accessibilityLabel(errorMessage)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
         }
         Button("Next") {
             Task {
+                errorMessage = ""
                 await confirmUser(username: username, phoneNumber: phoneNumber, email: email)
             }
         }
@@ -126,30 +143,59 @@ struct SignUpView: View {
         let users = await Database.shared.fetchUsers()
         if users.contains(where: { $0.username == username }) {
             usernameAccepted = false
-            print("Username already taken")
+            usernameError = "Username already taken. "
+            userError = true
         } else {
             usernameAccepted = true
+            usernameError = ""
         }
-        if users.contains(where: { $0.phoneNumber == phoneNumber }) {
+        if !phoneNumber.isEmpty{
+            if users.contains(where: { $0.phoneNumber == phoneNumber }) {
+                phoneNumberAccepted = false
+                phoneError = "Phone number already taken. "
+                userError = true
+            } else {
+                phoneNumberAccepted = true
+                phoneError = ""
+            }
+        } else {
             phoneNumberAccepted = false
-            print("Phone number already taken")
-        } else {
-            phoneNumberAccepted = true
+            phoneError = "Phone number required. "
         }
-        if users.contains(where: { $0.email == email }) {
-            emailAccepted = false
-            print("Email already taken")
-        } else if email.isEmpty {
-            emailAccepted = true
+        if !email.isEmpty {
+            if users.contains(where: { $0.email == email }) {
+                emailAccepted = false
+                emailError = "Email already taken. "
+                userError = true
+            } else {
+                emailAccepted = true
+                emailError = ""
+            }
         } else {
             emailAccepted = true
+            emailError = ""
         }
+
+        errorMessage = usernameError + phoneError + emailError
         if (nameFilled == true
             && usernameAccepted == true
             && emailAccepted == true
             && phoneNumberAccepted == true
             && passwordAccepted == true) {
             goToECView = true
+            userError = false
+        } else if(nameFilled == false && passwordAccepted == false){
+            errorMessage += "Name is required. Invalid password length"
+            userError = true
+        } else if(nameFilled == false) {
+            errorMessage += "Name is required."
+            userError = true
+        } else if (passwordAccepted == false) {
+            errorMessage += "Invalid password length."
+            userError = true
+        }
+        if userError {
+            UIAccessibility.post(notification: .announcement, argument: errorMessage)
         }
     }
 }

@@ -201,20 +201,16 @@ extension Database {
 extension Database {
     func addEmergencyContact(userId: Int, newEC: EmergencyContact) async {
         do {
-            let user = await fetchUserById(userId: userId)
-            var currentContacts = user?.emergencyContacts ?? []
-
-            currentContacts.append(newEC)
-
-            guard let jsonData = try? JSONEncoder().encode(currentContacts),
-                  let jsonString = String(data: jsonData, encoding: .utf8) else {
-                print("Failed to encode updated emergency contacts")
+            guard let user = await fetchUserById(userId: userId) else {
+                print("User not found.")
                 return
             }
+            var currentContacts = user.emergencyContacts ?? []
+            currentContacts.append(newEC)
 
             let response = try await client
                 .from("users")
-                .update(["emergencyContacts": jsonString])
+                .update(["emergencyContacts": currentContacts])
                 .eq("id", value: userId)
                 .execute()
 
@@ -223,27 +219,34 @@ extension Database {
             print("Error adding emergency contact:", error)
         }
     }
-
-    func updateEmergencyContact(userId: Int, newECs: [EmergencyContact]) async {
+    func updateEmergencyContact(userId: Int, originalName: String, updatedContact: EmergencyContact) async {
         do {
-            guard let jsonData = try? JSONEncoder().encode(newECs),
-                  let jsonString = String(data: jsonData, encoding: .utf8) else {
-                print("Failed to encode emergency contacts")
+            guard let user = await fetchUserById(userId: userId),
+                  var currentContacts = user.emergencyContacts else {
+                print("User or emergency contacts not found.")
                 return
             }
-            print("Updating user \(userId) with new emergency contacts JSON:", jsonString)
+
+            if let index = currentContacts.firstIndex(where: { $0.name == originalName }) {
+                currentContacts[index] = updatedContact
+            } else {
+                print("Contact not found.")
+                return
+            }
 
             let response = try await client
                 .from("users")
-                .update(["emergencyContacts": jsonString])
+                .update(["emergencyContacts": currentContacts])
                 .eq("id", value: userId)
                 .execute()
 
-            print("Update response:", response)
+            print("Updated contact:", response)
+
         } catch {
             print("Error updating emergency contact:", error)
         }
     }
+
     func deleteEmergencyContact(userId: Int, contactName: String) async {
         do {
             // Fetch the current contacts
@@ -304,14 +307,14 @@ extension Database {
                 .eq("id", value: userId)
                 .single()
                 .execute()
-
+            
             print("Fetched user response (raw JSON):", String(data: response.data, encoding: .utf8) ?? "No data")
 
             var user = try JSONDecoder().decode(User.self, from: response.data)
 
             if let jsonDict = try JSONSerialization.jsonObject(with: response.data, options: []) as? [String: Any],
-               let ecString = jsonDict["emergencyContacts"] as? String,
-               let ecData = ecString.data(using: .utf8) {
+                let ecString = jsonDict["emergencyContacts"] as? String,
+                let ecData = ecString.data(using: .utf8) {
 
                 do {
                     let contacts = try JSONDecoder().decode([EmergencyContact].self, from: ecData)
