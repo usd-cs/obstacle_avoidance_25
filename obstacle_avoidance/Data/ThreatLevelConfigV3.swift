@@ -9,7 +9,7 @@ import Foundation
 
 struct ThreatLevelConfigV3{
     static let angleWeights: [String: Int]=[
-        "12 o'clock": 5,  //Directly Ahead
+        "12 o'clock": 10,  //Directly Ahead
         "11 o'clock": 3,  //Slightly Off-Centered
         "1 o'clock": 3,
         "10 o'clock": 1,  //Closing in on Peripheral Vision

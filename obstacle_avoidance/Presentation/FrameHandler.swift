@@ -359,7 +359,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
                 print("Threat level: \(audioOutput!.threatLevel)")
                 print("Distance as a Float: \(Float(audioOutput!.distance))")
                 print("Object coords X and Y \(objectCoords)")
-                print("Object Vertical: \(audioOutput!.vert)")
+                print("Object Vertical: \(audioOutput!.vert) \n")
 //                content.append("Object name: \(audioOutput!.objName),")
 //                content.append("Object angle: \(audioOutput!.angle),")
 //                content.append("Object Verticality: \(audioOutput!.vert),")
