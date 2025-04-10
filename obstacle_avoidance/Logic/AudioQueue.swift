@@ -24,7 +24,7 @@ struct AudioQueueVertex: Comparable {
 class AudioQueue {
     public static var queue = Heap<AudioQueueVertex>()
 
-    static func addToHeap(_ processedObject: ProcessedObject){
+    static func addToHeap(_ processedObject: ProcessedObject) {
         let newVertex = AudioQueueVertex(
             threatLevel: processedObject.threatLevel,
             objName: processedObject.objName,
@@ -32,6 +32,7 @@ class AudioQueue {
             vert: processedObject.vert,
             distance: processedObject.distance
         );
+
         queue.insert(newVertex)
     }
     static func clearQueue(){
