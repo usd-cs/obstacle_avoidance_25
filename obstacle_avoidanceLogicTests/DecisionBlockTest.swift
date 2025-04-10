@@ -19,7 +19,7 @@ struct DecisionBlockTest {
     @Test("testDecisionBlockInit")
     func testDecisionBlockInit() {
         // Creates an instance of detectedObject
-        let detectedObject = DetectedObject(objName: "truck", distance: 6, angle: "12 o'clock")
+        let detectedObject = DetectedObject(objName: "truck", distance: 6, angle: "12 o'clock", vert: "lower third")
         let block = DecisionBlock(detectedObject: detectedObject)
 
         // Verify the object is stored correctly
@@ -31,7 +31,7 @@ struct DecisionBlockTest {
     // Test Case: Compute threat level for a single object
     @Test("testComputeThreatLevel")
     func testComputeThreatLevel() {
-        let detectedObject = DetectedObject(objName: "person", distance: 0.284, angle: "12 o'clock")
+        let detectedObject = DetectedObject(objName: "person", distance: 0.284, angle: "12 o'clock", vert: "lower third")
         let block = DecisionBlock(detectedObject: detectedObject)
 
         let computedThreat = block.computeThreatLevel(for: detectedObject)
