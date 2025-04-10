@@ -82,7 +82,8 @@ struct YOLODecoder{
                 score: confidence,
                 rect: rect,
                 name: labels[classIndex],
-                direction: "Unkown"
+                direction: "Unkown",
+                vert: "whoCares"
             ))
         }
 

@@ -117,7 +117,8 @@ class FrameHandler: NSObject, ObservableObject {
                 score: confidence,
                 rect: transformedBounds,
                 name: labelIdentifier,
-                direction: direction
+                direction: direction,
+                vert: verticalLocation
             )
             boxes.append(box)
         }
@@ -281,6 +282,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         self.confidence = largestBox.score
         self.angle = largestBox.direction
         self.objectIDD = largestBox.classIndex
+        self.vert = largestBox.vert
         // Get the baseadress of pixel and turn it into a Float16 so it is readable.
         let baseAddress = unsafeBitCast(
             CVPixelBufferGetBaseAddress(depthMap),
@@ -349,21 +351,22 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             let objectThreatLevel = block.computeThreatLevel(for: objectDetected)
             let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, vert: self.vert, threatLevel: objectThreatLevel)
             block.processDetectedObjects(processed: processedObject)
-            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 20)
+            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10)
             if audioOutput?.threatLevel ?? 0 > 1{
-//                print("Object name: \(audioOutput!.objName)")
-//                print("Object angle: \(audioOutput!.angle)")
-//                print("Object distance: \(audioOutput!.distance)")
-//                print("Threat level: \(audioOutput!.threatLevel)")
-//                print("Distance as a Float: \(Float(audioOutput!.distance))")
-//                print("Object coords X and Y \(objectCoords)")
-                content.append("Object name: \(audioOutput!.objName),")
-                content.append("Object angle: \(audioOutput!.angle),")
-                content.append("Object Verticality: \(audioOutput!.vert),")
-                content.append("Object distance: \(audioOutput!.distance),")
-                content.append("Threat level: \(audioOutput!.threatLevel),")
-                content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")
-                print(content)
+                print("Object name: \(audioOutput!.objName)")
+                print("Object angle: \(audioOutput!.angle)")
+                print("Object distance: \(audioOutput!.distance)")
+                print("Threat level: \(audioOutput!.threatLevel)")
+                print("Distance as a Float: \(Float(audioOutput!.distance))")
+                print("Object coords X and Y \(objectCoords)")
+                print("Object Vertical: \(audioOutput!.vert)")
+//                content.append("Object name: \(audioOutput!.objName),")
+//                content.append("Object angle: \(audioOutput!.angle),")
+//                content.append("Object Verticality: \(audioOutput!.vert),")
+//                content.append("Object distance: \(audioOutput!.distance),")
+//                content.append("Threat level: \(audioOutput!.threatLevel),")
+//                content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")
+//                print(content)
 
             }
 
