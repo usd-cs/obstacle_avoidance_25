@@ -53,7 +53,7 @@ class DecisionBlock {
         var threat = Float16(objThreat) * Float16(angleWeight) * inverseDistance
 
         if(detectedObject.vert == "upper third" && distanceClamped < 1.75){
-            threat = threat * 2
+            threat *= 2
         }
         return Float16(threat)
     }
