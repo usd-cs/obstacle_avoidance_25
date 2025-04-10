@@ -50,7 +50,11 @@ class DecisionBlock {
         //This iverts distance so the closer something is the more dangerous it is.
         let distanceClamped = max(0.1, Float16(object.distance))
         let inverseDistance = 1.0 / distanceClamped
-        let threat = Float16(objThreat) * Float16(angleWeight) * inverseDistance
+        var threat = Float16(objThreat) * Float16(angleWeight) * inverseDistance
+
+        if(detectedObject.vert == "upper third" && distanceClamped < 1.75){
+            threat = threat * 2
+        }
         return Float16(threat)
     }
 
