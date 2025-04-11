@@ -195,6 +195,18 @@ struct AccountScreen: View {
 struct EmergencyContactView: View {
     let user: User?
     @State private var contacts: [EmergencyContact] = []
+    @State private var nameEC = ""
+    @State private var phoneNumberEC = ""
+    @State private var addressEC = ""
+    @State private var addingEC = false
+    //@State private var newContact = EmergencyContact.empty
+    @State private var isEditing = false
+    @State private var editingContact: EmergencyContact? = nil
+    @State private var editingIndex: Int? = nil
+    @State private var editName = ""
+    @State private var editPhone = ""
+    @State private var editAddress = ""
+
 
     var body: some View {
         VStack {
@@ -204,14 +216,52 @@ struct EmergencyContactView: View {
                         .foregroundColor(.gray)
                         .padding()
                 } else {
-                    ForEach(contacts, id: \.name) { contact in
-                        EmergencyContactCard(contact: contact, onDelete: {
-                            Task {
-                                await deleteEmergencyContact(contact)
+                    ForEach(Array(contacts.enumerated()), id: \.element.name) { index, contact in
+                        if editingIndex == index {
+                            VStack(alignment: .leading, spacing: 10) {
+                                TextField("Name", text: $editName)
+                                TextField("Address", text: $editAddress)
+                                TextField("Phone Number", text: $editPhone)
+                                HStack {
+                                    Button("Cancel") {
+                                        editingIndex = nil
+                                    }
+                                    Spacer()
+                                    Button("Save") {
+                                        let updated = EmergencyContact(name: editName, phoneNumber: editPhone, address: editAddress)
+                                        Task {
+                                            await editEC(originalName: contact.name, updated: updated)
+                                            editingIndex = nil
+                                        }
+                                    }
+                                }
+                                .padding(.top, 5)
                             }
-                        })
+                            .padding()
+                            .background(Color(UIColor.systemGray5))
+                            .cornerRadius(10)
+                        } else {
+                            EmergencyContactCard(
+                                contact: contact,
+                                onDelete: {
+                                    Task { await deleteEmergencyContact(contact) }
+                                },
+                                onEdit: {
+                                    editingIndex = index
+                                    editName = contact.name
+                                    editPhone = contact.phoneNumber
+                                    editAddress = contact.address
+                                }
+                            )
+                        }
                     }
                 }
+            }
+            if addingEC {
+                newBoxView()
+            }
+            Button("Add Contact") {
+                addingEC = true
             }
         }
         .onAppear {
@@ -229,11 +279,58 @@ struct EmergencyContactView: View {
         }
         await Database.shared.deleteEmergencyContact(userId: userId, contactName: contact.name)
     }
+    
+    private func newBoxView() -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            TextField("Name", text: $nameEC)
+            TextField("Phone Number", text: $phoneNumberEC)
+            TextField("Address", text: $addressEC)
+            
+            Button("Save Contact") {
+                let newContact = EmergencyContact(name: nameEC, phoneNumber: phoneNumberEC, address: addressEC)
+                Task {
+                    await addEC(newContact)
+                }
+            }
+            .padding(.top)
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.gray, lineWidth: 1)
+        )
+        .padding()
+    }
+    
+    private func addEC(_ newContact: EmergencyContact) async {
+        guard let userId = user?.id else { return }
+        await Database.shared.addEmergencyContact(userId: userId, newEC: newContact)
+
+        DispatchQueue.main.async {
+            contacts.append(newContact)
+            //self.newContact = .empty
+            self.nameEC = ""
+            self.phoneNumberEC = ""
+            self.addressEC = ""
+            self.addingEC = false
+        }
+    }
+    
+    private func editEC(originalName: String, updated: EmergencyContact) async {
+        guard let userId = user?.id else { return }
+
+        if let index = contacts.firstIndex(where: { $0.name == originalName }) {
+            contacts[index] = updated
+        }
+
+        await Database.shared.updateEmergencyContact(userId: userId, originalName: originalName, updatedContact: updated)
+    }
 }
 
 struct EmergencyContactCard: View {
     let contact: EmergencyContact
-    let onDelete: () -> Void  // Function to delete contact
+    let onDelete: () -> Void
+    let onEdit: () -> Void
 
     var body: some View {
         HStack {
@@ -250,12 +347,11 @@ struct EmergencyContactCard: View {
             }
             Spacer()
 
-            Button(action: onDelete) {
-                Text("Delete")
+            VStack(spacing: 10) {
+                Button("Edit", action: onEdit)
+                    .foregroundColor(.blue)
+                Button("Delete", action: onDelete)
                     .foregroundColor(.red)
-                    .padding()
-                    .background(Color.white)
-                    .shadow(radius: 3)
             }
         }
         .padding(20)
@@ -265,7 +361,6 @@ struct EmergencyContactCard: View {
         .shadow(radius: 5)
     }
 }
-
 
 // Allows for our picker to easily work. Still debating if we want to do it like this or with arrays.
 enum MeasurementType: String, CaseIterable, Identifiable {

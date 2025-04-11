@@ -7,6 +7,8 @@
 
 import SwiftUI
 import SwiftData
+import UIKit
+
 
 struct LoginView: View {
     @AppStorage("isLoggedIn") private var isLoggedIn = false
@@ -15,6 +17,8 @@ struct LoginView: View {
     @State private var goToSignUp = false
     @State private var password = ""
     @State private var isPasswordVisible = false
+    @State private var errorMessage = ""
+    @State private var acceptedUser = false
 
     var body: some View {
         NavigationStack {
@@ -43,6 +47,11 @@ struct LoginView: View {
                 }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
+                if !acceptedUser {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .accessibilityLabel(errorMessage)
+                }
                 Button("Login") {
                     Task {
                         await authenticateUser(username: username)
@@ -70,11 +79,19 @@ struct LoginView: View {
                 isLoggedIn = true
                 self.username = user.username
                 goToApp = true
-            } else {
-                print("Incorrect password")
+                errorMessage = ""
+                acceptedUser = true
             }
-        } else {
-            print("User not found")
+            else {
+                errorMessage = "Incorrect username or password"
+                acceptedUser = false
+                UIAccessibility.post(notification: .announcement, argument: errorMessage)
+            }
+        }
+        else {
+            errorMessage = "Incorrect username or password"
+            acceptedUser = false
+            UIAccessibility.post(notification: .announcement, argument: errorMessage)
         }
     }
 }
