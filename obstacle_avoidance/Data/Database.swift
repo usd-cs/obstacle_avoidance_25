@@ -104,9 +104,8 @@ extension Database {
                 saltedPassword: salt,
                 address: address,
                 email: email,
-                user_uid: uid
+                userUid: uid
             )
-
             let response = try await client
                            .from("users")
                            .insert([newUser])
