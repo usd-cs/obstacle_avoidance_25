@@ -315,9 +315,6 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         let correctedDepth: Float16 = medianDepth > 0 ? 1.0 / medianDepth : 0
         CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
         DispatchQueue.main.async {
-            // print("Measured distance: \(depthVal) meters")
-//            print("Coordinates: \(self.objectCoordinates)")
-//            print("Detections per second: \(self.detectionTimestamps.count)")
             let newDetection = DetectionOutput(objcetName: self.objectName, distance: correctedDepth, angle: self.angle, id: self.objectIDD, vert: self.vert)
             if recentDetections.count > 5 {
                 recentDetections.removeFirst()
@@ -341,52 +338,24 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             self.objectDistance = self.findMedian(distances: simplifiedDetection)
             self.objectName = commonLabel
 
-            //get XY coords
-            let objectCoords = DetectionUtils.polarToCartesian(distance: Float(self.objectDistance), direction: self.angle)
-//            print("Object detected: \(self.objectName)")
-////            print("Box centerX: \(self.boxCenter.x) Box CenterY: \(self.boxCenter.y)")
-////            print("Confidence score: \(self.confidence)")
-//            print("Corrected distance: \(self.objectDistance) meters")
-//            print("angle: \(self.angle) o'clock")
+            // Get XY coords; Functionality unused as of now, but may be needed in future development
+            // let objectCoords = DetectionUtils.polarToCartesian(distance: Float(self.objectDistance), direction: self.angle)
+
             let objectDetected = DetectedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, vert: self.vert)
             let block = DecisionBlock(detectedObject: objectDetected)
             let objectThreatLevel = block.computeThreatLevel(for: objectDetected)
             let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, vert: self.vert, threatLevel: objectThreatLevel)
             block.processDetectedObjects(processed: processedObject)
-//            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10)
-//            if audioOutput?.threatLevel ?? 0 > 1{
-//                print("Object name: \(audioOutput!.objName)")
-//                print("Object angle: \(audioOutput!.angle)")
-//                print("Object distance: \(audioOutput!.distance)")
-//                print("Threat level: \(audioOutput!.threatLevel)")
-//                print("Distance as a Float: \(Float(audioOutput!.distance))")
-//                print("Object coords X and Y \(objectCoords)")
-//                print("Object Vertical: \(audioOutput!.vert) \n")
-//                content.append("Object name: \(audioOutput!.objName),")
-//                content.append("Object angle: \(audioOutput!.angle),")
-//                content.append("Object Verticality: \(audioOutput!.vert),")
-//                content.append("Object distance: \(audioOutput!.distance),")
-//                content.append("Threat level: \(audioOutput!.threatLevel),")
-//                content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")
-//                print(content)
-
-//            }
-
-//            // Get the Documents directory
-//            if let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-//                let fileURL = documentsURL.appendingPathComponent(fileName)
-//
-//                do {
-//                    try content.write(to: fileURL, atomically: true, encoding: .utf8)
-//                    print("Successfully wrote to file at: \(fileURL)")
-//                } catch {
-//                    print("Error writing to file: \(error)")
-//                }
-//            }
-
-            
-            
-
+            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10)
+            if audioOutput?.threatLevel ?? 0 > 1{
+                content.append("Object name: \(audioOutput!.objName),")
+                content.append("Object angle: \(audioOutput!.angle),")
+                content.append("Object Verticality: \(audioOutput!.vert),")
+                content.append("Object distance: \(audioOutput!.distance),")
+                content.append("Threat level: \(audioOutput!.threatLevel),")
+                content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")
+                print(content)
+            }
         }
     }
     func findMedian(distances: [Float16]) -> Float16

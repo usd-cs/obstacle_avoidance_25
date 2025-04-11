@@ -16,14 +16,14 @@ struct AudioQueueTests {
     @Test
     func testAudioQueueOrdering() {
         // Reset the heap before testing
-        obstacle_avoidance.AudioQueue.queue = Heap<AudioQueueVertex>()
+        AudioQueue.clearQueue()
 
         // Create an unordered list of mock objects
         let mockObjects = [
-            ProcessedObject(objName: "person", distance: 0.284, angle: "12 o'clock", vert: "lower third", threatLevel: 10.568), // Medium threat
-            ProcessedObject(objName: "stop sign", distance: 1.243, angle: "1 o'clock", vert: "lower third", threatLevel: 11.486), // High threat
-            ProcessedObject(objName: "kite", distance: 0.568, angle: "2 o'clock", vert: "lower third", threatLevel: 17.136),  // Highest threat
-            ProcessedObject(objName: "potted Pland", distance: 1.456, angle: "11 o'clock", vert: "lower third", threatLevel: 8.912) // Low threat
+            ProcessedObject(objName: "person", distance: 0.284, angle: "12 o'clock", vert: "lower third", threatLevel: 528.165), // Highest threat
+            ProcessedObject(objName: "stop sign", distance: 1.243, angle: "1 o'clock", vert: "lower third", threatLevel: 16.88), // Low threat
+            ProcessedObject(objName: "kite", distance: 0.568, angle: "2 o'clock", vert: "lower third", threatLevel: 12.32),  // Lower threat
+            ProcessedObject(objName: "potted plant", distance: 1.456, angle: "11 o'clock", vert: "lower third", threatLevel: 16.48) // Low threat
         ]
 
         // Adds objects to the heap
@@ -32,11 +32,11 @@ struct AudioQueueTests {
         }
 
         // Expected ordering: descending threat level
-        let expectedOrder = ["kite", "stop sign", "person"]
+        let expectedOrder = ["person", "stop sign", "potted plant"]
         var actualOrder: [String] = []
 
         // Pop elements and verify they are in the correct order
-        while let highestThreatObject = AudioQueue.popHighestPriorityObject(threshold: 10.511) {
+        while let highestThreatObject = AudioQueue.popHighestPriorityObject(threshold: 15) {
             actualOrder.append(highestThreatObject.objName)
         }
 
@@ -46,14 +46,14 @@ struct AudioQueueTests {
     @Test
     func testPopHighestThreatLevel() {
         // Reset the heap before testing
-        obstacle_avoidance.AudioQueue.queue = Heap<AudioQueueVertex>()
+        AudioQueue.clearQueue()
 
         // Insert mock objects
         let mockObjects = [
-            ProcessedObject(objName: "person", distance: 0.284, angle: "12 o'clock", vert: "lower third", threatLevel: 10.568), // Medium threat
-            ProcessedObject(objName: "stop sign", distance: 1.243, angle: "1 o'clock", vert: "lower third", threatLevel: 11.486), // High threat
-            ProcessedObject(objName: "kite", distance: 0.568, angle: "2 o'clock", vert: "lower third", threatLevel: 17.136),  // Highest threat
-            ProcessedObject(objName: "potted Pland", distance: 1.456, angle: "11 o'clock", vert: "lower third", threatLevel: 8.912) // Low threat
+            ProcessedObject(objName: "stop sign", distance: 0.284, angle: "12 o'clock", vert: "lower third", threatLevel: 36.225), // Highest threat
+            ProcessedObject(objName: "person", distance: 1.243, angle: "1 o'clock", vert: "lower third", threatLevel: 246.478), // Low threat
+            ProcessedObject(objName: "kite", distance: 0.568, angle: "2 o'clock", vert: "lower third", threatLevel: 12.32),  // Lower threat
+            ProcessedObject(objName: "potted Pland", distance: 1.456, angle: "11 o'clock", vert: "lower third", threatLevel: 16.48) // Low threat
         ]
 
         for object in mockObjects {
@@ -61,9 +61,9 @@ struct AudioQueueTests {
         }
 
         // Pop the highest-priority object and assert it's the one with highest threat level
-        let highestThreatObject = AudioQueue.popHighestPriorityObject(threshold: 10.511)
+        let highestThreatObject = AudioQueue.popHighestPriorityObject(threshold: 15)
 
-        #expect(highestThreatObject?.objName == "kite", "Failed: Highest threat object was not popped first.")
-        #expect(highestThreatObject?.threatLevel == 17.136, "Failed: Threat level does not match expected value.")
+        #expect(highestThreatObject?.objName == "person", "Failed: Highest threat object was not popped first.")
+        #expect(highestThreatObject?.threatLevel == 246.478, "Failed: Threat level does not match expected value.")
     }
 }
