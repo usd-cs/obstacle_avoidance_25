@@ -10,7 +10,10 @@ struct CameraView: View {
     @StateObject private var model = FrameHandler()
 
     var body: some View {
-        FrameView(image: model.frame, boundingBoxes: model.boundingBoxes)
+        ZStack{
+            FrameView(image: model.frame, boundingBoxes: model.boundingBoxes)
+            CorridorOverlayView()
+        }
             .ignoresSafeArea()
             .onAppear {
                 model.startCamera()
