@@ -345,7 +345,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             let block = DecisionBlock(detectedObject: objectDetected)
             let objectThreatLevel = block.computeThreatLevel(for: objectDetected)
             let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, vert: self.vert, threatLevel: objectThreatLevel)
-            block.processDetectedObjects(processed: processedObject)
+            block.processDetectedObjects()
             let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10)
             if audioOutput?.threatLevel ?? 0 > 1{
                 content.append("Object name: \(audioOutput!.objName),")

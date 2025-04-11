@@ -40,13 +40,11 @@ class AudioQueue {
     }
 
     static func popHighestPriorityObject(threshold: Float16) -> AudioQueueVertex? {
-        guard let candidate = queue.popMin() else{
+        print("Heap count: \(queue.count)")
+        guard let candidate = queue.min, candidate.threatLevel >= threshold else {
             return nil
         }
-        if candidate.threatLevel >= threshold{
-            return candidate
-        } else {
-            return nil
-        }
+        print("Popping object: \(candidate.objName), threat: \(candidate.threatLevel)")
+        return queue.popMin()
     }
 }

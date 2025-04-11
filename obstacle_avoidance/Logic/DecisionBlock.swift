@@ -59,7 +59,7 @@ class DecisionBlock {
     }
 
     // Given the provided information about the object, computes the threat level to create a processedObject
-    func processDetectedObjects(processed: ProcessedObject) {
+    func processDetectedObjects() {
         let processed = ProcessedObject(
             objName: detectedObject.objName,
             distance: detectedObject.distance,
