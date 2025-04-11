@@ -25,5 +25,5 @@ struct User: Codable {
     let saltedPassword: String // Should be varchar type in database
     let address: String
     let email: String
-    //let user_uid: UUID
+    let userUid: UUID?
 }

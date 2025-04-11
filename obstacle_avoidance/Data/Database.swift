@@ -90,8 +90,8 @@ extension Database {
                 return
         }
         do {
-            //let session = try await client.auth.signUp(email: email, password: password)
-            //let uid = session.user.id;
+            let session = try await client.auth.signUp(email: email, password: password)
+            let uid = session.user.id;
             
             let newUser = User(
                 id: nil,
@@ -103,10 +103,9 @@ extension Database {
                 hashedPassword: hashedPassword,
                 saltedPassword: salt,
                 address: address,
-                email: email
-                //user_uid: uid
+                email: email,
+                userUid: uid
             )
-
             let response = try await client
                            .from("users")
                            .insert([newUser])
@@ -123,53 +122,55 @@ extension Database {
                     newPhoneNumber: String?,
                     newEmail: String?,
                     newAddress: String?) async {
-            var updateValues: [String: String] = [:]
-            if let newUsername = newUsername {
-                let existingUser = await checkIfExists(column: "username", value: newUsername, userId: userId)
-                if existingUser {
-                    print("Error: Username is already taken.")
-                    return
-                }
-                updateValues["username"] = newUsername
+        
+        var updateValues: [String: String] = [:]
+        if let newUsername = newUsername {
+            let existingUser = await checkIfExists(column: "username", value: newUsername, userId: userId)
+            if existingUser {
+                print("Error: Username is already taken.")
+                return
             }
+            updateValues["username"] = newUsername
+        }
 
-            if let newPhoneNumber = newPhoneNumber {
-                let existingUser = await checkIfExists(column: "phone_number", value: newPhoneNumber, userId: userId)
-                if existingUser {
-                    print("Error: Phone number is already in use.")
-                    return
-                }
-                updateValues["phone_number"] = newPhoneNumber
+        if let newPhoneNumber = newPhoneNumber {
+            let existingUser = await checkIfExists(column: "phone_number", value: newPhoneNumber, userId: userId)
+            if existingUser {
+                print("Error: Phone number is already in use.")
+                return
             }
+            updateValues["phone_number"] = newPhoneNumber
+        }
 
-            if let newEmail = newEmail {
+        if let newEmail = newEmail {
+            if !newEmail.isEmpty {
                 let existingUser = await checkIfExists(column: "email", value: newEmail, userId: userId)
                 if existingUser {
                     print("Error: Email is already in use.")
                     return
                 }
-                updateValues["email"] = newEmail
             }
-            if let newAddress = newAddress { updateValues["address"] = newAddress }
-            if let newName = newName { updateValues["name"] = newName }
-
-            // Check if there are values to update
-            guard !updateValues.isEmpty else {
-                return
-            }
-
-            do {
-                let response = try await client
-                    .from("users")
-                    .update(updateValues)
-                    .eq("id", value: userId)
-                    .execute()
-
-                print("User updated:", response)
-            } catch {
-                print("Error updating user:", error)
-            }
+            updateValues["email"] = newEmail
         }
+        if let newAddress = newAddress { updateValues["address"] = newAddress }
+        if let newName = newName { updateValues["name"] = newName }
+
+        guard !updateValues.isEmpty else {
+            return
+        }
+
+        do {
+            let response = try await client
+                .from("users")
+                .update(updateValues)
+                .eq("id", value: userId)
+                .execute()
+
+            print("User updated:", response)
+        } catch {
+            print("Error updating user:", error)
+        }
+    }
 
     func deleteUser(userId: Int) async {
         do {
