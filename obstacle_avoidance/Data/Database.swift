@@ -78,9 +78,9 @@ extension Database {
                  username: String,
                  password: String,
                  phoneNumber: String,
-                 emergencyContacts: [EmergencyContact],
-                 email: String,
-                 address: String) async {
+                 emergencyContacts: [EmergencyContact]?,
+                 address: String,
+                 email: String) async {
         print("Adding user:", username)
         let salt = createSalt()
         let hashedPassword = hashSaltPassword(password: password, salt: salt)
@@ -90,6 +90,9 @@ extension Database {
                 return
         }
         do {
+            //let session = try await client.auth.signUp(email: email, password: password)
+            //let uid = session.user.id;
+            
             let newUser = User(
                 id: nil,
                 name: name,
@@ -101,6 +104,7 @@ extension Database {
                 saltedPassword: salt,
                 address: address,
                 email: email
+                //user_uid: uid
             )
 
             let response = try await client

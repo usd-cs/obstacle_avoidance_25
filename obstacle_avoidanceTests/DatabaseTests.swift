@@ -15,41 +15,41 @@ final class DatabaseTests: XCTestCase {
         print("Starting Test")
 
         let testEC = EmergencyContact(name: "Mike", phoneNumber: "123-456-7890", address: "100 That Lane")
+
         await Database.shared.addUser(
             name: "Joe",
             username: "Joe",
             password: "hellothere",
             phoneNumber: "555-666-7777",
             emergencyContacts: [testEC],
-            email: "joe@email.com",
-            address: "101 That Lane"
-        )
+            address: "101 That Lane",
+            email: "joe@email.com")
 
-        let users = await Database.shared.fetchUsers()
-        testUserId = users.first(where: { $0.username == "Joe" })?.id
-        XCTAssertNotNil(testUserId, "Test user was not created!")
-        print("User added successfully with ID:", testUserId ?? "nil")
-
-        // let updatedEC = EmergencyContact(name: "Tom", phoneNumber: "444-555-6666", address: "100 That Lane")
-
-        guard let testUserId = testUserId else {
-            XCTFail("ERROR: testUserId is nil! The user was not created properly.")
+        let users: [User]
+        do {
+            users = try await Database.shared.fetchUsers()
+        } catch {
+            XCTFail("Failed to fetch users: \(error)")
             return
         }
 
-        // await Database.shared.updateEmergencyContact(userId: testUserId, newECs: [updatedEC])
+        guard let joe = users.first(where: { $0.username == "Joe" }) else {
+            XCTFail("Test user not found in fetched results")
+            return
+        }
 
-        // let updatedUser = await Database.shared.fetchUserById(userId: testUserId)
+        print("User found: \(joe)")
+        testUserId = joe.id
+        XCTAssertNotNil(testUserId, "User ID is nil!")
 
-        // print("Updated User Full Object:", updatedUser ?? "nil")
-        
+        // Delete user
+        await Database.shared.deleteUser(userId: joe.id!)
 
-        await Database.shared.deleteUser(userId: testUserId)
-
-        let deletedUser = await Database.shared.fetchUserById(userId: testUserId)
-        XCTAssertNil(deletedUser, "User was NOT deleted!")
+        let deleted = await Database.shared.fetchUserById(userId: joe.id!)
+        XCTAssertNil(deleted, "User was not deleted!")
         print("User deleted successfully.")
     }
+
 
 }
 

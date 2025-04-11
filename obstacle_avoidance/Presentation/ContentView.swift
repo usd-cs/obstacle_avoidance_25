@@ -264,25 +264,6 @@ struct EmergencyContactView: View {
                 addingEC = true
             }
         }
-        /*.sheet(isPresented: $isEditing) {
-            if let contactToEdit = editingContact {
-                EditEmergencyContactView(
-                    contact: contactToEdit,
-                    onSave: { updatedContact in
-                        Task {
-                            await editEC(updatedContact)
-                            isEditing = false
-                            editingContact = nil
-                        }
-                    },
-                    onCancel: {
-                        isEditing = false
-                        editingContact = nil
-                    }
-                )
-            }
-        }*/
-
         .onAppear {
             if let userContacts = user?.emergencyContacts {
                 contacts = userContacts
@@ -380,41 +361,6 @@ struct EmergencyContactCard: View {
         .shadow(radius: 5)
     }
 }
-/*struct EditEmergencyContactView: View {
-    @State var contact: EmergencyContact
-    var onSave: (EmergencyContact) -> Void
-    var onCancel: () -> Void
-    @State private var nameEC: String = ""
-    @State private var phoneNumberEC: String = ""
-    @State private var addressEC: String = ""
-
-    var body: some View {
-        NavigationView {
-            Form {
-                TextField("Name", text: $nameEC)
-                TextField("Phone Number", text: $phoneNumberEC)
-                TextField("Address", text: $addressEC)
-            }
-            .navigationTitle("Edit Contact")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", action: onCancel)
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        let updatedContact = EmergencyContact(name: nameEC, phoneNumber: phoneNumberEC, address: addressEC)
-                        onSave(updatedContact)
-                    }
-                }
-            }
-        }
-        .onAppear {
-            nameEC = contact.name
-            phoneNumberEC = contact.phoneNumber
-            addressEC = contact.address
-        }
-    }
-}*/
 
 // Allows for our picker to easily work. Still debating if we want to do it like this or with arrays.
 enum MeasurementType: String, CaseIterable, Identifiable {

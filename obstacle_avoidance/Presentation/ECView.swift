@@ -38,14 +38,26 @@ struct ECView: View {
                 TextField("Address", text: $ecAddress)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
-                let emergencyContacts = EmergencyContact(
-                    name: ecName,
-                    phoneNumber: ecPhoneNumber,
-                    address: ecAddress
-                )
                 Button("Submit") {
                     Task {
-                        await addUserDatabase(name: name, username: username, password: password, phoneNumber: phoneNumber, emergencyContact: emergencyContacts, address:address, email: email)
+                        let trimmedName = ecName.trimmingCharacters(in: .whitespaces)
+                        let trimmedPhone = ecPhoneNumber.trimmingCharacters(in: .whitespaces)
+                        let trimmedAddress = ecAddress.trimmingCharacters(in: .whitespaces)
+
+                        let shouldAddContact = !trimmedName.isEmpty || !trimmedPhone.isEmpty || !trimmedAddress.isEmpty
+                        
+                        let emergencyContacts: [EmergencyContact]? = shouldAddContact
+                            ? [EmergencyContact(name: trimmedName, phoneNumber: trimmedPhone, address: trimmedAddress)]
+                            : nil
+
+                        await Database.shared.addUser(
+                            name: name,
+                            username: username,
+                            password: password,
+                            phoneNumber: phoneNumber,
+                            emergencyContacts: emergencyContacts,
+                            address: address,
+                            email: email)
                         goToApp = true
                         isLoggedIn = true
                     }
@@ -70,8 +82,8 @@ struct ECView: View {
                                       password: password,
                                       phoneNumber: phoneNumber,
                                       emergencyContacts: [emergencyContact],
-                                      email: email,
-                                      address: address)
+                                      address: address,
+                                      email: email)
     }
 }
 
