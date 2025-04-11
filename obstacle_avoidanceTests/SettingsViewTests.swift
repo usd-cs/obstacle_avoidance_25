@@ -36,8 +36,8 @@ final class SettingsViewTests: XCTestCase {
         
         let list = try ns.list(0)
         
-        XCTAssertEqual(list.count, 3)
-        
+        XCTAssertEqual(list.count, 4)
+
         let firstLinkLabel = try list.navigationLink(0)
             .labelView()
             .find(ViewType.Label.self)
@@ -54,6 +54,6 @@ final class SettingsViewTests: XCTestCase {
             .labelView()
             .find(ViewType.Label.self)
         let thirdLinkTitle = try thirdLinkLabel.find(ViewType.Text.self)
-        XCTAssertEqual(try thirdLinkTitle.string(), "System Prefrences")
+        XCTAssertEqual(try thirdLinkTitle.string(), "System Preferences")
     }
 }
