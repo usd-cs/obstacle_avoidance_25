@@ -8,11 +8,13 @@ import SwiftUI
 
 struct CameraView: View {
     @StateObject private var model = FrameHandler()
+    @State private var corridorGeometry: CorridorGeometry? = nil
+
 
     var body: some View {
         ZStack{
             FrameView(image: model.frame, boundingBoxes: model.boundingBoxes)
-            CorridorOverlayView()
+            CorridorOverlay(corridor: $corridorGeometry)
         }
             .ignoresSafeArea()
             .onAppear {
