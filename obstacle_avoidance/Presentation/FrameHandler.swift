@@ -14,6 +14,7 @@ class FrameHandler: NSObject, ObservableObject {
     @Published var frame: CGImage?
     @Published var boundingBoxes: [BoundingBox] = []
     @Published var objectDistance: Float16 = 0.0
+    @Published var corridorGeometry: CorridorGeometry? = nil // represents the area created by the corridor
     // Initializing variables related to capturing image.
     private var permissionGranted = true
     public let captureSession = AVCaptureSession()
