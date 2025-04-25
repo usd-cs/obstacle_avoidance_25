@@ -13,7 +13,7 @@ struct FrameView: View {
     //Keep track of when we last announced
     @State private var lastAnnounceTime: Date = .distantPast
     // How many seconds between announcements
-    private let announceInterval: TimeInterval = 2.8
+    private let announceInterval: TimeInterval = 0.1
     @State private var timer = Timer.publish(every:0.00001, on: .main, in: .common).autoconnect()
     @State private var clearTimer = Timer.publish(every:3.0, on: .main, in: .common).autoconnect()
 
@@ -27,9 +27,10 @@ struct FrameView: View {
             if let image = image {
                 Image(uiImage: UIImage(cgImage: image))
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
+                    .ignoresSafeArea()
             } else {
-                Color.black
+                Color.black.ignoresSafeArea()
             }
 
             // Overlay bounding boxes on the image

@@ -20,14 +20,14 @@ import Foundation
 // Create a struct holding parameters that pass through logic
 struct  DetectedObject {
     let objName: String
-    let distance: Float16
+    let distance: Float32
     let angle: String
     let vert: String
 }
 
 struct  ProcessedObject {
     let objName: String
-    let distance: Float16
+    let distance: Float32
     let angle: String
     let vert: String
     let threatLevel: Float16

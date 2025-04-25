@@ -13,7 +13,7 @@ struct AudioQueueVertex: Comparable {
     let objName: String // Name of the obstacle
     let angle: String // Angle of the obstacle in clock terms. Ex. 12 O'clock would be straight forward.
     let vert: String // Vertical postionality of an object
-    let distance: Float16 // Distance calculated from the person holding phone to the obstacle (in feet).
+    let distance: Float32 // Distance calculated from the person holding phone to the obstacle (in feet).
 
     // Auto Generate by Swift; Appears to reverse the order of the Queue since it's min-head by default
     static func < (lhs: AudioQueueVertex, rhs: AudioQueueVertex) -> Bool {
