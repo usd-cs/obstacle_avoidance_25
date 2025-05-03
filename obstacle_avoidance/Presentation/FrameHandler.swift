@@ -14,6 +14,7 @@ class FrameHandler: NSObject, ObservableObject {
     @Published var frame: CGImage?
     @Published var boundingBoxes: [BoundingBox] = []
     @Published var objectDistance: Float16 = 0.0
+    @Published var corridorGeometry: CorridorGeometry? = nil // represents the area created by the corridor
     // Initializing variables related to capturing image.
     private var permissionGranted = true
     public let captureSession = AVCaptureSession()
@@ -108,19 +109,31 @@ class FrameHandler: NSObject, ObservableObject {
                 width: objectBounds.maxX - objectBounds.minX,
                 height: objectBounds.maxY - objectBounds.minY
             )
-            let centerXPercentage = (transformedBounds.midX / screenRect.width) * 100
-            let centerYPercentage = (transformedBounds.midY / screenRect.height) * 100
-            let direction = DetectionUtils.calculateDirection(centerXPercentage)
-            let verticalLocation = DetectionUtils.verticalCorridor(centerYPercentage)
-            let box = BoundingBox(
-                classIndex: 0,
-                score: confidence,
-                rect: transformedBounds,
-                name: labelIdentifier,
-                direction: direction,
-                vert: verticalLocation
-            )
-            boxes.append(box)
+            if let corridor = self.corridorGeometry{
+//                let inCorridor = CorridorUtils.isBoundingBoxInCorridor(transformedBounds, corridor: corridor)
+//                if !inCorridor{
+//                    print("object outside corridor")
+//                }
+//                else{
+//                    print("object inside corridor")
+//                }
+                let objectPos = CorridorUtils.determinePosition(transformedBounds, corridor: corridor)
+                let centerXPercentage = (transformedBounds.midX / screenRect.width) * 100
+                let centerYPercentage = (transformedBounds.midY / screenRect.height) * 100
+                let direction = DetectionUtils.calculateDirection(centerXPercentage)
+                let verticalLocation = DetectionUtils.verticalCorridor(centerYPercentage)
+                let box = BoundingBox(
+                    classIndex: 0,
+                    score: confidence,
+                    rect: transformedBounds,
+                    name: labelIdentifier,
+                    direction: objectPos,
+                    vert: verticalLocation
+                )
+                boxes.append(box)
+
+            }
+
         }
         return boxes
     }
