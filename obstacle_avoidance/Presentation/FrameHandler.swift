@@ -359,16 +359,16 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             let objectThreatLevel = block.computeThreatLevel(for: objectDetected)
             let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, CorridorPosition: self.CorridorPosition, vert: self.vert, threatLevel: objectThreatLevel)
             block.processDetectedObjects(processed: processedObject)
-            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10)
-            if audioOutput?.threatLevel ?? 0 > 1{
-                content.append("Object name: \(audioOutput!.objName),")
-                content.append("Object direction: \(audioOutput!.CorridorPosition),")
-                content.append("Object Verticality: \(audioOutput!.vert),")
-                content.append("Object distance: \(audioOutput!.distance),")
-                content.append("Threat level: \(audioOutput!.threatLevel),")
-                content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")
-                print(content)
-            }
+            //let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 1)
+//            if audioOutput?.threatLevel ?? 0 > 1{
+//                content.append("Object name: \(audioOutput!.objName),")
+//                content.append("Object direction: \(audioOutput!.CorridorPosition),")
+//                content.append("Object Verticality: \(audioOutput!.vert),")
+//                content.append("Object distance: \(audioOutput!.distance),")
+//                content.append("Threat level: \(audioOutput!.threatLevel),")
+//                content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")
+//                //print(content)
+//            }
         }
     }
     func findMedian(distances: [Float16]) -> Float16

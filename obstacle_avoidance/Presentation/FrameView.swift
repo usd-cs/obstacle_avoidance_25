@@ -15,7 +15,7 @@ struct FrameView: View {
     // How many seconds between announcements
     private let announceInterval: TimeInterval = 2.8
     @State private var timer = Timer.publish(every:0.001, on: .main, in: .common).autoconnect()
-    @State private var clearTimer = Timer.publish(every:3.0, on: .main, in: .common).autoconnect()
+    @State private var clearTimer = Timer.publish(every:1.5, on: .main, in: .common).autoconnect()
 
     @State private var isSpeaking: Bool = false
     private let speakDelay: Double = 2.0
@@ -50,11 +50,12 @@ struct FrameView: View {
                 .onReceive(timer){ _ in
                     guard !isSpeaking else { return }
                     
-
+                    print(AudioQueue.queue)
                     if let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10) {
                         isSpeaking = true
-                        let newDirection = DetectionUtils.calculateScreenSection(objectDirection: audioOutput.CorridorPosition)
+                        let newDirection = audioOutput.CorridorPosition
                         let message = "\(audioOutput.objName) \(newDirection) \(audioOutput.distance)"
+                        AudioQueue.clearQueue()
                         DispatchQueue.main.async {
                             if UIAccessibility.isVoiceOverRunning {
                                 UIAccessibility.post(notification: .announcement, argument: message)
@@ -73,6 +74,9 @@ struct FrameView: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + speakDelay){
                             isSpeaking = false
                         }
+                    }
+                    else{
+                        print("Audio queue is false")
                     }
                 }
                 .onReceive(clearTimer){ _ in
