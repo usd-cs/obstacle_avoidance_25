@@ -53,10 +53,10 @@ struct FrameView: View {
 
                     if let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10) {
                         isSpeaking = true
-                        let newAngle = DetectionUtils.calculateScreenSection(objectDirection: audioOutput.angle)
+                        let newAngle = DetectionUtils.calculateScreenSection(objectDirection: audioOutput.CorridorPosition)
                         UIAccessibility.post(notification: .announcement, argument: "\(audioOutput.objName) \(newAngle) \(audioOutput.distance)")
                         print("Object name: \(audioOutput.objName)")
-                        print("Object angle: \(audioOutput.angle)")
+                        print("Object direction: \(audioOutput.CorridorPosition)")
                         print("Object distance: \(audioOutput.distance)")
                         print("Threat level: \(audioOutput.threatLevel)")
                         print("Distance as a Float: \(Float(audioOutput.distance))")
