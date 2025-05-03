@@ -14,14 +14,13 @@ struct FrameView: View {
     @State private var lastAnnounceTime: Date = .distantPast
     // How many seconds between announcements
     private let announceInterval: TimeInterval = 2.8
-    @State private var timer = Timer.publish(every:0.00001, on: .main, in: .common).autoconnect()
+    @State private var timer = Timer.publish(every:0.001, on: .main, in: .common).autoconnect()
     @State private var clearTimer = Timer.publish(every:3.0, on: .main, in: .common).autoconnect()
 
     @State private var isSpeaking: Bool = false
     private let speakDelay: Double = 2.0
     var image: CGImage?
     var boundingBoxes: [BoundingBox]
-    // hate hte linter 
     var body: some View {
         ZStack {
             if let image = image {
@@ -50,11 +49,20 @@ struct FrameView: View {
                 }
                 .onReceive(timer){ _ in
                     guard !isSpeaking else { return }
+                    
 
                     if let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10) {
                         isSpeaking = true
                         let newDirection = DetectionUtils.calculateScreenSection(objectDirection: audioOutput.CorridorPosition)
-                        UIAccessibility.post(notification: .announcement, argument: "\(audioOutput.objName) \(newDirection) \(audioOutput.distance)")
+                        let message = "\(audioOutput.objName) \(newDirection) \(audioOutput.distance)"
+                        DispatchQueue.main.async {
+                            if UIAccessibility.isVoiceOverRunning {
+                                UIAccessibility.post(notification: .announcement, argument: message)
+                                print("VoiceOver announcement posted: \(message)")
+                            } else {
+                                print("VoiceOver is not running. Announcement skipped.")
+                            }
+                        }
                         print("Object name: \(audioOutput.objName)")
                         print("Object direction: \(audioOutput.CorridorPosition)")
                         print("Object distance: \(audioOutput.distance)")
