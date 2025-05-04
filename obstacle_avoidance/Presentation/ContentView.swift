@@ -366,43 +366,61 @@ struct EmergencyContactCard: View {
 enum MeasurementType: String, CaseIterable, Identifiable {
     case feet = "feet"
     case meters = "meters"
+    case yards = "yards"
     var id: String { self.rawValue }
 }
 
 struct PreferencesView: View {
     // All variables for user preferences
-    @State private var hapticFeedback = false
-    @State private var spatialAudio = false
-    @State private var locationSharing = false
-    @State private var measurementSelection: MeasurementType = .feet
-    @State private var selectedHeight: Int = 60
-    @State private var selectedFOV: Int = 70
+    let user: User?
+    
+    @State private var hapticFeedback: Bool = false
+    @State private var locationSharing: Bool = false
+    @AppStorage("measurementType") private var measurementType: String = "feet"
+    @AppStorage("userHeight") private var userHeight: Int = 60
     // The range that the FOV and height can be between
-    let FOVRange = Array(50...110)
     let heightRange = Array(20...80)
 
     var body: some View {
         NavigationStack {
             List {
-                Picker("Measurement Type", selection: $measurementSelection) {
+                Picker("Measurement Type", selection: $measurementType) {
                     ForEach(MeasurementType.allCases) { measurement in
                         Text(measurement.rawValue.capitalized).tag(measurement)
                     }
                 }
-                Picker("User Height", selection: $selectedHeight) {
+                .onChange(of: measurementType) {
+                    updatePreference(measurementType: measurementType.rawValue)
+                }
+                Picker("User Height", selection: $userHeight) {
                     ForEach(heightRange, id: \ .self) { height in
                         Text("\(height) inches").tag(height)
                     }
                 }
-                Picker("Field of View", selection: $selectedFOV) {
-                    ForEach(FOVRange, id: \ .self) { FOV in
-                        Text("\(FOV) inches").tag(FOV)
-                    }
+                .onChange(of: userHeight) {
+                    updatePreference(userHeight: userHeight)
                 }
                 // Toggles for haptic, spatialized audio, and location sharing
                 toggleOption(title: "Receive haptic feedback", isOn: $hapticFeedback)
-                toggleOption(title: "Use spatialized audio", isOn: $spatialAudio)
+                    .onChange(of: hapticFeedback) {
+                        updatePreference(hapticFeedback: hapticFeedback)
+                    }
                 toggleOption(title: "Share your location", isOn: $locationSharing)
+                    .onChange(of: locationSharing) {
+                        updatePreference(locationSharing: locationSharing)
+                    }
+            }
+            .onAppear {
+                Task {
+                    try? await Task.sleep(nanoseconds: 300_000_000)
+                    guard let userId = user?.id else { return }
+                    if let updatedUser = await Database.shared.fetchUserById(userId: userId) {
+                        self.locationSharing = updatedUser.locationSharing
+                        self.userHeight = updatedUser.userHeight
+                        self.measurementType = MeasurementType(rawValue: updatedUser.measurementType)?.rawValue ?? "feet"
+                        self.hapticFeedback = updatedUser.hapticFeedback
+                    }
+                }
             }
             .pickerStyle(.navigationLink)
             .navigationTitle("Preferences")
@@ -418,6 +436,24 @@ struct PreferencesView: View {
         .background(Color(UIColor.systemGray6))
         .cornerRadius(8)
     }
+    
+    private func updatePreference(
+            userHeight: Int? = nil,
+            locationSharing: Bool? = nil,
+            measurementType: String? = nil,
+            hapticFeedback: Bool? = nil
+        ) {
+            Task {
+                guard let userId = user?.id else { return }
+                await Database.shared.updateUserPreferences(
+                    userId: userId,
+                    userHeight: userHeight,
+                    locationSharing: locationSharing,
+                    measurementType: measurementType,
+                    hapticFeedback: hapticFeedback
+                )
+            }
+        }
 }
 
 struct SettingsToggleStyle: ToggleStyle {

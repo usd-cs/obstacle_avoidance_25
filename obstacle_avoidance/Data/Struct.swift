@@ -26,4 +26,15 @@ struct User: Codable {
     let address: String
     let email: String
     let userUid: UUID?
+    let measurementType: String
+    let userHeight: Int
+    let hapticFeedback: Bool
+    let locationSharing: Bool
+}
+
+struct UserPreferencesUpdate: Encodable {
+    let userHeight: Int?
+    let locationSharing: Bool?
+    let measurementType: String?
+    let hapticFeedback: Bool?
 }

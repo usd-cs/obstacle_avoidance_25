@@ -80,7 +80,11 @@ extension Database {
                  phoneNumber: String,
                  emergencyContacts: [EmergencyContact]?,
                  address: String,
-                 email: String) async {
+                 email: String,
+                 measurementType: String,
+                 userHeight: Int,
+                 hapticFeedback: Bool,
+                 locationSharing: Bool) async {
         print("Adding user:", username)
         let salt = createSalt()
         let hashedPassword = hashSaltPassword(password: password, salt: salt)
@@ -104,7 +108,11 @@ extension Database {
                 saltedPassword: salt,
                 address: address,
                 email: email,
-                userUid: uid
+                userUid: uid,
+                measurementType: measurementType,
+                userHeight: userHeight,
+                hapticFeedback: hapticFeedback,
+                locationSharing: locationSharing
             )
             let response = try await client
                            .from("users")
@@ -200,6 +208,33 @@ extension Database {
             return false
         }
     }
+    
+    func updateUserPreferences(userId: Int,
+                               userHeight: Int?,
+                               locationSharing: Bool?,
+                               measurementType: String?,
+                               hapticFeedback: Bool?) async {
+        
+        let update = UserPreferencesUpdate(
+            userHeight: userHeight,
+            locationSharing: locationSharing,
+            measurementType: measurementType,
+            hapticFeedback: hapticFeedback
+        )
+
+        do {
+            let response = try await client
+                .from("users")
+                .update(update)
+                .eq("id", value: userId)
+                .execute()
+
+            print("Preferences updated:", response)
+        } catch {
+            print("Error updating preferences:", error)
+        }
+    }
+
 }
 
 // Extension for modifying emergency contaacts
@@ -270,7 +305,7 @@ extension Database {
 
             let response = try await client
                 .from("users")
-                .update(["emergencyContacts": jsonString])
+                .update(["emergencyContacts": currentContacts])
                 .eq("id", value: userId)
                 .execute()
 
@@ -308,7 +343,7 @@ extension Database {
         do {
             let response = try await client
                 .from("users")
-                .select("id, name, username, phoneNumber, emergencyContacts, createdAt, hashedPassword, saltedPassword, address, email")
+                .select("id, name, username, phoneNumber, emergencyContacts, createdAt, hashedPassword, saltedPassword, address, email, measurementType, userHeight, hapticFeedback, locationSharing")
                 .eq("id", value: userId)
                 .single()
                 .execute()
