@@ -21,14 +21,14 @@ import Foundation
 struct  DetectedObject {
     let objName: String
     let distance: Float16
-    let CorridorPosition: String
+    let corridorPosition: String
     let vert: String
 }
 
 struct  ProcessedObject {
     let objName: String
     let distance: Float16
-    let CorridorPosition: String
+    let corridorPosition: String
     let vert: String
     let threatLevel: Float16
 }
@@ -46,7 +46,7 @@ class DecisionBlock {
     func computeThreatLevel(for object: DetectedObject) -> Float16 {
         let objectID = ThreatLevelConfigV3.objectName[object.objName] ?? 1
         let objThreat = ThreatLevelConfigV3.objectWeights[objectID] ?? 1
-        let directionWeight = ThreatLevelConfigV3.CorridorPosition[object.CorridorPosition] ?? 1
+        let directionWeight = ThreatLevelConfigV3.corridorPosition[object.corridorPosition] ?? 1
         //This iverts distance so the closer something is the more dangerous it is.
         let distanceClamped = max(0.1, Float16(object.distance))
         let inverseDistance = 1.0 / distanceClamped
@@ -63,7 +63,7 @@ class DecisionBlock {
         let processed = ProcessedObject(
             objName: detectedObject.objName,
             distance: detectedObject.distance,
-            CorridorPosition: detectedObject.CorridorPosition,
+            corridorPosition: detectedObject.corridorPosition,
             vert: detectedObject.vert,
             threatLevel: computeThreatLevel(for: detectedObject)
             )

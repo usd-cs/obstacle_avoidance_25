@@ -8,13 +8,13 @@
 import Foundation
 
 struct CorridorUtils {
-    enum CorridorPosition {
+    enum corridorPos {
         case inside
         case left
         case right
         case ahead
     }
-    static func corridorPosition(_ point: CGPoint, trapezoid: CorridorGeometry) -> CorridorPosition {
+    static func corridorPosition(_ point: CGPoint, trapezoid: CorridorGeometry) -> corridorPos {
 
         let polygon = [trapezoid.bottomLeft, trapezoid.bottomRight, trapezoid.topRight, trapezoid.topLeft]
         var isInside = false

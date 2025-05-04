@@ -8,7 +8,7 @@
 import Foundation
 
 struct ThreatLevelConfigV3{
-    static let CorridorPosition: [String: Int]=[
+    static let corridorPosition: [String: Int]=[
         "Center": 10,  //Directly Ahead
         "Left": 3,     // Left of the Corridor
         "Right": 3,    // Right of the Corridor

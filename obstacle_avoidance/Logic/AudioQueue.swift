@@ -11,7 +11,7 @@ import HeapModule
 struct AudioQueueVertex: Comparable {
     let threatLevel: Float16  // Threat level of the obstacle between 0-100, with 100 being the greatest threat.
     let objName: String // Name of the obstacle
-    let CorridorPosition: String // Angle of the obstacle in left/right/center.
+    let corridorPosition: String // Angle of the obstacle in left/right/center.
     let vert: String // Vertical postionality of an object
     let distance: Float16 // Distance calculated from the person holding phone to the obstacle (in feet).
 
@@ -28,7 +28,7 @@ class AudioQueue {
         let newVertex = AudioQueueVertex(
             threatLevel: processedObject.threatLevel,
             objName: processedObject.objName,
-            CorridorPosition: processedObject.CorridorPosition,
+            corridorPosition: processedObject.corridorPosition,
             vert: processedObject.vert,
             distance: processedObject.distance
         );
