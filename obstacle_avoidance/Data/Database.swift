@@ -74,6 +74,7 @@ class Database {
     }
 }
 extension Database {
+    // swiftlint:disable:next function_parameter_count
     func addUser(name: String,
                  username: String,
                  password: String,
