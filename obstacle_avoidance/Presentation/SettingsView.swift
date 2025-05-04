@@ -54,10 +54,9 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
-    }    
+    }
     private func logout() {
         isLoggedIn = false
         username = ""  // Reset stored username
     }
 }
-

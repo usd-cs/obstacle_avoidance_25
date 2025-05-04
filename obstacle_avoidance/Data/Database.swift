@@ -95,8 +95,7 @@ extension Database {
         }
         do {
             let session = try await client.auth.signUp(email: email, password: password)
-            let uid = session.user.id;
-            
+            let uid = session.user.id
             let newUser = User(
                 id: nil,
                 name: name,
@@ -130,7 +129,6 @@ extension Database {
                     newPhoneNumber: String?,
                     newEmail: String?,
                     newAddress: String?) async {
-        
         var updateValues: [String: String] = [:]
         if let newUsername = newUsername {
             let existingUser = await checkIfExists(column: "username", value: newUsername, userId: userId)
@@ -208,13 +206,11 @@ extension Database {
             return false
         }
     }
-    
     func updateUserPreferences(userId: Int,
                                userHeight: Int?,
                                locationSharing: Bool?,
                                measurementType: String?,
                                hapticFeedback: Bool?) async {
-        
         let update = UserPreferencesUpdate(
             userHeight: userHeight,
             locationSharing: locationSharing,
@@ -347,7 +343,6 @@ extension Database {
                 .eq("id", value: userId)
                 .single()
                 .execute()
-            
             print("Fetched user response (raw JSON):", String(data: response.data, encoding: .utf8) ?? "No data")
 
             var user = try JSONDecoder().decode(User.self, from: response.data)
