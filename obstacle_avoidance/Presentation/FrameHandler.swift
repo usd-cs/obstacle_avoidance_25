@@ -274,8 +274,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             }
         }
         //creates array that will hold the recent detections to help us parse out outlers.
-        var content = ""
-        let fileName = "logs.txt"
+    
         var recentDetections: [DetectionOutput] = []
         let depthMap = syncedDepthData.depthData.depthDataMap
         CVPixelBufferLockBaseAddress(depthMap, .readOnly)
@@ -361,8 +360,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
                 validCount += 1
             }
         }
-        let meanDistanceMetres: Float32 =
-            (validCount > 0) ? (invDepthSum / Float32(validCount)) : 0
+
 
         // Now store the value you actually want to use:
 //        let correctedDepth: Float16 = Float16(meanDistanceMetres)
