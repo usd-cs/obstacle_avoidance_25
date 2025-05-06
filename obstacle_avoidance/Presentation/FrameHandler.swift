@@ -290,25 +290,69 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             CVPixelBufferGetBaseAddress(depthMap),
             to: UnsafeMutablePointer<Float16>.self
         )
-        let centerX = Float(CGFloat(width) * (boxCenter.x / screenRect.width))
-        let centerY = Float(CGFloat(height) * (boxCenter.y / screenRect.height))
-        let windowSize = 5
-        //Max and min ensure that when the bounty box is far left or far right of screen we do not get nevative value or values taht exceed the width
-        let leftX = max(centerX - Float(windowSize), 0)
-        let rightX = min(centerX + Float(windowSize), width - 1)
-        let bottomY = max(centerY - Float(windowSize), 0)
-        let topY = min(centerY + Float(windowSize), width - 1)
-//        var totalDepth: Float16 = 0
-        var count = 0
+//        let centerX = Float(CGFloat(width) * (boxCenter.x / screenRect.width))
+//        let centerY = Float(CGFloat(height) * (boxCenter.y / screenRect.height))
+//        let windowSize = 100
+//        //Max and min ensure that when the bounty box is far left or far right of screen we do not get nevative value or values taht exceed the width
+//        let leftX = max(centerX - Float(windowSize), 0)
+//        let rightX = min(centerX + Float(windowSize), width - 1)
+//        let bottomY = max(centerY - Float(windowSize), 0)
+//        let topY = min(centerY + Float(windowSize), width - 1)
+////        var totalDepth: Float16 = 0
+//        var count = 0
+//        var depthSamples = [Float16]()
+//        //For each X and Y value find the depth and add it to a list to find the median value
+//        for yVal in Int(bottomY)...Int(topY) {
+//            for xVal in Int(leftX)...Int(rightX){
+//                depthSamples.append(baseAddress[yVal * Int(width) + xVal])
+////                totalDepth += baseAddress[y * Int(width) + x]
+//                count += 1
+//            }
+//        }
+        //  Compute bounding box corners in screen coordinates
+        let boxMinX = largestBox.rect.minX
+        let boxMaxX = largestBox.rect.maxX
+        let boxMinY = largestBox.rect.minY
+        let boxMaxY = largestBox.rect.maxY
+
+        // Convert from screen coordinates to depth-map coordinates
+        let depthMinX = Int((boxMinX / screenRect.width) * CGFloat(width))
+        let depthMaxX = Int((boxMaxX / screenRect.width) * CGFloat(width))
+        let depthMinY = Int((boxMinY / screenRect.height) * CGFloat(height))
+        let depthMaxY = Int((boxMaxY / screenRect.height) * CGFloat(height))
+
+        // Clamp the values so they never go outside the depth buffer array
+        let clampedMinX = max(depthMinX, 0)
+        let clampedMaxX = min(depthMaxX, Int(width) - 1)
+        let clampedMinY = max(depthMinY, 0)
+        let clampedMaxY = min(depthMaxY, Int(height) - 1)
+        var count: Float16 = 0
+        var totalDepth: Float16 = 0
+        
+        // Collect all depth samples from the bounding box
         var depthSamples = [Float16]()
-        //For each X and Y value find the depth and add it to a list to find the median value
-        for yVal in Int(bottomY)...Int(topY) {
-            for xVal in Int(leftX)...Int(rightX){
-                depthSamples.append(baseAddress[yVal * Int(width) + xVal])
-//                totalDepth += baseAddress[y * Int(width) + x]
+        for yVal in clampedMinY...clampedMaxY {
+            for xVal in clampedMinX...clampedMaxX {
+                let depthIndex = yVal * Int(width) + xVal
+                depthSamples.append(baseAddress[depthIndex])
+                totalDepth += baseAddress[yVal * Int(width) + xVal]
                 count += 1
             }
         }
+        var invDepthSum: Float32 = 0        // sum of (1 / disparity) = metres
+        var validCount = 0
+
+        for raw in depthSamples {
+            if raw > 0 {                    // skip invalid / zero disparities
+                invDepthSum += 1.0 / Float32(raw)   // convert to metres first
+                validCount += 1
+            }
+        }
+        let meanDistanceMetres: Float32 =
+            (validCount > 0) ? (invDepthSum / Float32(validCount)) : 0
+
+        // Now store the value you actually want to use:
+//        let correctedDepth: Float16 = Float16(meanDistanceMetres)
 //        let averageDepth = count > 0 ? totalDepth / Float16(count) : 0
         let medianDepth = self.findMedian(distances: depthSamples)
         // This inverts the depth value as the distance is inversed naturally
@@ -316,7 +360,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
         DispatchQueue.main.async {
             let newDetection = DetectionOutput(objcetName: self.objectName, distance: correctedDepth, angle: self.angle, id: self.objectIDD, vert: self.vert)
-            if recentDetections.count > 5 {
+            if recentDetections.count > 7 {
                 recentDetections.removeFirst()
             }
             recentDetections.append(newDetection)
@@ -328,14 +372,19 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             }
             let sortedFrequency = frequency.sorted(by: {$0.value < $1.value})
             let commonLabel = sortedFrequency[0].key
+            var totalDistance: Float16 = 0
+            var finalCount: Float16 = 0
             for detection in recentDetections {
                 if detection.objcetName == commonLabel {
+                    totalDistance = detection.distance
+                    finalCount += 1
                     simplifiedDetection.append(detection.distance)
                     self.angle = detection.angle //gets the last, and most accuract angle of the common object
                     self.objectIDD = detection.id
                 }
             }
-            self.objectDistance = self.findMedian(distances: simplifiedDetection)
+//            self.objectDistance = self.findMedian(distances: simplifiedDetection)
+            self.objectDistance = finalCount > 0 ? totalDistance / Float16(finalCount) : 0
             self.objectName = commonLabel
 
             // Get XY coords; Functionality unused as of now, but may be needed in future development
@@ -346,16 +395,16 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             let objectThreatLevel = block.computeThreatLevel(for: objectDetected)
             let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, vert: self.vert, threatLevel: objectThreatLevel)
             block.processDetectedObjects(processed: processedObject)
-            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10)
-            if audioOutput?.threatLevel ?? 0 > 1{
-                content.append("Object name: \(audioOutput!.objName),")
-                content.append("Object angle: \(audioOutput!.angle),")
-                content.append("Object Verticality: \(audioOutput!.vert),")
-                content.append("Object distance: \(audioOutput!.distance),")
-                content.append("Threat level: \(audioOutput!.threatLevel),")
-                content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")
-                print(content)
-            }
+//            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10)
+//            if audioOutput?.threatLevel ?? 0 > 1{
+//                content.append("Object name: \(audioOutput!.objName),")
+//                content.append("Object angle: \(audioOutput!.angle),")
+//                content.append("Object Verticality: \(audioOutput!.vert),")
+//                content.append("Object distance: \(audioOutput!.distance),")
+//                content.append("Threat level: \(audioOutput!.threatLevel),")
+//                content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")
+//                print(content)
+//            }
         }
     }
     func findMedian(distances: [Float16]) -> Float16

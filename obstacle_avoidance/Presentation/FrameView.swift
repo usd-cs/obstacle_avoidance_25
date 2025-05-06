@@ -14,7 +14,7 @@ struct FrameView: View {
     @State private var lastAnnounceTime: Date = .distantPast
     // How many seconds between announcements
     private let announceInterval: TimeInterval = 2.8
-    @State private var timer = Timer.publish(every:0.00001, on: .main, in: .common).autoconnect()
+    @State private var timer = Timer.publish(every:0.01, on: .main, in: .common).autoconnect()
     @State private var clearTimer = Timer.publish(every:3.0, on: .main, in: .common).autoconnect()
 
     @State private var isSpeaking: Bool = false
@@ -50,24 +50,25 @@ struct FrameView: View {
                 }
                 .onReceive(timer){ _ in
                     guard !isSpeaking else { return }
-
-                    if let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10) {
+                    if let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 25) {
                         isSpeaking = true
                         let newAngle = DetectionUtils.calculateScreenSection(objectDirection: audioOutput.angle)
-                        UIAccessibility.post(notification: .announcement, argument: "\(audioOutput.objName) \(newAngle) \(audioOutput.distance)")
-                        print("Object name: \(audioOutput.objName)")
-                        print("Object angle: \(audioOutput.angle)")
-                        print("Object distance: \(audioOutput.distance)")
-                        print("Threat level: \(audioOutput.threatLevel)")
-                        print("Distance as a Float: \(Float(audioOutput.distance))")
-                        print("Object Vertical: \(audioOutput.vert) \n")
-                        
+//                        if audioOutput.objName == "person"{
+                            UIAccessibility.post(notification: .announcement, argument: "\(audioOutput.objName) \(newAngle) \(audioOutput.distance)")
+                            print("Object name: \(audioOutput.objName)")
+                            print("Object angle: \(audioOutput.angle)")
+                            print("Object distance: \(audioOutput.distance)")
+                            print("Threat level: \(audioOutput.threatLevel)")
+//                                                        print("Distance as a Float: \(Float(audioOutput.distance))")
+                            //                            print("Object Vertical: \(audioOutput.vert) \n")
+//                        }
                         DispatchQueue.main.asyncAfter(deadline: .now() + speakDelay){
                             isSpeaking = false
                         }
                     }
                 }
                 .onReceive(clearTimer){ _ in
+                    print("Queue cleared")
                     AudioQueue.clearQueue()
                 }
 
