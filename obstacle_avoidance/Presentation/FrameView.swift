@@ -14,14 +14,13 @@ struct FrameView: View {
     @State private var lastAnnounceTime: Date = .distantPast
     // How many seconds between announcements
     private let announceInterval: TimeInterval = 2.8
-    @State private var timer = Timer.publish(every:0.00001, on: .main, in: .common).autoconnect()
-    @State private var clearTimer = Timer.publish(every:3.0, on: .main, in: .common).autoconnect()
+    @State private var timer = Timer.publish(every:0.001, on: .main, in: .common).autoconnect()
+    @State private var clearTimer = Timer.publish(every:1.5, on: .main, in: .common).autoconnect()
 
     @State private var isSpeaking: Bool = false
     private let speakDelay: Double = 2.0
     var image: CGImage?
     var boundingBoxes: [BoundingBox]
-    // hate hte linter 
     var body: some View {
         ZStack {
             if let image = image {
@@ -50,13 +49,23 @@ struct FrameView: View {
                 }
                 .onReceive(timer){ _ in
                     guard !isSpeaking else { return }
-
+                    
+                    print(AudioQueue.queue)
                     if let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10) {
                         isSpeaking = true
-                        let newAngle = DetectionUtils.calculateScreenSection(objectDirection: audioOutput.angle)
-                        UIAccessibility.post(notification: .announcement, argument: "\(audioOutput.objName) \(newAngle) \(audioOutput.distance)")
+                        let newDirection = audioOutput.corridorPosition
+                        let message = "\(audioOutput.objName) \(newDirection) \(audioOutput.distance)"
+                        AudioQueue.clearQueue()
+                        DispatchQueue.main.async {
+                            if UIAccessibility.isVoiceOverRunning {
+                                UIAccessibility.post(notification: .announcement, argument: message)
+                                print("VoiceOver announcement posted: \(message)")
+                            } else {
+                                print("VoiceOver is not running. Announcement skipped.")
+                            }
+                        }
                         print("Object name: \(audioOutput.objName)")
-                        print("Object angle: \(audioOutput.angle)")
+                        print("Object direction: \(audioOutput.corridorPosition)")
                         print("Object distance: \(audioOutput.distance)")
                         print("Threat level: \(audioOutput.threatLevel)")
                         print("Distance as a Float: \(Float(audioOutput.distance))")
@@ -65,6 +74,9 @@ struct FrameView: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + speakDelay){
                             isSpeaking = false
                         }
+                    }
+                    else{
+                        print("Audio queue is false")
                     }
                 }
                 .onReceive(clearTimer){ _ in

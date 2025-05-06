@@ -33,7 +33,7 @@ class FrameHandler: NSObject, ObservableObject {
     public var detectionTimestamps: [TimeInterval] = []
     public var objectCoordinates: CGRect = CGRect(x: 0, y: 0, width: 0, height: 0)
     public var confidence: Float = 0.0
-    public var angle: String = ""
+    public var corridorPosition: String = ""
     public var vert: String = ""
     public var objectIDD: Int = -1
 //    public var middlePoint: (Int, Int) = ()
@@ -295,7 +295,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         self.objectName = largestBox.name
         self.objectCoordinates = largestBox.rect
         self.confidence = largestBox.score
-        self.angle = largestBox.direction
+        self.corridorPosition = largestBox.direction
         self.objectIDD = largestBox.classIndex
         self.vert = largestBox.vert
         // Get the baseadress of pixel and turn it into a Float16 so it is readable.
@@ -328,7 +328,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         let correctedDepth: Float16 = medianDepth > 0 ? 1.0 / medianDepth : 0
         CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
         DispatchQueue.main.async {
-            let newDetection = DetectionOutput(objcetName: self.objectName, distance: correctedDepth, angle: self.angle, id: self.objectIDD, vert: self.vert)
+            let newDetection = DetectionOutput(objcetName: self.objectName, distance: correctedDepth, corridorPosition: self.corridorPosition, id: self.objectIDD, vert: self.vert)
             if recentDetections.count > 5 {
                 recentDetections.removeFirst()
             }
@@ -344,7 +344,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             for detection in recentDetections {
                 if detection.objcetName == commonLabel {
                     simplifiedDetection.append(detection.distance)
-                    self.angle = detection.angle //gets the last, and most accuract angle of the common object
+                    self.corridorPosition = detection.corridorPosition //gets the last, and most accuract angle of the common object
                     self.objectIDD = detection.id
                 }
             }
@@ -354,21 +354,21 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             // Get XY coords; Functionality unused as of now, but may be needed in future development
             // let objectCoords = DetectionUtils.polarToCartesian(distance: Float(self.objectDistance), direction: self.angle)
 
-            let objectDetected = DetectedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, vert: self.vert)
+            let objectDetected = DetectedObject(objName: self.objectName, distance: self.objectDistance, corridorPosition: self.corridorPosition, vert: self.vert)
             let block = DecisionBlock(detectedObject: objectDetected)
             let objectThreatLevel = block.computeThreatLevel(for: objectDetected)
-            let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, vert: self.vert, threatLevel: objectThreatLevel)
+            let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, corridorPosition: self.corridorPosition, vert: self.vert, threatLevel: objectThreatLevel)
             block.processDetectedObjects(processed: processedObject)
-            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10)
-            if audioOutput?.threatLevel ?? 0 > 1{
-                content.append("Object name: \(audioOutput!.objName),")
-                content.append("Object angle: \(audioOutput!.angle),")
-                content.append("Object Verticality: \(audioOutput!.vert),")
-                content.append("Object distance: \(audioOutput!.distance),")
-                content.append("Threat level: \(audioOutput!.threatLevel),")
-                content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")
-                print(content)
-            }
+            //let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 1)
+//            if audioOutput?.threatLevel ?? 0 > 1{
+//                content.append("Object name: \(audioOutput!.objName),")
+//                content.append("Object direction: \(audioOutput!.corridorPosition),")
+//                content.append("Object Verticality: \(audioOutput!.vert),")
+//                content.append("Object distance: \(audioOutput!.distance),")
+//                content.append("Threat level: \(audioOutput!.threatLevel),")
+//                content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")
+//                //print(content)
+//            }
         }
     }
     func findMedian(distances: [Float16]) -> Float16
@@ -455,7 +455,7 @@ struct BoundingBoxLayer: UIViewRepresentable {
 struct DetectionOutput{
     let objcetName: String
     let distance: Float16
-    let angle: String
+    let corridorPosition: String
     let id: Int
     let vert: String
 }
