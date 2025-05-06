@@ -33,7 +33,7 @@ struct SettingsView: View {
                         .padding(.bottom, 30)
                         .accessibility(addTraits: .isStaticText)
                 }
-                NavigationLink(destination: PreferencesView()) {
+                NavigationLink(destination: PreferencesView(user: user)) {
                     Label("System Preferences", systemImage: "arrow.right.circle")
                         .font(.headline)
                         .fontWeight(.bold)
@@ -54,10 +54,9 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
-    }    
+    }
     private func logout() {
         isLoggedIn = false
         username = ""  // Reset stored username
     }
 }
-

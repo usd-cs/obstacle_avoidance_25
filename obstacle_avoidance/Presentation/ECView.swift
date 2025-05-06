@@ -19,6 +19,10 @@ struct ECView: View {
     let email: String
     let phoneNumber: String
     @AppStorage("isLoggedIn") private var isLoggedIn = false
+    @AppStorage("measurementType") private var measurementType: String = "feet"
+    @AppStorage("userHeight") private var userHeight: Int = 60
+    let hapticFeedback = false
+    let locationSharing = false
     var body: some View {
         NavigationStack {
             VStack {
@@ -45,7 +49,6 @@ struct ECView: View {
                         let trimmedAddress = ecAddress.trimmingCharacters(in: .whitespaces)
 
                         let shouldAddContact = !trimmedName.isEmpty || !trimmedPhone.isEmpty || !trimmedAddress.isEmpty
-                        
                         let emergencyContacts: [EmergencyContact]? = shouldAddContact
                             ? [EmergencyContact(name: trimmedName, phoneNumber: trimmedPhone, address: trimmedAddress)]
                             : nil
@@ -57,7 +60,11 @@ struct ECView: View {
                             phoneNumber: phoneNumber,
                             emergencyContacts: emergencyContacts,
                             address: address,
-                            email: email)
+                            email: email,
+                            measurementType: measurementType.rawValue,
+                            userHeight: userHeight,
+                            hapticFeedback: hapticFeedback,
+                            locationSharing: locationSharing)
                         goToApp = true
                         isLoggedIn = true
                     }
@@ -83,7 +90,11 @@ struct ECView: View {
                                       phoneNumber: phoneNumber,
                                       emergencyContacts: [emergencyContact],
                                       address: address,
-                                      email: email)
+                                      email: email,
+                                      measurementType: measurementType.rawValue,
+                                      userHeight: userHeight,
+                                      hapticFeedback: hapticFeedback,
+                                      locationSharing: locationSharing)
     }
 }
 

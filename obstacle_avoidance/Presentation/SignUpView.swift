@@ -7,7 +7,6 @@
 import SwiftUI
 import UIKit
 
-
 struct SignUpView: View {
     @AppStorage("isLoggedIn") private var isLoggedIn = false
     @AppStorage("username") private var username = ""
@@ -29,7 +28,6 @@ struct SignUpView: View {
     @State private var phoneError = ""
     @State private var emailError = ""
     @State private var userError = false
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("User Information")
@@ -119,7 +117,6 @@ struct SignUpView: View {
                                 .padding(.bottom, 8)
                         }
             .frame(maxWidth: .infinity, alignment: .center)
-            
             if userError{
                 Text(errorMessage)
                     .foregroundColor(.red)

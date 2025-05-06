@@ -20,7 +20,6 @@ struct ContentView: View {
     @AppStorage("isLoggedIn") private var isLoggedIn = false
     @State private var user: User?
     @AppStorage("username") private var username = ""
-    
     var body: some View {
         VStack {
             TabbedView(user: user)
@@ -31,7 +30,6 @@ struct ContentView: View {
             }
         }
     }
-    
     private func getUserInfo() async {
         let users = await Database.shared.fetchUsers()
         user = users.first(where: { $0.username == username })
@@ -41,7 +39,6 @@ struct ContentView: View {
 // Main tab bar with navigation
 struct TabbedView: View {
     let user: User?
-    
     init(user: User?) {
         self.user = user
         UITabBar.appearance().backgroundColor = UIColor.lightGray
@@ -86,7 +83,6 @@ struct AccountScreen: View {
     @State private var updatedPhoneNumber = ""
     @State private var updatedAddress = ""
     @AppStorage("isLoggedIn") private var isLoggedIn = false
-    
     var body: some View {
         Form {
             // This is the account screen, so it will hold all the information for each user.
@@ -99,13 +95,12 @@ struct AccountScreen: View {
                     editableRow(label: "Address", text: $updatedAddress)
                     // editableRow(label: "Password", text: "********", isSecure: true)
                     HStack {
-                            Text("Password:").fontWeight(.bold)
-                            Spacer()
-                            Text("********") // Always shows `********` instead of the actual password
-                                .foregroundColor(.gray)
-                        }
+                        Text("Password:").fontWeight(.bold)
+                        Spacer()
+                        Text("********") // Always shows `********` instead of the actual password
+                            .foregroundColor(.gray)
+                    }
                 }
-                
                 if isEditing {
                     Button("Save Changes") {
                         saveChanges()
@@ -146,14 +141,11 @@ struct AccountScreen: View {
                 }
             }
         }
-        
     }
-        
     private func saveChanges() {
         // Logic to save changes to a database or user preferences
         guard let user = user, let userId = user.id else { return }  // Ensure user exists
-            
-            Task {
+        Task {
                 await Database.shared.updateUser(
                     userId: userId,
                     newName: updatedName,
@@ -165,7 +157,6 @@ struct AccountScreen: View {
             }
         isEditing = false
     }
-        
     private func editableRow(label: String, text: Binding<String>, keyboard: UIKeyboardType = .default, isSecure: Bool = false) -> some View {
         HStack {
             Text("\(label):").fontWeight(.bold)
@@ -185,7 +176,6 @@ struct AccountScreen: View {
             }
         }
     }
-    
     private func deleteAccount(userId: Int) async {
         await Database.shared.deleteUser(userId: userId)
         isLoggedIn = false
@@ -199,15 +189,12 @@ struct EmergencyContactView: View {
     @State private var phoneNumberEC = ""
     @State private var addressEC = ""
     @State private var addingEC = false
-    //@State private var newContact = EmergencyContact.empty
     @State private var isEditing = false
     @State private var editingContact: EmergencyContact? = nil
     @State private var editingIndex: Int? = nil
     @State private var editName = ""
     @State private var editPhone = ""
     @State private var editAddress = ""
-
-
     var body: some View {
         VStack {
             Section(header: Text("Emergency Contacts")) {
@@ -228,7 +215,9 @@ struct EmergencyContactView: View {
                                     }
                                     Spacer()
                                     Button("Save") {
-                                        let updated = EmergencyContact(name: editName, phoneNumber: editPhone, address: editAddress)
+                                        let updated = EmergencyContact(name: editName,
+                                                                       phoneNumber: editPhone,
+                                                                       address: editAddress)
                                         Task {
                                             await editEC(originalName: contact.name, updated: updated)
                                             editingIndex = nil
@@ -270,7 +259,6 @@ struct EmergencyContactView: View {
             }
         }
     }
-
     private func deleteEmergencyContact(_ contact: EmergencyContact) async {
         guard let userId = user?.id else { return }
 
@@ -279,13 +267,11 @@ struct EmergencyContactView: View {
         }
         await Database.shared.deleteEmergencyContact(userId: userId, contactName: contact.name)
     }
-    
     private func newBoxView() -> some View {
         VStack(alignment: .leading, spacing: 10) {
             TextField("Name", text: $nameEC)
             TextField("Phone Number", text: $phoneNumberEC)
             TextField("Address", text: $addressEC)
-            
             Button("Save Contact") {
                 let newContact = EmergencyContact(name: nameEC, phoneNumber: phoneNumberEC, address: addressEC)
                 Task {
@@ -301,11 +287,9 @@ struct EmergencyContactView: View {
         )
         .padding()
     }
-    
     private func addEC(_ newContact: EmergencyContact) async {
         guard let userId = user?.id else { return }
         await Database.shared.addEmergencyContact(userId: userId, newEC: newContact)
-
         DispatchQueue.main.async {
             contacts.append(newContact)
             //self.newContact = .empty
@@ -315,23 +299,18 @@ struct EmergencyContactView: View {
             self.addingEC = false
         }
     }
-    
     private func editEC(originalName: String, updated: EmergencyContact) async {
         guard let userId = user?.id else { return }
-
         if let index = contacts.firstIndex(where: { $0.name == originalName }) {
             contacts[index] = updated
         }
-
         await Database.shared.updateEmergencyContact(userId: userId, originalName: originalName, updatedContact: updated)
     }
 }
-
 struct EmergencyContactCard: View {
     let contact: EmergencyContact
     let onDelete: () -> Void
     let onEdit: () -> Void
-
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 5) {
@@ -346,7 +325,6 @@ struct EmergencyContactCard: View {
                     .foregroundColor(.gray)
             }
             Spacer()
-
             VStack(spacing: 10) {
                 Button("Edit", action: onEdit)
                     .foregroundColor(.blue)
@@ -361,54 +339,69 @@ struct EmergencyContactCard: View {
         .shadow(radius: 5)
     }
 }
-
 // Allows for our picker to easily work. Still debating if we want to do it like this or with arrays.
 enum MeasurementType: String, CaseIterable, Identifiable {
     case feet = "feet"
     case meters = "meters"
+    case yards = "yards"
     var id: String { self.rawValue }
 }
-
 struct PreferencesView: View {
     // All variables for user preferences
-    @State private var hapticFeedback = false
-    @State private var spatialAudio = false
-    @State private var locationSharing = false
-    @State private var measurementSelection: MeasurementType = .feet
-    @State private var selectedHeight: Int = 60
-    @State private var selectedFOV: Int = 70
+    let user: User?
+    
+    @State private var hapticFeedback: Bool = false
+    @State private var locationSharing: Bool = false
+    @AppStorage("measurementType") private var measurementType: String = "feet"
+    @AppStorage("userHeight") private var userHeight: Int = 60
     // The range that the FOV and height can be between
-    let FOVRange = Array(50...110)
     let heightRange = Array(20...80)
 
     var body: some View {
         NavigationStack {
             List {
-                Picker("Measurement Type", selection: $measurementSelection) {
+                Picker("Measurement Type", selection: $measurementType) {
                     ForEach(MeasurementType.allCases) { measurement in
                         Text(measurement.rawValue.capitalized).tag(measurement)
                     }
                 }
-                Picker("User Height", selection: $selectedHeight) {
+                .onChange(of: measurementType) {
+                    updatePreference(measurementType: measurementType.rawValue)
+                }
+                Picker("User Height", selection: $userHeight) {
                     ForEach(heightRange, id: \ .self) { height in
                         Text("\(height) inches").tag(height)
                     }
                 }
-                Picker("Field of View", selection: $selectedFOV) {
-                    ForEach(FOVRange, id: \ .self) { FOV in
-                        Text("\(FOV) inches").tag(FOV)
-                    }
+                .onChange(of: userHeight) {
+                    updatePreference(userHeight: userHeight)
                 }
                 // Toggles for haptic, spatialized audio, and location sharing
                 toggleOption(title: "Receive haptic feedback", isOn: $hapticFeedback)
-                toggleOption(title: "Use spatialized audio", isOn: $spatialAudio)
+                    .onChange(of: hapticFeedback) {
+                        updatePreference(hapticFeedback: hapticFeedback)
+                    }
                 toggleOption(title: "Share your location", isOn: $locationSharing)
+                    .onChange(of: locationSharing) {
+                        updatePreference(locationSharing: locationSharing)
+                    }
+            }
+            .onAppear {
+                Task {
+                    try? await Task.sleep(nanoseconds: 300_000_000)
+                    guard let userId = user?.id else { return }
+                    if let updatedUser = await Database.shared.fetchUserById(userId: userId) {
+                        self.locationSharing = updatedUser.locationSharing
+                        self.userHeight = updatedUser.userHeight
+                        self.measurementType = MeasurementType(rawValue: updatedUser.measurementType)?.rawValue ?? "feet"
+                        self.hapticFeedback = updatedUser.hapticFeedback
+                    }
+                }
             }
             .pickerStyle(.navigationLink)
             .navigationTitle("Preferences")
         }
     }
-    
     private func toggleOption(title: String, isOn: Binding<Bool>) -> some View {
         Toggle(isOn: isOn) {
             Text(title)
@@ -418,8 +411,24 @@ struct PreferencesView: View {
         .background(Color(UIColor.systemGray6))
         .cornerRadius(8)
     }
+    private func updatePreference(
+            userHeight: Int? = nil,
+            locationSharing: Bool? = nil,
+            measurementType: String? = nil,
+            hapticFeedback: Bool? = nil
+        ) {
+            Task {
+                guard let userId = user?.id else { return }
+                await Database.shared.updateUserPreferences(
+                    userId: userId,
+                    userHeight: userHeight,
+                    locationSharing: locationSharing,
+                    measurementType: measurementType,
+                    hapticFeedback: hapticFeedback
+                )
+            }
+        }
 }
-
 struct SettingsToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack {
@@ -433,7 +442,6 @@ struct SettingsToggleStyle: ToggleStyle {
         }
     }
 }
-
 // For Preview in Xcode
 struct ContentViewPreviews: PreviewProvider {
     static var previews: some View {
