@@ -51,6 +51,7 @@ struct FrameView: View {
                     print(AudioQueue.queue)
                     if let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10) {
                         isSpeaking = true
+
                         let newDirection = audioOutput.corridorPosition
                         let message = "\(audioOutput.objName) \(newDirection) \(audioOutput.distance)"
                         AudioQueue.clearQueue()
@@ -65,6 +66,7 @@ struct FrameView: View {
                         print("Object name: \(audioOutput.objName)")
                         print("Object direction: \(audioOutput.corridorPosition)")
                         print("Object distance: \(audioOutput.distance)")
+                        print("Formatted distance: \(audioOutput.formattedDist)")
                         print("Threat level: \(audioOutput.threatLevel)")
                         print("Distance as a Float: \(Float(audioOutput.distance))")
                         print("Object Vertical: \(audioOutput.vert) \n")
