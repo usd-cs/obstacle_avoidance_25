@@ -21,6 +21,19 @@ struct AudioQueueVertex: Comparable {
     }
 }
 
+extension AudioQueueVertex{
+    var formattedDist: String{
+        let unitPref = UserDefaults.standard.string(forKey: "measurementType") ?? "feet"
+        if unitPref == "meters"{
+            let meters = Double(self.distance)
+            return String(format: "%.1f meters", meters)
+        } else {
+            let feet = Double(self.distance) * 3.28084
+            return String(format: "%.1f feet", feet)
+        }
+    }
+}
+
 class AudioQueue {
     public static var queue = Heap<AudioQueueVertex>()
 
