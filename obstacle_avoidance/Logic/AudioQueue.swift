@@ -22,13 +22,28 @@ struct AudioQueueVertex: Comparable {
 }
 
 extension AudioQueueVertex{
+    func roundingDistance(distance: Double) -> Double{
+        let decimalVal = distance - floor(distance)
+        if  decimalVal > 0.7{
+            return ceil(distance)
+        }
+        else{
+            return floor(distance)
+        }
+    }
     var formattedDist: String{
         let unitPref = UserDefaults.standard.string(forKey: "measurementType") ?? "feet"
         if unitPref == "meters"{
-            let meters = Double(self.distance)
+            var meters = Double(self.distance)
+            if meters > 1{
+                meters = roundingDistance(distance: meters)
+            }
             return String(format: "%.1f meters", meters)
         } else {
-            let feet = Double(self.distance) * 3.28084
+            var feet = Double(self.distance) * 3.28084
+            if feet > 1{
+                feet = roundingDistance(distance: feet)
+            }
             return String(format: "%.1f feet", feet)
         }
     }
