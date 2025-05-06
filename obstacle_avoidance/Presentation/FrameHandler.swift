@@ -14,6 +14,7 @@ class FrameHandler: NSObject, ObservableObject {
     @Published var frame: CGImage?
     @Published var boundingBoxes: [BoundingBox] = []
     @Published var objectDistance: Float16 = 0.0
+    @Published var corridorGeometry: CorridorGeometry? = nil // represents the area created by the corridor
     // Initializing variables related to capturing image.
     private var permissionGranted = true
     public let captureSession = AVCaptureSession()
@@ -32,7 +33,7 @@ class FrameHandler: NSObject, ObservableObject {
     public var detectionTimestamps: [TimeInterval] = []
     public var objectCoordinates: CGRect = CGRect(x: 0, y: 0, width: 0, height: 0)
     public var confidence: Float = 0.0
-    public var angle: String = ""
+    public var corridorPosition: String = ""
     public var vert: String = ""
     public var objectIDD: Int = -1
 //    public var middlePoint: (Int, Int) = ()
@@ -108,19 +109,31 @@ class FrameHandler: NSObject, ObservableObject {
                 width: objectBounds.maxX - objectBounds.minX,
                 height: objectBounds.maxY - objectBounds.minY
             )
-            let centerXPercentage = (transformedBounds.midX / screenRect.width) * 100
-            let centerYPercentage = (transformedBounds.midY / screenRect.height) * 100
-            let direction = DetectionUtils.calculateDirection(centerXPercentage)
-            let verticalLocation = DetectionUtils.verticalCorridor(centerYPercentage)
-            let box = BoundingBox(
-                classIndex: 0,
-                score: confidence,
-                rect: transformedBounds,
-                name: labelIdentifier,
-                direction: direction,
-                vert: verticalLocation
-            )
-            boxes.append(box)
+            if let corridor = self.corridorGeometry{
+//                let inCorridor = CorridorUtils.isBoundingBoxInCorridor(transformedBounds, corridor: corridor)
+//                if !inCorridor{
+//                    print("object outside corridor")
+//                }
+//                else{
+//                    print("object inside corridor")
+//                }
+                let objectPos = CorridorUtils.determinePosition(transformedBounds, corridor: corridor)
+                let centerXPercentage = (transformedBounds.midX / screenRect.width) * 100
+                let centerYPercentage = (transformedBounds.midY / screenRect.height) * 100
+                let direction = DetectionUtils.calculateDirection(centerXPercentage)
+                let verticalLocation = DetectionUtils.verticalCorridor(centerYPercentage)
+                let box = BoundingBox(
+                    classIndex: 0,
+                    score: confidence,
+                    rect: transformedBounds,
+                    name: labelIdentifier,
+                    direction: objectPos,
+                    vert: verticalLocation
+                )
+                boxes.append(box)
+
+            }
+
         }
         return boxes
     }
@@ -282,7 +295,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         self.objectName = largestBox.name
         self.objectCoordinates = largestBox.rect
         self.confidence = largestBox.score
-        self.angle = largestBox.direction
+        self.corridorPosition = largestBox.direction
         self.objectIDD = largestBox.classIndex
         self.vert = largestBox.vert
         // Get the baseadress of pixel and turn it into a Float16 so it is readable.
@@ -359,8 +372,8 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
         let correctedDepth: Float16 = medianDepth > 0 ? 1.0 / medianDepth : 0
         CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
         DispatchQueue.main.async {
-            let newDetection = DetectionOutput(objcetName: self.objectName, distance: correctedDepth, angle: self.angle, id: self.objectIDD, vert: self.vert)
-            if recentDetections.count > 7 {
+            let newDetection = DetectionOutput(objcetName: self.objectName, distance: correctedDepth, corridorPosition: self.corridorPosition, id: self.objectIDD, vert: self.vert)
+            if recentDetections.count > 5 {
                 recentDetections.removeFirst()
             }
             recentDetections.append(newDetection)
@@ -379,7 +392,7 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
                     totalDistance = detection.distance
                     finalCount += 1
                     simplifiedDetection.append(detection.distance)
-                    self.angle = detection.angle //gets the last, and most accuract angle of the common object
+                    self.corridorPosition = detection.corridorPosition //gets the last, and most accuract angle of the common object
                     self.objectIDD = detection.id
                 }
             }
@@ -390,20 +403,22 @@ extension FrameHandler: AVCaptureDataOutputSynchronizerDelegate {
             // Get XY coords; Functionality unused as of now, but may be needed in future development
             // let objectCoords = DetectionUtils.polarToCartesian(distance: Float(self.objectDistance), direction: self.angle)
 
-            let objectDetected = DetectedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, vert: self.vert)
+            let objectDetected = DetectedObject(objName: self.objectName, distance: self.objectDistance, corridorPosition: self.corridorPosition, vert: self.vert)
             let block = DecisionBlock(detectedObject: objectDetected)
             let objectThreatLevel = block.computeThreatLevel(for: objectDetected)
-            let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, angle: self.angle, vert: self.vert, threatLevel: objectThreatLevel)
+            let processedObject = ProcessedObject(objName: self.objectName, distance: self.objectDistance, corridorPosition: self.corridorPosition, vert: self.vert, threatLevel: objectThreatLevel)
             block.processDetectedObjects(processed: processedObject)
-//            let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 10)
+
+            //let audioOutput = AudioQueue.popHighestPriorityObject(threshold: 1)
 //            if audioOutput?.threatLevel ?? 0 > 1{
 //                content.append("Object name: \(audioOutput!.objName),")
-//                content.append("Object angle: \(audioOutput!.angle),")
+//                content.append("Object direction: \(audioOutput!.corridorPosition),")
 //                content.append("Object Verticality: \(audioOutput!.vert),")
 //                content.append("Object distance: \(audioOutput!.distance),")
 //                content.append("Threat level: \(audioOutput!.threatLevel),")
 //                content.append("Distance as a Float: \(Float(audioOutput!.distance)),\n")
-//                print(content)
+
+//                //print(content)
 //            }
         }
     }
@@ -491,7 +506,7 @@ struct BoundingBoxLayer: UIViewRepresentable {
 struct DetectionOutput{
     let objcetName: String
     let distance: Float16
-    let angle: String
+    let corridorPosition: String
     let id: Int
     let vert: String
 }

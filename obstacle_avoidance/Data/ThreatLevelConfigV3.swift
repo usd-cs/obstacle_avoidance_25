@@ -8,12 +8,11 @@
 import Foundation
 
 struct ThreatLevelConfigV3{
-    static let angleWeights: [String: Int]=[
-        "12 o'clock": 10,  //Directly Ahead
-        "11 o'clock": 3,  //Slightly Off-Centered
-        "1 o'clock": 3,
-        "10 o'clock": 1,  //Closing in on Peripheral Vision
-        "2 o'clock": 1
+    static let corridorPosition: [String: Int]=[
+        "Center": 10,  //Directly Ahead
+        "Left": 3,     // Left of the Corridor
+        "Right": 3,    // Right of the Corridor
+        "Above": 2,    // Front of the Corridor
     ]
 
 //Setting up semi-arbitrary values just to run through the tree
