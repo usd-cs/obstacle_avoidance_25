@@ -50,7 +50,7 @@ class DecisionBlock {
         //This inverts distance so the closer something is the more dangerous it is.
         let distanceClamped = max(0.1, Float16(object.distance))
         let inverseDistance = 1.0 / distanceClamped
-        if object.corridorPosition == "outside"{
+        if object.corridorPosition == "outside" || object.distance >= 3{
             return(0.0)
         } else {
             var threat = Float16(objThreat) * Float16(directionWeight) * inverseDistance
