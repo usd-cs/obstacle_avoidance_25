@@ -12,7 +12,7 @@ struct ThreatLevelConfigV3{
         "Center": 10,  //Directly Ahead
         "Left": 5,     // Left of the Corridor
         "Right": 3,    // Right of the Corridor
-        "Above": 2,    // Front of the Corridor
+        "Outside": 0,    // Front of the Corridor
     ]
 
 //Setting up semi-arbitrary values just to run through the tree

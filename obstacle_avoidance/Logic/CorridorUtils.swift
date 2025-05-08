@@ -68,26 +68,41 @@ struct CorridorUtils {
         }
         return isInside
     }
+
+    /**
+    I feel like we could subdivide the corridor in 3 equally and determine where in space is the object exactly
+     */
+    static func positionInCorridor(_ percentage: CGFloat) -> String{
+        let sections = [
+            "Left",
+            "Center",
+            "Right"
+        ]
+        let index = min(Int(percentage/33.33), sections.count-1)
+        return sections[index]
+    }
     static func isBoundingBoxInCorridor(_ bbox: CGRect, corridor: CorridorGeometry)->Bool{
         let point = CGPoint(x: bbox.midX, y: bbox.midY)
         return isPointInside(point, trapezoid: corridor)
     }
+    static func horizontalPercentage(bbox: CGRect, corridor: CorridorGeometry) -> CGFloat{
+        let verticalFactor = (bbox.midY - corridor.bottomLeft.y)/(corridor.topLeft.y-corridor.bottomLeft.y)
+        let corridorLeftX = corridor.bottomLeft.x + (corridor.topLeft.x - corridor.bottomLeft.x) * verticalFactor
+        let corridorRightX = corridor.bottomRight.x + (corridor.topRight.x - corridor.bottomRight.x) * verticalFactor
+        let widthAtY = corridorRightX - corridorLeftX
+
+        let percentageInsideCorridor = ((bbox.midX - corridorLeftX) / widthAtY) * 100
+        return max(0, min(percentageInsideCorridor,100))
+    }
+
     static func determinePosition(_ bbox: CGRect, corridor: CorridorGeometry)->String{
         let point = CGPoint(x: bbox.midX, y: bbox.midY)
+        //we can just avoid the extra computations if the object is not inside our corridor
+        if isPointInside(point, trapezoid: corridor){
+            let horizontalPos = horizontalPercentage(bbox: bbox, corridor: corridor)
+            return positionInCorridor(horizontalPos)
+        }
 
-        let position = corridorPosition(point, trapezoid: corridor)
-
-        if position == .left{
-            return "left"
-        }
-        else if position == .inside{
-            return "inside"
-        }
-        else if position == .right{
-            return "right"
-        }
-        else{
-            return "ahead"
-        }
+        return "Outside"
     }
 }
