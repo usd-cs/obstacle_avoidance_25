@@ -47,15 +47,18 @@ class DecisionBlock {
         let objectID = ThreatLevelConfigV3.objectName[object.objName] ?? 1
         let objThreat = ThreatLevelConfigV3.objectWeights[objectID] ?? 1
         let directionWeight = ThreatLevelConfigV3.corridorPosition[object.corridorPosition] ?? 1
-        //This iverts distance so the closer something is the more dangerous it is.
+        //This inverts distance so the closer something is the more dangerous it is.
         let distanceClamped = max(0.1, Float16(object.distance))
         let inverseDistance = 1.0 / distanceClamped
-        var threat = Float16(objThreat) * Float16(directionWeight) * inverseDistance
-
-        if(detectedObject.vert == "upper third" && distanceClamped < 1.75){
-            threat *= 2
+        if object.corridorPosition == "outside"{
+            return(0.0)
+        } else {
+            var threat = Float16(objThreat) * Float16(directionWeight) * inverseDistance
+            if(detectedObject.vert == "upper third" && distanceClamped < 1.75){
+                threat *= 2
+            }
+            return Float16(threat)
         }
-        return Float16(threat)
     }
 
     // Given the provided information about the object, computes the threat level to create a processedObject
@@ -69,6 +72,10 @@ class DecisionBlock {
             )
 
         // Passes each instance of a detected object into the Queue
-        AudioQueue.addToHeap(processed)
+        if processed.threatLevel != 0{
+            AudioQueue.addToHeap(processed)
+        } else{
+            return
+        }
     }
 }
