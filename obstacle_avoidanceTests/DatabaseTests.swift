@@ -23,10 +23,14 @@ final class DatabaseTests: XCTestCase {
             phoneNumber: "555-666-7777",
             emergencyContacts: [testEC],
             address: "101 That Lane",
-            email: "joe@email.com")
+            email: "joe@email.com",
+            measurementType: "feet",
+            userHeight: 72,
+            hapticFeedback: false,
+            locationSharing: false)
 
-        let users: [User]
-        do {
+            let users: [User]
+            do {
             users = try await Database.shared.fetchUsers()
         } catch {
             XCTFail("Failed to fetch users: \(error)")

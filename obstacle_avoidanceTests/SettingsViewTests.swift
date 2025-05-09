@@ -24,7 +24,12 @@ final class SettingsViewTests: XCTestCase {
                     hashedPassword: "hashed",
                     saltedPassword: "salt",
                     address: "123 Test St",
-                    email: "test@example.com"
+                    email: "test@example.com",
+                    userUid: UUID(),
+                    measurementType: "feet",
+                    userHeight: 72,
+                    hapticFeedback: false,
+                    locationSharing: false
                 )
         
         let set = SettingsView(user: mockUser)
