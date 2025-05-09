@@ -130,42 +130,63 @@ extension Database {
                     newPhoneNumber: String?,
                     newEmail: String?,
                     newAddress: String?) async {
+
         var updateValues: [String: String] = [:]
-        if let newUsername = newUsername {
-            let existingUser = await checkIfExists(column: "username", value: newUsername, userId: userId)
-            if existingUser {
-                print("Error: Username is already taken.")
-                return
-            }
-            updateValues["username"] = newUsername
-        }
+        var currentUser: User
 
-        if let newPhoneNumber = newPhoneNumber {
-            let existingUser = await checkIfExists(column: "phone_number", value: newPhoneNumber, userId: userId)
-            if existingUser {
-                print("Error: Phone number is already in use.")
-                return
-            }
-            updateValues["phone_number"] = newPhoneNumber
-        }
+        do {
+            let response = try await client
+                .from("users")
+                .select("*")
+                .eq("id", value: userId)
+                .single()
+                .execute()
 
-        if let newEmail = newEmail {
-            if !newEmail.isEmpty {
-                let existingUser = await checkIfExists(column: "email", value: newEmail, userId: userId)
-                if existingUser {
-                    print("Error: Email is already in use.")
-                    return
-                }
-            }
-            updateValues["email"] = newEmail
-        }
-        if let newAddress = newAddress { updateValues["address"] = newAddress }
-        if let newName = newName { updateValues["name"] = newName }
+            print("FULL raw response data:")
+            let jsonObject = try JSONSerialization.jsonObject(with: response.data)
+            let prettyData = try JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted)
+            let prettyString = String(data: prettyData, encoding: .utf8) ?? "Could not convert to string"
+            print(prettyString)
+            currentUser = try JSONDecoder().decode(User.self, from: response.data)
 
-        guard !updateValues.isEmpty else {
+        } catch {
+            print("Failed to fetch or decode user: \(error)")
             return
         }
-
+        if let newPhoneNumber = newPhoneNumber, newPhoneNumber != currentUser.phoneNumber {
+            let exists = await checkIfExists(column: "phone_number", value: newPhoneNumber, userId: userId)
+            if exists {
+                print("Phone number taken")
+            } else {
+                updateValues["phone_number"] = newPhoneNumber
+            }
+        }
+        if let newEmail = newEmail, newEmail != currentUser.email {
+            let exists = await checkIfExists(column: "email", value: newEmail, userId: userId)
+            if exists {
+                print("Email taken")
+            } else {
+                updateValues["email"] = newEmail
+            }
+        }
+        if let newAddress = newAddress, newAddress != currentUser.address {
+            updateValues["address"] = newAddress
+        }
+        if let newName = newName, newName != currentUser.name {
+            updateValues["name"] = newName
+        }
+        if let newUsername = newUsername, newUsername != currentUser.username {
+            let exists = await checkIfExists(column: "username", value: newUsername, userId: userId)
+            if exists {
+                print("Username taken")
+            } else {
+                updateValues["username"] = newUsername
+            }
+        }
+        guard !updateValues.isEmpty else {
+            print("No changes to apply")
+            return
+        }
         do {
             let response = try await client
                 .from("users")
@@ -178,7 +199,6 @@ extension Database {
             print("Error updating user:", error)
         }
     }
-
     func deleteUser(userId: Int) async {
         do {
             let response = try await client
@@ -231,7 +251,23 @@ extension Database {
             print("Error updating preferences:", error)
         }
     }
+    func updateAuthEmail(_ email: String) async throws{
+        var attributes = UserAttributes()
+        attributes.email = email
+        try await client.auth.update(user: attributes)
+    }
+    func updateAuthPhone(_ phone: String) async throws {
+        var attributes = UserAttributes()
+        attributes.phone = phone
 
+        do {
+            try await client.auth.update(user: attributes)
+            print("Auth phone update succeeded")
+        } catch {
+            print("Auth phone update failed: \(error)")
+            throw error
+        }
+    }
 }
 
 // Extension for modifying emergency contaacts
