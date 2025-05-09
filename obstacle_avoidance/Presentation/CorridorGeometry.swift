@@ -26,7 +26,7 @@ func calculateCorridor(size: CGSize) -> CorridorGeometry{
     let baseWidth = screenWidth * 0.95
 
     // Top of the corridor (farthest point)
-    let topY = screenHeight * 0.5 // ~60% up the screen
+    let topY = screenHeight * 0.3 // ~60% up the screen
     let topWidth = screenWidth * 0.45 // tapers to this width
 
     return CorridorGeometry(

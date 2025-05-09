@@ -38,13 +38,13 @@ extension AudioQueueVertex{
             if meters > 1{
                 meters = roundingDistance(distance: meters)
             }
-            return String(format: "%.1f meters", meters)
+            return String(format: "%.0f meters", meters)
         } else {
             var feet = Double(self.distance) * 3.28084
             if feet > 1{
                 feet = roundingDistance(distance: feet)
             }
-            return String(format: "%.1f feet", feet)
+            return String(format: "%.0f feet", feet)
         }
     }
 }

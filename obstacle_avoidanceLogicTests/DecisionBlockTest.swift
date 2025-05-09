@@ -19,19 +19,19 @@ struct DecisionBlockTest {
     @Test("testDecisionBlockInit")
     func testDecisionBlockInit() {
         // Creates an instance of detectedObject
-        let detectedObject = DetectedObject(objName: "truck", distance: 6, angle: "12 o'clock", vert: "lower third")
+        let detectedObject = DetectedObject(objName: "truck", distance: 6, corridorPosition: "center", vert: "lower third")
         let block = DecisionBlock(detectedObject: detectedObject)
 
         // Verify the object is stored correctly
         #expect(block.detectedObject.objName == "truck", "Object ID does not match")
         #expect(block.detectedObject.distance == 6, "Distance does not match")
-        #expect(block.detectedObject.angle == "12 o'clock", "Angle does not match")
+        #expect(block.detectedObject.corridorPosition == "center", "Angle does not match")
     }
 
     // Test Case: Compute threat level for a single object
     @Test("testComputeThreatLevel")
     func testComputeThreatLevel() {
-        let detectedObject = DetectedObject(objName: "person", distance: 0.284, angle: "12 o'clock", vert: "lower third")
+        let detectedObject = DetectedObject(objName: "person", distance: 0.284, corridorPosition: "center", vert: "lower third")
         let block = DecisionBlock(detectedObject: detectedObject)
 
         let computedThreat = block.computeThreatLevel(for: detectedObject)
@@ -39,7 +39,7 @@ struct DecisionBlockTest {
         let inverseDistance = 1.0 / distanceClamped
         let expectedThreatLevel = Float16((
             ThreatLevelConfigV3.objectWeights[
-            ThreatLevelConfigV3.objectName[detectedObject.objName]!]!)) * Float16((ThreatLevelConfigV3.angleWeights[detectedObject.angle]!))
+            ThreatLevelConfigV3.objectName[detectedObject.objName]!]!)) * Float16((ThreatLevelConfigV3.corridorPosition[detectedObject.corridorPosition] ?? 1))
         * ((inverseDistance))
         print("Expected Threat level\(expectedThreatLevel)")
         print("Computed Threat Level\(computedThreat)")
