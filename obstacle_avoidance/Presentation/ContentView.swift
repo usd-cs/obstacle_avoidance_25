@@ -18,11 +18,11 @@ struct ContentView: View {
     @State private var showAlert = false
     @State private var startPressed = false
     @AppStorage("isLoggedIn") private var isLoggedIn = false
-    @State private var user: User?
+    @State private var currentUser: User?
     @AppStorage("username") private var username = ""
     var body: some View {
         VStack {
-            TabbedView(user: user)
+            TabbedView(user: $currentUser)
         }
         .onAppear {
             Task {
@@ -32,15 +32,15 @@ struct ContentView: View {
     }
     private func getUserInfo() async {
         let users = await Database.shared.fetchUsers()
-        user = users.first(where: { $0.username == username })
+        currentUser = users.first(where: { $0.username == username })
     }
 }
 
 // Main tab bar with navigation
 struct TabbedView: View {
-    let user: User?
-    init(user: User?) {
-        self.user = user
+    @Binding var user: User?
+    init(user: Binding<User?>) {
+        self._user = user
         UITabBar.appearance().backgroundColor = UIColor.lightGray
         UITabBar.appearance().isTranslucent = true
     }
@@ -62,7 +62,7 @@ struct TabbedView: View {
                 }
             // Settings view, in a navigation stack so we can have a proper back button
             NavigationStack {
-                SettingsView(user: user)
+                SettingsView(user: $user)
             }
                 .tabItem {
                     Image(systemName: "gear")
@@ -76,7 +76,7 @@ struct TabbedView: View {
 struct AccountScreen: View {
     @State private var isEditing: Bool = false // Controls editing mode
     @AppStorage("username") private var username = ""
-    let user: User?
+    @Binding var user: User?
     @State private var updatedUsername = ""
     @State private var updatedName = ""
     @State private var updatedEmail = ""
@@ -101,20 +101,19 @@ struct AccountScreen: View {
                             .foregroundColor(.gray)
                     }
                 }
-                if isEditing {
-                    Button("Save Changes") {
-                        saveChanges()
-                    }
-                    .foregroundColor(.blue)
-                }
             }
             .onAppear {
-                if let user = user {
-                    updatedUsername = user.username
-                    updatedName = user.name
-                    updatedEmail = user.email
-                    updatedPhoneNumber = user.phoneNumber
-                    updatedAddress = user.address
+                Task {
+                    if let userId = user?.id {
+                        if let refreshedUser = await Database.shared.fetchUserById(userId: userId) {
+                            self.user = refreshedUser
+                            updatedUsername = refreshedUser.username
+                            updatedName = refreshedUser.name
+                            updatedEmail = refreshedUser.email
+                            updatedPhoneNumber = refreshedUser.phoneNumber
+                            updatedAddress = refreshedUser.address
+                        }
+                    }
                 }
             }
             Button(action: {
@@ -137,25 +136,56 @@ struct AccountScreen: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(isEditing ? "Done" : "Edit") {
-                    isEditing.toggle()
+                    if isEditing {
+                        print("Done tapped — saving changes")
+                        saveChanges()
+                    } else {
+                        isEditing = true
+                    }
                 }
             }
         }
     }
     private func saveChanges() {
         // Logic to save changes to a database or user preferences
-        guard let user = user, let userId = user.id else { return }  // Ensure user exists
-        Task {
-                await Database.shared.updateUser(
-                    userId: userId,
-                    newName: updatedName,
-                    newUsername: updatedUsername,
-                    newPhoneNumber: updatedPhoneNumber,
-                    newEmail: updatedEmail,
-                    newAddress: updatedAddress
-                )
+        print("saveChanges triggered")
+        guard let user = user, let userId = user.id else { return }
+        Task{
+            print("Entering Task")
+            await Database.shared.updateUser(
+                userId: userId,
+                newName: updatedName,
+                newUsername: updatedUsername,
+                newPhoneNumber: updatedPhoneNumber,
+                newEmail: updatedEmail,
+                newAddress: updatedAddress
+            )
+            print("Task complete")
+            /*if updatedEmail != user.email && !updatedEmail.isEmpty {
+             do {
+             try await Database.shared.updateAuthEmail(updatedEmail)
+             } catch {
+             print("Failed to update email: \(error.localizedDescription)")
+             }
+             }
+             
+             if updatedPhoneNumber != user.phoneNumber && !updatedPhoneNumber.isEmpty {
+             do {
+             try await Database.shared.updateAuthPhone(updatedPhoneNumber)
+             } catch {
+             print("Failed to update phone number: \(error.localizedDescription)")
+             }
+             }*/
+            DispatchQueue.main.async {
+                updatedUsername = updatedUsername
+                updatedName = updatedName
+                updatedEmail = updatedEmail
+                updatedPhoneNumber = updatedPhoneNumber
+                updatedAddress = updatedAddress
+                
+                isEditing = false
             }
-        isEditing = false
+        }
     }
     private func editableRow(label: String, text: Binding<String>, keyboard: UIKeyboardType = .default, isSecure: Bool = false) -> some View {
         HStack {
@@ -343,7 +373,6 @@ struct EmergencyContactCard: View {
 enum MeasurementType: String, CaseIterable, Identifiable {
     case feet = "feet"
     case meters = "meters"
-    case yards = "yards"
     var id: String { self.rawValue }
 }
 struct PreferencesView: View {
@@ -440,11 +469,5 @@ struct SettingsToggleStyle: ToggleStyle {
                 .toggleStyle(SwitchToggleStyle())
                 .frame(width: 80, height: 40)
         }
-    }
-}
-// For Preview in Xcode
-struct ContentViewPreviews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
     }
 }

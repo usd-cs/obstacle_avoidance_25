@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct SettingsView: View {
-    let user: User?
+    @Binding var user: User?
     @AppStorage("isLoggedIn") private var isLoggedIn = false
     @AppStorage("username") private var username = ""
 
     var body: some View {
         NavigationStack {
             List {
-                NavigationLink(destination: AccountScreen(user: user)) {
+                NavigationLink(destination: AccountScreen(user: $user)) {
                     Label("Account", systemImage: "arrow.right.circle")
                         .font(.headline)
                         .fontWeight(.bold)

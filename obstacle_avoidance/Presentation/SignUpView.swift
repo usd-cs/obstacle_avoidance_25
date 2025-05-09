@@ -146,8 +146,12 @@ struct SignUpView: View {
             usernameAccepted = true
             usernameError = ""
         }
-        if !phoneNumber.isEmpty{
-            if users.contains(where: { $0.phoneNumber == phoneNumber }) {
+        if !phoneNumber.isEmpty {
+            if !isValidPhoneNumber(phoneNumber) {
+                phoneNumberAccepted = false
+                phoneError = "Invalid phone number. "
+                userError = true
+            } else if users.contains(where: { $0.phoneNumber == phoneNumber }) {
                 phoneNumberAccepted = false
                 phoneError = "Phone number already taken. "
                 userError = true
@@ -160,11 +164,15 @@ struct SignUpView: View {
             phoneError = "Phone number required. "
         }
         if !email.isEmpty {
-            if users.contains(where: { $0.email == email }) {
+             if !isValidEmail(email){
                 emailAccepted = false
-                emailError = "Email already taken. "
+                emailError = "Invalid email. "
                 userError = true
-            } else {
+            } else if users.contains(where: { $0.email == email }) {
+               emailAccepted = false
+               emailError = "Email already taken. "
+               userError = true
+           } else {
                 emailAccepted = true
                 emailError = ""
             }
@@ -195,6 +203,15 @@ struct SignUpView: View {
             UIAccessibility.post(notification: .announcement, argument: errorMessage)
         }
     }
+    func isValidPhoneNumber(_ phone: String) -> Bool {
+        let digits = phone.filter { $0.isNumber }
+        return digits.count == 10
+    }
+    func isValidEmail(_ email: String) -> Bool {
+        let emailRegex = #"^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"#
+        return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: email)
+    }
+
 }
 
 #Preview {
